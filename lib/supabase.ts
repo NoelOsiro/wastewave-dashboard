@@ -36,8 +36,8 @@ export const fetchPayments = async () => {
     status: payment.status,
     date: payment.payment_date,
     house_id: payment.house_id,
-    house: payment.houses?.name || "Unknown",
-    owner: payment.houses?.owner || "Unknown",
+    house: Array.isArray(payment.houses) && payment.houses[0]?.name || "Unknown",
+    owner: Array.isArray(payment.houses) && payment.houses[0]?.owner || "Unknown",
   }));
 };
 
