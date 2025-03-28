@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { HouseData } from "../hooks/useFormSchema";
+import Link from "next/link";
 
 type HouseTableProps = {
   initialHouses: HouseData[];
@@ -101,12 +102,21 @@ export const HouseTable = ({ initialHouses, onView, onEdit, onDelete }: HouseTab
                     </PopoverTrigger>
                     <PopoverContent className="w-40 p-0">
                       <div className="p-1">
-                        <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => onView(house)}>
+                        <Link href={`/houses/${house.id}`} >
+                        <Button variant="ghost" className="w-full justify-start text-sm">
                           <Eye size={14} className="mr-2" /> View
                         </Button>
-                        <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => onEdit(house)}>
-                          <Edit size={14} className="mr-2" /> Edit
+                        </Link>
+                        <Link href={`/houses/edit/${house.id}`} >
+                        <Button variant="ghost" className="w-full justify-start text-sm">
+                        <Edit size={14} className="mr-2" /> Edit
                         </Button>
+                        </Link>
+                        <Link href={`/houses/collection/${house.id}`} >
+                        <Button variant="ghost" className="w-full justify-start text-sm">
+                        <SlidersHorizontal size={14} className="mr-2" /> Collection
+                        </Button>
+                        </Link>
                         <Button variant="ghost" className="w-full justify-start text-sm text-destructive" onClick={() => onDelete(house)}>
                           <Trash size={14} className="mr-2" /> Delete
                         </Button>

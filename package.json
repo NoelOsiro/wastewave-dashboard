@@ -1,9 +1,18 @@
 {
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "next lint",
+    "format": "prettier --write .",
+    "test": "next test",
+    "test:coverage": "next  run --coverage",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui",
+    "test:ui:coverage": "vitest --ui --coverage",
+    "test:ui:coverage:watch": "vitest --ui --coverage --watch",
+    "test:ui:coverage:report": "vitest --ui --coverage --reporter=html"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.15",

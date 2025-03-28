@@ -6,6 +6,7 @@ import ClientComponents from "@/app/houses/clientcomponents";
 import { HouseData } from "./hooks/useFormSchema";
 import { Suspense } from "react";
 import { fetchHouses } from "@/lib/supabase";
+import Link from "next/link";
 
 
 // Mark as dynamic to force SSR on every request (optional)
@@ -23,10 +24,10 @@ export default async function HousesPage() {
             <p className="text-muted-foreground mt-1">Manage all registered houses and their details.</p>
           </div>
           <Button asChild>
-            <span>
+            <Link href="/houses/add">
               <Plus size={16} className="mr-2" />
               Add New House
-            </span>
+            </Link>
           </Button>
         </div>
         <Suspense fallback={<div>Loading metrics...</div>}>
