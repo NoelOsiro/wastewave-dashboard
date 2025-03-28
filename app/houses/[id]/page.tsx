@@ -6,13 +6,13 @@ import { CollectionHistoryCard } from "../components/CollectionHistoryCard";
 import { createClient } from "@/utils/supabase/server";
 
 export const dynamic = "force-dynamic"; // Force SSR on every request
-
-export default async function HouseViewPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const { id } = params;
+// Define the props type explicitly
+interface HousePageProps {
+  params: Promise<{ id: string }>; // params is a Promise
+}
+export default async function HouseViewPage({ params }: HousePageProps) {
+  const resolvedParams = await params;
+  const id = resolvedParams.id;
   const supabase = await createClient();
   
   // Fetch house data
