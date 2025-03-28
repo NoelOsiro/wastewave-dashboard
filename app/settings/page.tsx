@@ -9,8 +9,16 @@ import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
+import { createClient } from "@/utils/supabase/client";
+import PaymentConfig from "@/components/dashboard/PaymentsConfig";
+
+
+
+
 
 const Settings = () => {
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -27,6 +35,7 @@ const Settings = () => {
             <TabsTrigger value="appearance">Appearance</TabsTrigger>
             <TabsTrigger value="notifications">Notifications</TabsTrigger>
             <TabsTrigger value="system">System</TabsTrigger>
+            <TabsTrigger value="config">Payment Config</TabsTrigger>
           </TabsList>
           <TabsContent value="general" className="space-y-4">
             <Card>
@@ -73,7 +82,7 @@ const Settings = () => {
                 <Button>Save changes</Button>
               </CardFooter>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle>Email Settings</CardTitle>
@@ -237,6 +246,9 @@ const Settings = () => {
                 <Button variant="outline">Check for Updates</Button>
               </CardFooter>
             </Card>
+          </TabsContent>
+          <TabsContent value="config" className="space-y-4">
+            <PaymentConfig />
           </TabsContent>
         </Tabs>
       </div>
