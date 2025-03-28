@@ -31,7 +31,7 @@ const ThemeSwitcher = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size={"sm"} className="glass-button rounded-full w-9 h-9 p-0">
+        <Button variant="ghost" size={"sm"} className="frosted-glass rounded-full w-9 h-9 p-0">
           {theme === "light" ? (
             <Sun
               key="light"
@@ -53,20 +53,20 @@ const ThemeSwitcher = () => {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="glass-dropdown w-content border-white/20 dark:border-white/10" align="start">
+      <DropdownMenuContent className="frosted-glass w-content border-white/30 dark:border-white/20" align="start">
         <DropdownMenuRadioGroup
           value={theme}
           onValueChange={(e) => setTheme(e)}
         >
-          <DropdownMenuRadioItem className="flex gap-2 hover:bg-white/10 dark:hover:bg-white/5" value="light">
+          <DropdownMenuRadioItem className="flex gap-2 hover:bg-white/20 dark:hover:bg-white/10" value="light">
             <Sun size={ICON_SIZE} className="text-yellow-500" />{" "}
             <span>Light</span>
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem className="flex gap-2 hover:bg-white/10 dark:hover:bg-white/5" value="dark">
+          <DropdownMenuRadioItem className="flex gap-2 hover:bg-white/20 dark:hover:bg-white/10" value="dark">
             <Moon size={ICON_SIZE} className="text-indigo-300" />{" "}
             <span>Dark</span>
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem className="flex gap-2 hover:bg-white/10 dark:hover:bg-white/5" value="system">
+          <DropdownMenuRadioItem className="flex gap-2 hover:bg-white/20 dark:hover:bg-white/10" value="system">
             <Laptop size={ICON_SIZE} className="text-muted-foreground" />{" "}
             <span>System</span>
           </DropdownMenuRadioItem>
