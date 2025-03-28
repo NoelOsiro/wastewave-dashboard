@@ -88,7 +88,7 @@ export async function POST(request: Request): Promise<NextResponse<StkPushRespon
         PartyA: phoneNumber,
         PartyB: short_code,
         PhoneNumber: phoneNumber,
-        CallBackURL: "https://your-domain.com/api/callback", // Replace with your actual callback URL
+        CallBackURL: "https://wastewave-dashboard.vercel.app/api/callback", // Replace with your actual callback URL
         AccountReference: "Test123",
         TransactionDesc: "Payment for services",
       }),
