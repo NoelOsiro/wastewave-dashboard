@@ -1,4 +1,3 @@
-
 "use client"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -49,7 +48,7 @@ export default function PaymentConfig() {
     };
 
     return (
-        <Card className="frosted-glass">
+        <Card>
             <CardHeader>
                 <CardTitle>Payment Config</CardTitle>
                 <CardDescription>Set up your payment gateway and methods.</CardDescription>
@@ -59,10 +58,10 @@ export default function PaymentConfig() {
                     <div>
                         <Label>Payment Provider</Label>
                         <Select value={config.provider} onValueChange={handleProviderChange}>
-                            <SelectTrigger className="glass-input">
+                            <SelectTrigger>
                                 <SelectValue placeholder="Select a provider" />
                             </SelectTrigger>
-                            <SelectContent className="frosted-glass">
+                            <SelectContent>
                                 <SelectItem value="M-Pesa">M-Pesa</SelectItem>
                                 <SelectItem value="SasaPay">SasaPay</SelectItem>
                                 <SelectItem value="Stripe">Stripe</SelectItem>
@@ -71,32 +70,32 @@ export default function PaymentConfig() {
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="consumer_key">Consumer Key</Label>
-                        <Input className="glass-input" name="consumer_key" value={config.consumer_key} onChange={handleChange} />
+                        <Input name="consumer_key" value={config.consumer_key} onChange={handleChange} />
                     </div>
                     <div>
                         <Label>Consumer Secret</Label>
-                        <Input className="glass-input" name="consumer_secret" value={config.consumer_secret} onChange={handleChange} />
+                        <Input name="consumer_secret" value={config.consumer_secret} onChange={handleChange} />
                     </div>
                     <div>
                         <Label>Short Code</Label>
-                        <Input className="glass-input" name="short_code" value={config.short_code} onChange={handleChange} />
+                        <Input name="short_code" value={config.short_code} onChange={handleChange} />
                     </div>
                     <div>
                         <Label>Passkey</Label>
-                        <Input className="glass-input" name="passkey" value={config.passkey} onChange={handleChange} />
+                        <Input name="passkey" value={config.passkey} onChange={handleChange} />
                     </div>
                     <div>
                         <Label>Initiator Name</Label>
-                        <Input className="glass-input" name="initiator_name" value={config.initiator_name} onChange={handleChange} />
+                        <Input name="initiator_name" value={config.initiator_name} onChange={handleChange} />
                     </div>
                     <div>
                         <Label>Security Credential</Label>
-                        <Input className="glass-input" name="security_credential" value={config.security_credential} onChange={handleChange} />
+                        <Input name="security_credential" value={config.security_credential} onChange={handleChange} />
                     </div>
                 </div>
             </CardContent>
             <CardFooter>
-                <Button onClick={handleSave} disabled={loading} className="glass-button bg-primary hover:bg-primary/90">
+                <Button onClick={handleSave} disabled={loading}>
                     {loading ? "Saving..." : "Save Config"}
                 </Button>
             </CardFooter>

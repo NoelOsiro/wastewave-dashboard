@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -26,47 +25,47 @@ const ThemeSwitcher = () => {
     return null;
   }
 
-  const ICON_SIZE = 18;
+  const ICON_SIZE = 16;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size={"sm"} className="frosted-glass rounded-full w-9 h-9 p-0">
+        <Button variant="ghost" size={"sm"}>
           {theme === "light" ? (
             <Sun
               key="light"
               size={ICON_SIZE}
-              className="text-yellow-500"
+              className={"text-muted-foreground"}
             />
           ) : theme === "dark" ? (
             <Moon
               key="dark"
               size={ICON_SIZE}
-              className="text-indigo-300"
+              className={"text-muted-foreground"}
             />
           ) : (
             <Laptop
               key="system"
               size={ICON_SIZE}
-              className="text-muted-foreground"
+              className={"text-muted-foreground"}
             />
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="frosted-glass w-content border-white/30 dark:border-white/20" align="start">
+      <DropdownMenuContent className="w-content" align="start">
         <DropdownMenuRadioGroup
           value={theme}
           onValueChange={(e) => setTheme(e)}
         >
-          <DropdownMenuRadioItem className="flex gap-2 hover:bg-white/20 dark:hover:bg-white/10" value="light">
-            <Sun size={ICON_SIZE} className="text-yellow-500" />{" "}
+          <DropdownMenuRadioItem className="flex gap-2" value="light">
+            <Sun size={ICON_SIZE} className="text-muted-foreground" />{" "}
             <span>Light</span>
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem className="flex gap-2 hover:bg-white/20 dark:hover:bg-white/10" value="dark">
-            <Moon size={ICON_SIZE} className="text-indigo-300" />{" "}
+          <DropdownMenuRadioItem className="flex gap-2" value="dark">
+            <Moon size={ICON_SIZE} className="text-muted-foreground" />{" "}
             <span>Dark</span>
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem className="flex gap-2 hover:bg-white/20 dark:hover:bg-white/10" value="system">
+          <DropdownMenuRadioItem className="flex gap-2" value="system">
             <Laptop size={ICON_SIZE} className="text-muted-foreground" />{" "}
             <span>System</span>
           </DropdownMenuRadioItem>
