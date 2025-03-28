@@ -1,9 +1,13 @@
-export default async function Layout({
+export default async function LoginLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="max-w-7xl flex flex-col gap-12 items-start">{children}</div>
+    <main className="min-h-screen w-full flex items-center justify-center bg-background">
+      <div className="w-full max-w-7xl flex flex-col md:flex-row items-stretch justify-between mx-auto">
+        {children}
+      </div>
+    </main>
   );
 }

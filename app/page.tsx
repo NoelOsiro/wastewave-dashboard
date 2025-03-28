@@ -3,6 +3,8 @@ import { DashboardMetric } from "@/components/dashboard/DashboardMetric";
 import { DashboardChart } from "@/components/dashboard/DashboardChart";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { Users, Home as HomeIcon, Truck, CreditCard, Award, Calendar } from "lucide-react";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 const revenueData = [
   { name: "Jan", revenue: 4000 },
   { name: "Feb", revenue: 3000 },
@@ -56,6 +58,15 @@ const topPerformers = [
 ];
 
 export default async function Home() {
+  const supabase = await createClient();
+  
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+  
+    if (!user) {
+      return redirect("/sign-in");
+    }
   return (
     <Layout>
       <div className="space-y-8">
