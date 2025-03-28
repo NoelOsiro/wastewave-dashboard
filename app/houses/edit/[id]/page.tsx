@@ -5,13 +5,12 @@ import { createClient } from "@/utils/supabase/server";
 import { EditHouseForm } from "./EditHouseForm";
 
 export const dynamic = "force-dynamic"; // Force SSR on every request
-
-export default async function EditHousePage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const { id } = params;
+interface HousePageProps {
+  params: Promise<{ id: string }>; // params is a Promise
+}
+export default async function EditHousePage({ params }: HousePageProps) {
+  const resolvedParams = await params;
+  const id = resolvedParams.id;
   const supabase = await createClient();
 
   // Fetch house data
