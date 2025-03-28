@@ -119,27 +119,7 @@
 
 @layer components {
   .glass-card {
-    @apply bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-white/30 dark:border-gray-800/30 
-           shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] rounded-xl 
-           transition-all duration-300 hover:shadow-[0_8px_32px_0_rgba(31,38,135,0.12)];
-  }
-
-  .glass-input {
-    @apply bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border border-white/20 dark:border-gray-700/20
-           focus:ring-2 focus:ring-primary/50 focus:border-transparent
-           transition-all duration-200;
-  }
-
-  .glass-button {
-    @apply bg-primary/90 text-primary-foreground backdrop-blur-md
-           border border-white/20 hover:bg-primary/80
-           shadow-[0_4px_14px_0_rgba(0,0,0,0.1)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.15)]
-           transition-all duration-200;
-  }
-
-  .glass-select {
-    @apply bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border border-white/20 dark:border-gray-700/20
-           focus:ring-2 focus:ring-primary/50 focus:border-transparent;
+    @apply bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-lg;
   }
   
   .status-badge {
@@ -170,6 +150,7 @@
     @apply bg-eco-500 text-white hover:bg-eco-600 focus:ring-eco-500 focus:ring-offset-2;
   }
 }
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
