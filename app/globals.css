@@ -118,7 +118,7 @@
 
 @layer components {
   .glass-card {
-    @apply bg-white/80 dark:bg-black/50 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-lg;
+    @apply bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-lg;
   }
   
   .status-badge {
@@ -149,6 +149,7 @@
     @apply bg-eco-500 text-white hover:bg-eco-600 focus:ring-eco-500 focus:ring-offset-2;
   }
 }
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
