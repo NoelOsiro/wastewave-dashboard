@@ -36,7 +36,10 @@ async function fetchNotificationData() {
     metrics: metrics || { total_sent: 0, sms_sent: 0, email_sent: 0, delivery_rate: "0%" },
   };
 }
-
+interface NotificationsPageProps {
+  
+  searchParams: Promise<{tab?: string; error?: string }>;
+}
 
 function Header(props: { error: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }) {
   return (<div>
@@ -47,13 +50,10 @@ function Header(props: { error: string | number | bigint | boolean | ReactElemen
 }
 
 
-export default async function NotificationsPage({
-  searchParams,
-}: {
-  searchParams: { tab?: string; error?: string };
-}) {
-  const activeTab = searchParams.tab || "new";
-  const error = searchParams.error;
+export default async function NotificationsPage({ searchParams }: NotificationsPageProps) {
+  const resolvedParams = await searchParams;
+  const activeTab = resolvedParams.tab || "new";
+  const error = resolvedParams.error;
   const { templates, history, metrics } = await fetchNotificationData();
 
   return (
