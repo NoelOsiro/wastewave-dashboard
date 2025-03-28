@@ -5,15 +5,13 @@ import { HouseData } from "../hooks/useFormSchema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Edit, Mail, Phone, MapPin, Home, User } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface HouseDetailsCardProps {
   house: HouseData;
 }
 
 export function HouseDetailsCard({ house }: HouseDetailsCardProps) {
-  const router = useRouter();
-
   return (
     <Card className="glass-card h-full">
       <CardHeader className="pb-2">
@@ -25,11 +23,13 @@ export function HouseDetailsCard({ house }: HouseDetailsCardProps) {
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={() => router.push(`/houses?edit=${house.id}`)}
+            asChild
             className="text-muted-foreground hover:text-foreground"
           >
-            <Edit size={16} className="mr-2" />
-            Edit
+            <Link href={`/houses/edit/${house.id}`}>
+              <Edit size={16} className="mr-2" />
+              Edit
+            </Link>
           </Button>
         </div>
       </CardHeader>

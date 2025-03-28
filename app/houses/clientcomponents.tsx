@@ -1,3 +1,4 @@
+
 // Client wrapper for interactive components
 "use client";
 
@@ -9,6 +10,7 @@ import { EditHouseSheet } from "./components/EditHouseSheet";
 import { ViewHouseSheet } from "./components/ViewHouseSheet";
 import { DeleteHouseSheet } from "./components/DeleteHouseSheet";
 import { NewHouseModal } from "./components/NewHouseModal";
+import { useRouter } from "next/navigation";
 
 type ClientComponentsProps = {
   initialHouses: HouseData[];
@@ -21,6 +23,7 @@ export default function ClientComponents({ initialHouses }: ClientComponentsProp
   const [openViewSheet, setOpenViewSheet] = useState(false);
   const [openDeleteSheet, setOpenDeleteSheet] = useState(false);
   const [selectedHouse, setSelectedHouse] = useState<HouseData | null>(null);
+  const router = useRouter();
 
   const handleView = (house: HouseData) => {
     setSelectedHouse(house);
@@ -28,9 +31,8 @@ export default function ClientComponents({ initialHouses }: ClientComponentsProp
   };
 
   const handleEdit = (house: HouseData) => {
-    setSelectedHouse(house);
-    setOpenEditSheet(true);
-    setOpenViewSheet(false);
+    // Navigate to the dedicated edit page
+    router.push(`/houses/edit/${house.id}`);
   };
 
   const handleDelete = (house: HouseData) => {
