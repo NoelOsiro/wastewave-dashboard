@@ -1,12 +1,14 @@
 import { Layout } from "@/components/layout/Layout";
 import AddHouseForm from "./AddHouseForm";
 
-export default async function AddHousePage({
-  searchParams,
-}: {
-  searchParams: { error?: string };
-}) {
-  const error = searchParams.error;
+
+interface AddHousePageProps {
+  
+  searchParams: Promise<{ error?: string }>;
+}
+export default async function AddHousePage({searchParams}: AddHousePageProps) {
+  const resolvedParams = await searchParams;
+  const error = resolvedParams.error;
 
   return (
     <Layout>
