@@ -56,6 +56,55 @@ const topPerformers = [
   { id: 4, house: "Akbar Compound", points: 430, wasteSeparation: "93%" },
   { id: 5, house: "Martinez Family", points: 405, wasteSeparation: "91%" },
 ];
+const getDasboardData = async (role:string) => {
+  switch (role) {
+    case "admin":
+      return {
+        revenueData,
+        wasteCollectionData,
+        scheduleData,
+        recentPayments,
+        upcomingCollections,
+        topPerformers,
+      };
+    case "house":
+      return {
+        revenueData: [],
+        wasteCollectionData: wasteCollectionData,
+        scheduleData: scheduleData,
+        recentPayments: recentPayments,
+        upcomingCollections: upcomingCollections,
+        topPerformers: [],
+      };
+    case "collector":
+      return {
+        revenueData: [],
+        wasteCollectionData: [],
+        scheduleData: [],
+        recentPayments: [],
+        upcomingCollections: [],
+        topPerformers: [],
+      };
+    case "manager":
+      return {
+        revenueData: [],
+        wasteCollectionData: [],
+        scheduleData: [],
+        recentPayments: [],
+        upcomingCollections: [],
+        topPerformers: [],
+      };
+    default:
+      return {
+        revenueData,
+        wasteCollectionData,
+        scheduleData,
+        recentPayments,
+        upcomingCollections,
+        topPerformers,
+      };
+  }
+}
 
 export default async function Home() {
   const supabase = await createClient();
@@ -67,6 +116,15 @@ export default async function Home() {
     if (!user) {
       return redirect("/sign-in");
     }
+    const userData = {
+      name: "Waste Admin",
+      email: "admin@wastewave.com",
+      role: "house",
+      image: "https://images.unsplash.com/photo-1502685104226-e9b3c4f2e0a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
+    }
+  
+  
+  const { revenueData, wasteCollectionData, scheduleData, recentPayments, upcomingCollections, topPerformers }  = await getDasboardData(userData.role);
   return (
     <Layout>
       <div className="space-y-8">
@@ -108,13 +166,15 @@ export default async function Home() {
         </div>
         
         {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className={`grid grid-cols-1 ${userData.role != 'admin'? '':'lg:grid-cols-2'}  gap-6`}>
+        { userData.role != "house" && (
           <DashboardChart
             title="Revenue Overview"
             data={revenueData}
             dataKeys={["revenue"]}
             type="area"
           />
+        )}
           <DashboardChart
             title="Waste Collection by Type"
             data={wasteCollectionData}
@@ -167,7 +227,7 @@ export default async function Home() {
           </DashboardCard>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className={`grid grid-cols-1 ${userData.role != 'admin'? '':'lg:grid-cols-2'}  gap-6`}>
           {/* Upcoming Collections */}
           <DashboardCard title="Upcoming Collections">
             <div className="space-y-4">
@@ -189,7 +249,8 @@ export default async function Home() {
           </DashboardCard>
           
           {/* Top Performers */}
-          <DashboardCard title="Top Performers">
+          { userData.role != "house" && (
+            <DashboardCard title="Top Performers">
             <div className="space-y-4">
               {topPerformers.slice(0, 3).map((performer, index) => (
                 <div key={performer.id} className="flex items-center justify-between">
@@ -211,6 +272,8 @@ export default async function Home() {
               ))}
             </div>
           </DashboardCard>
+          )}
+          
         </div>
       </div>
     </Layout>

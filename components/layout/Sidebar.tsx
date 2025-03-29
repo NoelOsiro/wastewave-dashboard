@@ -13,6 +13,7 @@ import {
   X,
   ChevronRight
 } from "lucide-react";
+import { title } from "process";
 
 
 
@@ -25,44 +26,114 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ initialSidebarOpen, user}) => {
   const [open, setOpen] = useState(initialSidebarOpen)
   const pathname = usePathname();
+
+  const getNavItems = () => {
+    const commonLinks = [
+      {
+        title: "Dashboard",
+        icon: Home,
+        href: "/",
+      },  
+      
+      
+    ];
+    
+    switch (user?.role) {
+      case 'admin':
+        return [
+          ...commonLinks,
+          {
+            title: "Rewards",
+            icon: Award,
+            href: "/rewards",
+          },
+          {
+            title: "Houses",
+            icon: Users,
+            href: "/houses",
+          },
+          {
+            title: "Payments",
+            icon: CreditCard,
+            href: "/payments",
+          },
+          {
+            title: "Schedule",
+            icon: Calendar,
+            href: "/schedule",
+          },
+          {
+            title: "Notifications",
+            icon: Bell,
+            href: "/notifications",
+          },
+          {
+            title: "Settings",
+            icon: Settings,
+            href: "/settings",
+          },
+        ];
+      case 'house_manager':
+        return [
+          ...commonLinks,
+          
+          {
+            title: "Schedule",
+            icon: Calendar,
+            href: "/schedule",
+          },
+          {
+            title: "Profile",
+            icon: Settings,
+            href: "/profile",
+          },
+          {
+            title: "Help",
+            icon: Settings,
+            href: "/help",
+          },
+          {
+            title: "Notifications",
+            icon: Bell,
+            href: "/notifications",
+          },
+        ];
+      case 'house':
+        return [
+          ...commonLinks,
+          
+          {
+            title: "Schedule",
+            icon: Calendar,
+            href: "/schedule",
+          },
+          {
+            title: "Payments",
+            icon: CreditCard,
+            href: "/payments",
+          },
+          {
+            title: "Profile",
+            icon: Settings,
+            href: "/profile",
+          },
+          {
+            title: "Rewards",
+            icon: Award,
+            href: "/rewards",
+          },
+          {
+            title: "Help",
+            icon: Settings,
+            href: "/help",
+          }
+        ];
+      default:
+        return commonLinks;
+    }
+  };
   
-  const sidebarLinks = [
-    {
-      title: "Dashboard",
-      icon: Home,
-      href: "/",
-    },
-    {
-      title: "Houses",
-      icon: Users,
-      href: "/houses",
-    },
-    {
-      title: "Schedule",
-      icon: Calendar,
-      href: "/schedule",
-    },
-    {
-      title: "Payments",
-      icon: CreditCard,
-      href: "/payments",
-    },
-    {
-      title: "Notifications",
-      icon: Bell,
-      href: "/notifications",
-    },
-    {
-      title: "Rewards",
-      icon: Award,
-      href: "/rewards",
-    },
-    {
-      title: "Settings",
-      icon: Settings,
-      href: "/settings",
-    },
-  ];
+  const sidebarLinks = getNavItems();
   
   const isCurrentPath = (path: string) => {
     return pathname === path;

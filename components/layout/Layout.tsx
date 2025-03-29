@@ -14,8 +14,9 @@ export async function Layout({ children, initialSidebarOpen = true }: LayoutProp
   // const { data: userData } = await supabase.from('users').select('*').single()
   const userData = {
     name: "Waste Admin",
-    role: "Administrator",
-    email: "admin@wastewave.com"
+    email: "admin@wastewave.com",
+    role: "house",
+    image: "https://images.unsplash.com/photo-1502685104226-e9b3c4f2e0a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
   }
   return (
 
