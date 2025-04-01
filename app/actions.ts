@@ -1,3 +1,4 @@
+
 "use server";
 
 import { encodedRedirect } from "@/utils/utils";
@@ -8,6 +9,8 @@ import { redirect } from "next/navigation";
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
+  const name = formData.get("name")?.toString();
+  const role = formData.get("role")?.toString();
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
@@ -19,11 +22,15 @@ export const signUpAction = async (formData: FormData) => {
     );
   }
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       emailRedirectTo: `${origin}/auth/callback`,
+      data: {
+        name: name || email.split('@')[0],
+        role: role || 'house', // Default to house role if not specified
+      }
     },
   });
 
@@ -31,6 +38,12 @@ export const signUpAction = async (formData: FormData) => {
     console.error(error.code + " " + error.message);
     return encodedRedirect("error", "/sign-up", error.message);
   } else {
+    // If user was created successfully, insert into appropriate role-specific table
+    if (data.user) {
+      // In a real implementation, you might create role-specific records here
+      console.log(`User ${data.user.id} created with role: ${role}`);
+    }
+    
     return encodedRedirect(
       "success",
       "/sign-up",
@@ -42,15 +55,22 @@ export const signUpAction = async (formData: FormData) => {
 export const signInAction = async (formData: FormData) => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+  const role = formData.get("role") as string;
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
   if (error) {
     return encodedRedirect("error", "/sign-in", error.message);
+  }
+
+  // Verify that the user has the correct role
+  if (data.user && data.user.user_metadata.role !== role) {
+    await supabase.auth.signOut();
+    return encodedRedirect("error", "/sign-in", "Incorrect role selected for this account");
   }
 
   return redirect("/");
