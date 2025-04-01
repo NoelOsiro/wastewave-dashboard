@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import Link from "next/link";
+import { createClient } from "@/utils/supabase/client";
 
 interface TopbarProps {
   initialSidebarOpen: boolean
@@ -127,6 +128,20 @@ export const Topbar: React.FC<TopbarProps> = ({ initialSidebarOpen, user }) => {
 
   const markAllAsRead = () => {
     setUnreadNotifications(0);
+  };
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    const { error } = await supabase.auth.signOut();
+    
+    if (error) {
+      console.error('Error logging out:', error.message);
+      // Optionally show an error toast/notification
+      return;
+    }
+    
+    // Redirect to login page or home page after logout
+    window.location.href = '/sign-in';
   };
   
   return (
@@ -262,7 +277,7 @@ export const Topbar: React.FC<TopbarProps> = ({ initialSidebarOpen, user }) => {
               <button className="focus:outline-none" aria-label="User profile">
                 <Avatar className="h-8 w-8 cursor-pointer hover:ring-2 hover:ring-primary transition-all">
                   <AvatarImage src="" alt="Profile" />
-                  <AvatarFallback className="bg-primary/10 text-primary font-medium">WA</AvatarFallback>
+                  <AvatarFallback className="bg-primary/10 text-primary font-medium">{user.user_metadata.name[0]}</AvatarFallback>
                 </Avatar>
               </button>
             </DropdownMenuTrigger>
@@ -270,11 +285,11 @@ export const Topbar: React.FC<TopbarProps> = ({ initialSidebarOpen, user }) => {
               <div className="flex items-center p-3">
                 <Avatar className="h-10 w-10 mr-3">
                   <AvatarImage src="" alt="Profile" />
-                  <AvatarFallback className="bg-primary/10 text-primary font-medium">WA</AvatarFallback>
+                  <AvatarFallback className="bg-primary/10 text-primary font-medium">{user.user_metadata.name[0]}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="text-sm font-medium">Waste Admin</p>
-                  <p className="text-xs text-muted-foreground">admin@wastewave.com</p>
+                  <p className="text-sm font-medium">{user.user_metadata.name}</p>
+                  <p className="text-xs text-muted-foreground">{user.email}</p>
                 </div>
               </div>
               <DropdownMenuSeparator />
@@ -290,7 +305,7 @@ export const Topbar: React.FC<TopbarProps> = ({ initialSidebarOpen, user }) => {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer text-destructive">
+              <DropdownMenuItem className="cursor-pointer text-destructive" onClick={handleLogout}>
                 Logout
               </DropdownMenuItem>
             </DropdownMenuContent>

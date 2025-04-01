@@ -1,23 +1,21 @@
 export type Message =
-  | { success: string }
-  | { error: string }
-  | { message: string };
+  {
+    type: string;
+    message: string;
+  };
 
 export function FormMessage({ message }: { message: Message }) {
   return (
     <div className="flex flex-col gap-2 w-full max-w-md text-sm">
-      {"success" in message && (
-        <div className="text-foreground border-l-2 border-foreground px-4">
-          {message.success}
+      {message.type === "success" && (
+        <div className="text-status-success border-l-2 border-status-success  px-4">
+          {message.message}
         </div>
       )}
-      {"error" in message && (
-        <div className="text-destructive-foreground border-l-2 border-destructive-foreground px-4">
-          {message.error}
+      {message.type === "error" && (
+        <div className="p-2 text-status-error border-l-2 border-status-error bg-red-100 text-bold px-4 text-center">
+          {message.message}
         </div>
-      )}
-      {"message" in message && (
-        <div className="text-foreground border-l-2 px-4">{message.message}</div>
       )}
     </div>
   );

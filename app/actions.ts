@@ -14,12 +14,33 @@ export const signUpAction = async (formData: FormData) => {
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
-  if (!email || !password) {
-    return encodedRedirect(
-      "error",
-      "/sign-up",
-      "Email and password are required",
-    );
+
+  // Validation
+  if (!email) {
+    throw encodedRedirect("error", "/sign-up", "Email is required");
+  }
+  if (!password) {
+    throw encodedRedirect("error", "/sign-up", "Password is required");
+  }
+  if (!name) {
+    throw encodedRedirect("error", "/sign-up", "Full name is required");
+  }
+  if (!role) {
+    throw encodedRedirect("error", "/sign-up", "Please select a role");
+  }
+
+  const validRoles = ['house', 'house_manager', 'admin'] as const;
+  if (!validRoles.includes(role as any)) {
+    throw encodedRedirect("error", "/sign-up", "Invalid role selected");
+  }
+  if (password.length < 6) {
+    throw encodedRedirect("error", "/sign-up", "Password must be at least 6 characters");
+  }
+  if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+    throw encodedRedirect("error", "/sign-up", "Please enter a valid email address");
+  }
+  if (!/^[a-zA-Z\s-]{2,}$/.test(name)) {
+    throw encodedRedirect("error", "/sign-up", "Please enter a valid name (at least 2 characters)");
   }
 
   const { data, error } = await supabase.auth.signUp({
@@ -30,27 +51,31 @@ export const signUpAction = async (formData: FormData) => {
       data: {
         name: name || email.split('@')[0],
         role: role || 'house', // Default to house role if not specified
-      }
+      },
     },
   });
 
   if (error) {
     console.error(error.code + " " + error.message);
-    return encodedRedirect("error", "/sign-up", error.message);
-  } else {
-    // If user was created successfully, insert into appropriate role-specific table
-    if (data.user) {
-      // In a real implementation, you might create role-specific records here
-      console.log(`User ${data.user.id} created with role: ${role}`);
+    // Handle specific error cases
+    if (error.code === 'weak_password') {
+      return encodedRedirect("error", "/sign-up", "Please choose a stronger password");
     }
-    
-    return encodedRedirect(
-      "success",
-      "/sign-up",
-      "Thanks for signing up! Please check your email for a verification link.",
-    );
+    if (error.code === 'user_already_exists') {
+      return encodedRedirect("error", "/sign-up", "This email is already registered");
+    }
+    return encodedRedirect("error", "/sign-up", error.message);
   }
+
+  // Fallback in case data.user is somehow missing
+  return encodedRedirect(
+    "success",
+    "/sign-up",
+    "Sign up initiated. Please check your email."
+  );
 };
+
+
 
 export const signInAction = async (formData: FormData) => {
   const email = formData.get("email") as string;
@@ -58,6 +83,7 @@ export const signInAction = async (formData: FormData) => {
   const role = formData.get("role") as string;
   const supabase = await createClient();
 
+  // First, attempt to sign in with email and password
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -67,13 +93,19 @@ export const signInAction = async (formData: FormData) => {
     return encodedRedirect("error", "/sign-in", error.message);
   }
 
-  // Verify that the user has the correct role
-  if (data.user && data.user.user_metadata.role !== role) {
-    await supabase.auth.signOut();
-    return encodedRedirect("error", "/sign-in", "Incorrect role selected for this account");
+  // After successful sign-in, verify the role from user metadata
+  if (data.user) {
+    const userRole = data.user.user_metadata?.role;
+    
+    if (userRole !== role) {
+      // Sign out if the role doesn't match
+      await supabase.auth.signOut();
+      return encodedRedirect("error", "/sign-in", "Incorrect role selected for this account");
+    }
+    
+    // Role matches, proceed with successful login
+    return encodedRedirect("success", "/", "Sign in successful");
   }
-
-  return redirect("/");
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {

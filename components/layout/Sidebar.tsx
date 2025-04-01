@@ -38,7 +38,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ initialSidebarOpen, user}) => 
       
     ];
     
-    switch (user?.role) {
+    switch (user?.user_metadata.role) {
       case 'admin':
         return [
           ...commonLinks,

@@ -9,11 +9,15 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ToastHandler } from "@/components/taost-handler";
+
 
 export default async function Login({ searchParams }: { searchParams: Promise<Message> }) {
   const resolvedSearchParams = await searchParams;
 
   return (
+    <>
+    <ToastHandler />
     <div className="flex min-h-screen w-full flex-col md:flex-row">
       {/* Left side - Gradient Background */}
       <div className="bg-gradient-to-br from-primary/90 to-primary/60 p-10 flex-1 flex flex-col items-center justify-center text-white relative overflow-hidden">
@@ -36,7 +40,7 @@ export default async function Login({ searchParams }: { searchParams: Promise<Me
 
       {/* Right side - Form */}
       <div className="p-8 flex-1 flex flex-col justify-center items-center">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-lg">
           <Card className="border-none shadow-lg">
             <CardContent className="pt-6">
               <div className="space-y-6">
@@ -51,17 +55,17 @@ export default async function Login({ searchParams }: { searchParams: Promise<Me
                   <div className="space-y-4">
                     <Label className="text-sm font-medium">I am a:</Label>
                     <RadioGroup defaultValue="house" name="role" className="grid grid-cols-3 gap-4">
-                      <div className="flex flex-col items-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer">
+                      <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer has-[:checked]:bg-accent has-[:checked]:border-primary">
                         <Home className="h-6 w-6 text-primary" />
                         <RadioGroupItem value="house" id="house" className="sr-only" />
                         <Label htmlFor="house" className="text-sm cursor-pointer">House</Label>
                       </div>
-                      <div className="flex flex-col items-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer">
+                      <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer has-[:checked]:bg-accent has-[:checked]:border-primary">
                         <Building className="h-6 w-6 text-primary" />
                         <RadioGroupItem value="house_manager" id="manager" className="sr-only" />
                         <Label htmlFor="manager" className="text-sm cursor-pointer">Building Manager</Label>
                       </div>
-                      <div className="flex flex-col items-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer">
+                      <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer has-[:checked]:bg-accent has-[:checked]:border-primary">
                         <Trash2 className="h-6 w-6 text-primary" />
                         <RadioGroupItem value="admin" id="admin" className="sr-only" />
                         <Label htmlFor="admin" className="text-sm cursor-pointer">Waste Company</Label>
@@ -112,8 +116,6 @@ export default async function Login({ searchParams }: { searchParams: Promise<Me
                     Sign in
                   </SubmitButton>
 
-                  <FormMessage message={resolvedSearchParams} />
-
                   <div className="text-center mt-4">
                     <p className="text-sm text-muted-foreground">
                       Don&apos;t have an account?{" "}
@@ -129,5 +131,7 @@ export default async function Login({ searchParams }: { searchParams: Promise<Me
         </div>
       </div>
     </div>
+     </>
+    
   );
 }

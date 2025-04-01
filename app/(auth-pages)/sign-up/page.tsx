@@ -9,25 +9,18 @@ import { SmtpMessage } from "../smtp-message";
 import { Mail, Lock, User, Building, Home, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
+import { ToastHandler } from "@/components/taost-handler";
 export default async function Signup(props: {
   searchParams: Promise<Message>;
 }) {
-  const searchParams = await props.searchParams;
-  if ("message" in searchParams) {
-    return (
-      <div className="w-full flex-1 flex items-center h-screen sm:max-w-md justify-center gap-2 p-4">
-        <FormMessage message={searchParams} />
-      </div>
-    );
-  }
 
   return (
     <>
+     <ToastHandler />
       <div className="flex min-h-screen w-full flex-col md:flex-row">
         {/* Left side - Form */}
         <div className="p-8 flex-1 flex flex-col justify-center items-center order-2 md:order-1">
-          <div className="w-full max-w-md">
+          <div className="w-full max-w-lg">
             <Card className="border-none shadow-lg">
               <CardContent className="pt-6">
                 <div className="space-y-6">
@@ -42,17 +35,17 @@ export default async function Signup(props: {
                     <div className="space-y-4">
                       <Label className="text-sm font-medium">I am signing up as:</Label>
                       <RadioGroup defaultValue="house" name="role" className="grid grid-cols-3 gap-4">
-                        <div className="flex flex-col items-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer">
+                        <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer has-[:checked]:bg-accent has-[:checked]:border-primary">
                           <Home className="h-6 w-6 text-primary" />
                           <RadioGroupItem value="house" id="house" className="sr-only" />
                           <Label htmlFor="house" className="text-sm cursor-pointer">House</Label>
                         </div>
-                        <div className="flex flex-col items-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer">
+                        <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer has-[:checked]:bg-accent has-[:checked]:border-primary">
                           <Building className="h-6 w-6 text-primary" />
                           <RadioGroupItem value="house_manager" id="manager" className="sr-only" />
                           <Label htmlFor="manager" className="text-sm cursor-pointer">Building Manager</Label>
                         </div>
-                        <div className="flex flex-col items-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer">
+                        <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer has-[:checked]:bg-accent has-[:checked]:border-primary">
                           <Trash2 className="h-6 w-6 text-primary" />
                           <RadioGroupItem value="admin" id="admin" className="sr-only" />
                           <Label htmlFor="admin" className="text-sm cursor-pointer">Waste Company</Label>
@@ -64,13 +57,13 @@ export default async function Signup(props: {
                       <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                        <Input 
-                          id="name" 
-                          name="name" 
-                          type="text" 
-                          placeholder="Your full name" 
-                          className="pl-10" 
-                          required 
+                        <Input
+                          id="name"
+                          name="name"
+                          type="text"
+                          placeholder="Your full name"
+                          className="pl-10"
+                          required
                         />
                       </div>
                     </div>
@@ -79,13 +72,13 @@ export default async function Signup(props: {
                       <Label htmlFor="email" className="text-sm font-medium">Email</Label>
                       <div className="relative">
                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                        <Input 
-                          id="email" 
-                          name="email" 
-                          type="email" 
-                          placeholder="you@example.com" 
-                          className="pl-10" 
-                          required 
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          placeholder="you@example.com"
+                          className="pl-10"
+                          required
                         />
                       </div>
                     </div>
@@ -94,14 +87,14 @@ export default async function Signup(props: {
                       <Label htmlFor="password" className="text-sm font-medium">Password</Label>
                       <div className="relative">
                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                        <Input 
-                          id="password" 
-                          name="password" 
-                          type="password" 
-                          placeholder="Create a strong password" 
-                          className="pl-10" 
+                        <Input
+                          id="password"
+                          name="password"
+                          type="password"
+                          placeholder="Create a strong password"
+                          className="pl-10"
                           minLength={6}
-                          required 
+                          required
                         />
                       </div>
                       <p className="text-xs text-muted-foreground">
@@ -109,16 +102,15 @@ export default async function Signup(props: {
                       </p>
                     </div>
 
-                    <SubmitButton 
-                      formAction={signUpAction} 
-                      pendingText="Signing up..." 
+                    <SubmitButton
+                      formAction={signUpAction}
+                      pendingText="Signing up..."
                       className="w-full"
                     >
                       Sign up
                     </SubmitButton>
 
-                    <FormMessage message={searchParams} />
-                  
+
                     <div className="text-center mt-4">
                       <p className="text-sm text-muted-foreground">
                         Already have an account?{" "}
@@ -153,7 +145,6 @@ export default async function Signup(props: {
           </div>
         </div>
       </div>
-      <SmtpMessage />
     </>
   );
 }
