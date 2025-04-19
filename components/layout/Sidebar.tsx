@@ -32,7 +32,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ initialSidebarOpen, user}) => 
       {
         title: "Dashboard",
         icon: Home,
-        href: "/",
+        href: "/dashboard",
       },  
       
       

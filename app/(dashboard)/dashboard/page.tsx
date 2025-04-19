@@ -104,6 +104,32 @@ const getDasboardData = async (role: string) => {
             }
     }
 }
+const newLocal = <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <DashboardMetric
+        title="Total Houses"
+        value="128"
+        description="8 new this month"
+        trend={{ value: 12, isPositive: true }}
+        icon={<HomeIcon size={24} />} />
+    <DashboardMetric
+        title="Collection Rate"
+        value="94%"
+        description="Last 30 days"
+        trend={{ value: 3, isPositive: true }}
+        icon={<Truck size={24} />} />
+    <DashboardMetric
+        title="Monthly Revenue"
+        value="$5,248"
+        description="$642 more than last month"
+        trend={{ value: 14, isPositive: true }}
+        icon={<CreditCard size={24} />} />
+    <DashboardMetric
+        title="Active Rewards"
+        value="86"
+        description="65% participation rate"
+        trend={{ value: 5, isPositive: true }}
+        icon={<Award size={24} />} />
+</div>
 // Utility function to get authenticated user
 
 export default async function Home() {
@@ -111,7 +137,7 @@ export default async function Home() {
     const { data: { user } } = await supabase.auth.getUser()
 
     const { revenueData, wasteCollectionData, scheduleData, recentPayments, upcomingCollections, topPerformers } =
-        await getDasboardData(user?.role!)
+        await getDasboardData(user?.user_metadata.role)
     return (
         <div className="space-y-8">
             <div>
@@ -120,36 +146,7 @@ export default async function Home() {
             </div>
 
             {/* Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <DashboardMetric
-                    title="Total Houses"
-                    value="128"
-                    description="8 new this month"
-                    trend={{ value: 12, isPositive: true }}
-                    icon={<HomeIcon size={24} />}
-                />
-                <DashboardMetric
-                    title="Collection Rate"
-                    value="94%"
-                    description="Last 30 days"
-                    trend={{ value: 3, isPositive: true }}
-                    icon={<Truck size={24} />}
-                />
-                <DashboardMetric
-                    title="Monthly Revenue"
-                    value="$5,248"
-                    description="$642 more than last month"
-                    trend={{ value: 14, isPositive: true }}
-                    icon={<CreditCard size={24} />}
-                />
-                <DashboardMetric
-                    title="Active Rewards"
-                    value="86"
-                    description="65% participation rate"
-                    trend={{ value: 5, isPositive: true }}
-                    icon={<Award size={24} />}
-                />
-            </div>
+            {newLocal}
 
             {/* Charts */}
             <div className={`grid grid-cols-1 ${user?.role != "admin" ? "" : "lg:grid-cols-2"}  gap-6`}>
