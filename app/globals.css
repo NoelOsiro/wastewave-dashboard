@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -93,10 +92,15 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
-    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-medium tracking-tight;
   }
 
@@ -121,31 +125,34 @@
   .glass-card {
     @apply bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-lg;
   }
-  
+
   .status-badge {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
-  
+
   .status-badge-success {
     @apply status-badge bg-status-success/10 text-status-success;
   }
-  
+  .bg-body {
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+  }
   .status-badge-warning {
     @apply status-badge bg-status-warning/10 text-status-warning;
   }
-  
+
   .status-badge-error {
     @apply status-badge bg-status-error/10 text-status-error;
   }
-  
+
   .status-badge-info {
     @apply status-badge bg-status-info/10 text-status-info;
   }
-  
+
   .dashboard-card {
     @apply glass-card rounded-2xl p-6 transition-all duration-300 hover:shadow-xl;
   }
-  
+
   .btn-eco {
     @apply bg-eco-500 text-white hover:bg-eco-600 focus:ring-eco-500 focus:ring-offset-2;
   }

@@ -70,9 +70,9 @@ const rewardItems = [
 
 const Rewards = () => {
   return (
-    <Layout>
-      Child
-    </Layout>
+
+      <></>
+
   );
 };
 

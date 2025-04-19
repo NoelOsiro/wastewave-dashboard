@@ -1,4 +1,3 @@
-import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Suspense } from "react";
@@ -24,7 +23,6 @@ export default async function SchedulePage() {
   }
 
   return (
-    <Layout>
       <div className="space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
@@ -51,6 +49,5 @@ export default async function SchedulePage() {
           <RecentCollections collections={recentCollectionsData} />
         </Suspense>
       </div>
-    </Layout>
   );
 }

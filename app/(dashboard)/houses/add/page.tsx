@@ -1,4 +1,3 @@
-import { Layout } from "@/components/layout/Layout";
 import AddHouseForm from "./AddHouseForm";
 
 
@@ -11,7 +10,6 @@ export default async function AddHousePage({searchParams}: AddHousePageProps) {
   const error = resolvedParams.error;
 
   return (
-    <Layout>
       <div className="max-w-md mx-auto space-y-8 py-8">
         <div>
           <h1 className="font-semibold tracking-tight text-2xl">Add New House</h1>
@@ -19,6 +17,5 @@ export default async function AddHousePage({searchParams}: AddHousePageProps) {
         </div>
         <AddHouseForm error={error} />
       </div>
-    </Layout>
   );
 }

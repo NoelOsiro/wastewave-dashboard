@@ -1,5 +1,4 @@
 
-import { Layout } from "@/components/layout/Layout";
 import { notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { EditHouseForm } from "./EditHouseForm";
@@ -25,7 +24,7 @@ export default async function EditHousePage({ params }: HousePageProps) {
   }
 
   return (
-    <Layout>
+    
       <div className="max-w-3xl mx-auto space-y-8 py-8">
         <div>
           <h1 className="font-semibold tracking-tight text-2xl">Edit House</h1>
@@ -35,6 +34,5 @@ export default async function EditHousePage({ params }: HousePageProps) {
         </div>
         <EditHouseForm house={house} />
       </div>
-    </Layout>
   );
 }

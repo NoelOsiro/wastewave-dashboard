@@ -57,7 +57,6 @@ export default async function NotificationsPage({ searchParams }: NotificationsP
   const { templates, history, metrics } = await fetchNotificationData();
 
   return (
-    <Layout>
       <div className="space-y-8">
         <Header error={error}></Header>
 
@@ -82,6 +81,5 @@ export default async function NotificationsPage({ searchParams }: NotificationsP
           <History history={history} />
         )}
       </div>
-    </Layout>
   );
 }

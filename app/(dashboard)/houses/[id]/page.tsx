@@ -1,6 +1,5 @@
 
 import { notFound } from "next/navigation";
-import { Layout } from "@/components/layout/Layout";
 import { HouseDetailsCard } from "../components/HouseDetailsCard";
 import { CollectionHistoryCard } from "../components/CollectionHistoryCard";
 import { createClient } from "@/utils/supabase/server";
@@ -38,7 +37,6 @@ export default async function HouseViewPage({ params }: HousePageProps) {
   }
 
   return (
-    <Layout>
       <div className="space-y-8">
         <div>
           <h1 className="font-semibold tracking-tight">{house.name}</h1>
@@ -59,6 +57,5 @@ export default async function HouseViewPage({ params }: HousePageProps) {
           </div>
         </div>
       </div>
-    </Layout>
   );
 }

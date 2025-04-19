@@ -21,7 +21,6 @@ export default async function PaymentsPage() {
   }
 
   return (
-    <Layout>
       <div className="space-y-8">
       <div>
           <h1 className="font-semibold tracking-tight">Payments</h1>
@@ -54,6 +53,5 @@ export default async function PaymentsPage() {
         
         <PaymentsTable initialPayments={payments} />
       </div>
-    </Layout>
   );
 }

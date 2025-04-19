@@ -1,12 +1,10 @@
-import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Metrics } from "./components/Metrics";
-import ClientComponents from "@/app/houses/clientcomponents";
-import { HouseData } from "./hooks/useFormSchema";
 import { Suspense } from "react";
 import { fetchHouses } from "@/lib/supabase";
 import Link from "next/link";
+import ClientComponents from "./clientcomponents";
 
 
 // Mark as dynamic to force SSR on every request (optional)
@@ -16,9 +14,8 @@ export default async function HousesPage() {
   const houses = await fetchHouses();
 
   return (
-    <Layout>
-      <div className="space-y-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="font-semibold tracking-tight">Houses Management</h1>
             <p className="text-muted-foreground mt-1">Manage all registered houses and their details.</p>
@@ -35,7 +32,6 @@ export default async function HousesPage() {
         </Suspense>
         <ClientComponents initialHouses={houses} />
       </div>
-    </Layout>
   );
 }
 

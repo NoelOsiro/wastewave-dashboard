@@ -1,6 +1,5 @@
 "use client"
 import React from "react";
-import { Layout } from "@/components/layout/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -11,7 +10,6 @@ import { Label } from "@/components/ui/label";
 
 const Profile = () => {
   return (
-    <Layout>
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Profile</h1>
@@ -118,7 +116,6 @@ const Profile = () => {
           </div>
         </div>
       </div>
-    </Layout>
   );
 };
 
