@@ -125,7 +125,7 @@ const getNavItems = (role:string) => {
         {
           title: "Schedule",
           icon: Calendar,
-          href: "/recycler/schedule",
+          href: "/schedule",
         },
         {
           title: "Payments",
