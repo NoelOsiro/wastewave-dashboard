@@ -2,6 +2,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import { SupabaseClient } from '@supabase/supabase-js';
 import OnboardingPage from "@/app/onboarding/page";
 import { toast } from "sonner";
 
@@ -25,26 +26,51 @@ jest.mock("@/utils/supabase/onboarding", () => ({
 }));
 
 describe("OnboardingPage", () => {
-  const mockRouter = { push: jest.fn() };
+  const mockRouter = { 
+    push: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    refresh: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn()
+  };
   const mockSupabase = {
     auth: {
       getUser: jest.fn(),
       updateUser: jest.fn(),
+      signInWithOAuth: jest.fn(),
+      signOut: jest.fn(),
     },
-    from: jest.fn().mockReturnThis(),
-    select: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    single: jest.fn(),
-  };
+    from: jest.fn().mockReturnValue({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn(),
+    }),
+    // Required base properties
+    supabaseUrl: 'http://localhost:54321',
+    supabaseKey: 'dummy-key',
+    realtime: { connect: jest.fn() },
+    realtimeUrl: 'http://localhost:54321',
+    rest: { headers: {} },
+    // Additional required properties
+    functions: { invoke: jest.fn() },
+    storage: { from: jest.fn() },
+    schema: '',
+    rpc: jest.fn(),
+    removeChannel: jest.fn(),
+    removeAllChannels: jest.fn(),
+    getChannels: jest.fn(),
+    channel: jest.fn(),
+  } as unknown as SupabaseClient;
 
   beforeEach(() => {
-    (useRouter as jest.Mock).mockReturnValue(mockRouter);
-    (createClient as jest.Mock).mockReturnValue(mockSupabase);
+    jest.mocked(useRouter).mockReturnValue(mockRouter);
+    jest.mocked(createClient).mockReturnValue(mockSupabase);
     jest.clearAllMocks();
   });
 
   it("redirects to sign-in if user is not authenticated", async () => {
-    mockSupabase.auth.getUser.mockResolvedValue({ data: { user: null }, error: new Error("Unauthorized") });
+    (mockSupabase.auth.getUser as jest.Mock).mockResolvedValue({ data: { user: null }, error: new Error("Unauthorized") });
 
     render(<OnboardingPage />);
 
@@ -62,13 +88,18 @@ describe("OnboardingPage", () => {
   });
 
   it("fetches user data and renders MultiStepForm", async () => {
-    mockSupabase.auth.getUser.mockResolvedValue({
+    (mockSupabase.auth.getUser as jest.Mock).mockResolvedValue({
       data: { user: { id: "user-123" } },
       error: null,
     });
-    mockSupabase.single.mockResolvedValue({
+    const mockSingle = jest.fn().mockResolvedValue({
       data: { role: null, onboarding_step: null },
       error: null,
+    });
+    (mockSupabase.from as jest.Mock).mockReturnValue({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: mockSingle,
     });
 
     render(<OnboardingPage />);
@@ -79,36 +110,17 @@ describe("OnboardingPage", () => {
     });
   });
 
-  it("handles form completion for generator role", async () => {
-    mockSupabase.auth.getUser.mockResolvedValue({
-      data: { user: { id: "user-123" } },
-      error: null,
-    });
-    mockSupabase.single.mockResolvedValue({
-      data: { role: null, onboarding_step: null },
-      error: null,
-    });
-    mockSupabase.auth.updateUser.mockResolvedValue({ data: {}, error: null });
-    mockSupabase.eq.mockResolvedValue({ data: {}, error: null });
-    const mockUpdateOnboardingStatus = require("@/utils/supabase/onboarding").updateOnboardingStatus;
-    mockUpdateOnboardingStatus.mockResolvedValue({ error: null });
-
-    render(<OnboardingPage />);
-
-    await waitFor(() => {
-      // Simulate form completion (handled in MultiStepForm tests)
-      // Trigger handleFormComplete via MultiStepForm
-    });
-
-    // Note: Full form submission testing is covered in MultiStepForm tests
-  });
-
   it("shows error toast on failed user data fetch", async () => {
-    mockSupabase.auth.getUser.mockResolvedValue({
+    (mockSupabase.auth.getUser as jest.Mock).mockResolvedValue({
       data: { user: { id: "user-123" } },
       error: null,
     });
-    mockSupabase.single.mockResolvedValue({ data: null, error: new Error("Profile not found") });
+    const mockSingle = jest.fn().mockResolvedValue({ data: null, error: new Error("Profile not found") });
+    (mockSupabase.from as jest.Mock).mockReturnValue({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: mockSingle,
+    });
 
     render(<OnboardingPage />);
 
