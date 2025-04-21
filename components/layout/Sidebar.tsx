@@ -11,9 +11,16 @@ import {
   Award, 
   Settings, 
   X,
-  ChevronRight
+  ChevronRight,
+  User2Icon,
+  Building2,
+  ClipboardList,
+  FileBarChart,
+  HelpCircle,
+  MapPin,
+  Truck
 } from "lucide-react";
-import { title } from "process";
+
 
 
 
@@ -22,118 +29,162 @@ interface SidebarProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   user: any // Adjust type
 }
+const getNavItems = (role:string) => {
+  const commonLinks = [
+    {
+      title: "Dashboard",
+      icon: Home,
+      href: "/dashboard",
+    },
+    {
+      title: "Profile",
+      icon: User2Icon,
+      href: "/profile",
+    },
+  ]
 
+  switch (role) {
+    case "generator":
+      return [
+        ...commonLinks,
+        {
+          title: "Waste Log",
+          icon: ClipboardList,
+          href: "/generator/waste-log",
+        },
+        {
+          title: "Schedule",
+          icon: Calendar,
+          href: "/generator/schedule",
+        },
+        {
+          title: "Payments",
+          icon: CreditCard,
+          href: "/generator/payments",
+        },
+        {
+          title: "Rewards",
+          icon: Award,
+          href: "/generator/rewards",
+        },
+        {
+          title: "Help",
+          icon: HelpCircle,
+          href: "/help",
+        },
+      ]
+
+    case "transporter":
+      return [
+        ...commonLinks,
+        {
+          title: "Routes",
+          icon: MapPin,
+          href: "/transporter/routes",
+        },
+        {
+          title: "Live Tracking",
+          icon: Truck,
+          href: "/transporter/tracking",
+        },
+        {
+          title: "Schedule",
+          icon: Calendar,
+          href: "/transporter/schedule",
+        },
+        {
+          title: "Documents",
+          icon: FileBarChart,
+          href: "/transporter/documents",
+        },
+        {
+          title: "Notifications",
+          icon: Bell,
+          href: "/notifications",
+        },
+        {
+          title: "Help",
+          icon: HelpCircle,
+          href: "/help",
+        },
+      ]
+
+    case "recycler":
+      return [
+        ...commonLinks,
+        {
+          title: "Inbound Waste",
+          icon: ClipboardList,
+          href: "/recycler/inbound",
+        },
+        {
+          title: "Processing Stats",
+          icon: FileBarChart,
+          href: "/recycler/processing",
+        },
+        {
+          title: "Schedule",
+          icon: Calendar,
+          href: "/recycler/schedule",
+        },
+        {
+          title: "Payments",
+          icon: CreditCard,
+          href: "/recycler/payments",
+        },
+        {
+          title: "Notifications",
+          icon: Bell,
+          href: "/notifications",
+        },
+        {
+          title: "Settings",
+          icon: Settings,
+          href: "/settings",
+        },
+      ]
+
+    case "disposer":
+      return [
+        ...commonLinks,
+        {
+          title: "Intake Records",
+          icon: ClipboardList,
+          href: "/disposer/intake",
+        },
+        {
+          title: "Monitoring",
+          icon: FileBarChart,
+          href: "/disposer/monitoring",
+        },
+        {
+          title: "Environmental Logs",
+          icon: Building2,
+          href: "/disposer/environment",
+        },
+        {
+          title: "Compliance",
+          icon: Settings,
+          href: "/disposer/compliance",
+        },
+        {
+          title: "Help",
+          icon: HelpCircle,
+          href: "/help",
+        },
+      ]
+
+    default:
+      return commonLinks
+  }
+}
 export const Sidebar: React.FC<SidebarProps> = ({ initialSidebarOpen, user}) => {
   const [open, setOpen] = useState(initialSidebarOpen)
   const pathname = usePathname();
 
-  const getNavItems = () => {
-    const commonLinks = [
-      {
-        title: "Dashboard",
-        icon: Home,
-        href: "/dashboard",
-      },  
-      
-      
-    ];
-    
-    switch (user?.user_metadata.role) {
-      case 'admin':
-        return [
-          ...commonLinks,
-          {
-            title: "Rewards",
-            icon: Award,
-            href: "/rewards",
-          },
-          {
-            title: "Houses",
-            icon: Users,
-            href: "/houses",
-          },
-          {
-            title: "Payments",
-            icon: CreditCard,
-            href: "/payments",
-          },
-          {
-            title: "Schedule",
-            icon: Calendar,
-            href: "/schedule",
-          },
-          {
-            title: "Notifications",
-            icon: Bell,
-            href: "/notifications",
-          },
-          {
-            title: "Settings",
-            icon: Settings,
-            href: "/settings",
-          },
-        ];
-      case 'house_manager':
-        return [
-          ...commonLinks,
-          
-          {
-            title: "Schedule",
-            icon: Calendar,
-            href: "/schedule",
-          },
-          {
-            title: "Profile",
-            icon: Settings,
-            href: "/profile",
-          },
-          {
-            title: "Help",
-            icon: Settings,
-            href: "/help",
-          },
-          {
-            title: "Notifications",
-            icon: Bell,
-            href: "/notifications",
-          },
-        ];
-      case 'house':
-        return [
-          ...commonLinks,
-          
-          {
-            title: "Schedule",
-            icon: Calendar,
-            href: "/schedule",
-          },
-          {
-            title: "Payments",
-            icon: CreditCard,
-            href: "/payments",
-          },
-          {
-            title: "Profile",
-            icon: Settings,
-            href: "/profile",
-          },
-          {
-            title: "Rewards",
-            icon: Award,
-            href: "/rewards",
-          },
-          {
-            title: "Help",
-            icon: Settings,
-            href: "/help",
-          }
-        ];
-      default:
-        return commonLinks;
-    }
-  };
   
-  const sidebarLinks = getNavItems();
+  
+  const sidebarLinks = getNavItems(user?.user_metadata.role);
   
   const isCurrentPath = (path: string) => {
     return pathname === path;

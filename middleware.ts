@@ -8,17 +8,20 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname
 
-  // Allow access to public routes
-  if (["/sign-in", "/signup", "/onboarding"].includes(pathname)) {
+  const publicRoutes = ["/", "/sign-in", "/sign-up", "/onboarding"]
+
+  if (publicRoutes.includes(pathname)) {
     return NextResponse.next()
   }
 
-  // If no user, redirect to sign-in
+  // Redirect if not logged in
   if (!user) {
     return NextResponse.redirect(new URL("/sign-in", request.url))
   }
 
-  // Check onboarding status
+  const userRole = user.user_metadata?.role
+
+  // Onboarding status check
   const { data: profile, error } = await supabase
     .from("profiles")
     .select("onboarding_completed")
@@ -29,12 +32,39 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/sign-in", request.url))
   }
 
-  // If onboarding is not completed, redirect to onboarding
   if (!profile.onboarding_completed && pathname !== "/onboarding") {
     return NextResponse.redirect(new URL("/onboarding", request.url))
   }
 
-  // Allow access to protected routes
+  // Restrict access to certain base paths to specific roles
+  const rolePathMap: Record<string, string> = {
+    generator: "/generator",
+    transporter: "/transporter",
+    recycler: "/recycler",
+    disposer: "/disposer",
+  }
+
+  for (const [role, basePath] of Object.entries(rolePathMap)) {
+    if (pathname.startsWith(basePath) && userRole !== role) {
+      return NextResponse.redirect(new URL("/dashboard", request.url))
+    }
+  }
+
+  // DENY specific paths per role
+  const roleDeniedPathsMap: Record<string, string[]> = {
+    recycler: ["/houses", "/houses/", "/houses/new"], // you can add more
+    transporter: [],
+    generator: [],
+    disposer: [],
+  }
+
+  const deniedPaths = roleDeniedPathsMap[userRole] || []
+  const isDenied = deniedPaths.some(path => pathname.startsWith(path))
+
+  if (isDenied) {
+    return NextResponse.redirect(new URL("/dashboard", request.url))
+  }
+
   return NextResponse.next()
 }
 

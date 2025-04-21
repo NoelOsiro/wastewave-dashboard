@@ -64,6 +64,17 @@ export default function RoleSelection() {
       if (userError || !user) {
         throw new Error("User not found")
       }
+      // update user metadata role
+      const { data: updatedUser, error: metadataError } = await supabase.auth.updateUser({
+        data: {
+          role: selectedRole,
+        },
+      })
+
+      if (metadataError) {
+        throw metadataError
+      }
+
 
       const nextStep = selectedRole === "generator" ? "complete" : "license-verification"
 
@@ -103,18 +114,16 @@ export default function RoleSelection() {
             {roles.map((role) => (
               <div
                 key={role.id}
-                className={`flex items-center space-x-2 rounded-lg border p-4 cursor-pointer transition-colors ${
-                  selectedRole === role.id
+                className={`flex items-center space-x-2 rounded-lg border p-4 cursor-pointer transition-colors ${selectedRole === role.id
                     ? "border-primary bg-primary/5"
                     : "hover:bg-muted/50"
-                }`}
+                  }`}
                 onClick={() => setSelectedRole(role.id)}
               >
                 <RadioGroupItem value={role.id} id={role.id} className="sr-only" />
                 <role.icon
-                  className={`h-5 w-5 ${
-                    selectedRole === role.id ? "text-primary" : "text-muted-foreground"
-                  }`}
+                  className={`h-5 w-5 ${selectedRole === role.id ? "text-primary" : "text-muted-foreground"
+                    }`}
                 />
                 <div className="flex-1">
                   <Label htmlFor={role.id} className="text-base font-medium cursor-pointer">

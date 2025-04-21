@@ -3,6 +3,10 @@ import { DashboardChart } from "@/components/dashboard/DashboardChart"
 import { Home as HomeIcon, Truck, CreditCard, Award, Calendar } from "lucide-react"
 import { DashboardCard } from "@/components/dashboard/DashboardCard"
 import { createClient } from "@/utils/supabase/server"
+import TransporterMetrics from "@/components/dashboard/metrics/transporter_metrics copy"
+import DisposerMetrics from "@/components/dashboard/metrics/disposer_metrics copy 3"
+import GeneratorMetrics from "@/components/dashboard/metrics/generator_metrics copy 2"
+import RecyclerMetrics from "@/components/dashboard/metrics/recycler_metrics"
 
 const revenueData = [
     { name: "Jan", revenue: 4000 },
@@ -104,40 +108,47 @@ const getDasboardData = async (role: string) => {
             }
     }
 }
-const newLocal = <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <DashboardMetric
-        title="Total Houses"
-        value="128"
-        description="8 new this month"
-        trend={{ value: 12, isPositive: true }}
-        icon={<HomeIcon size={24} />} />
-    <DashboardMetric
-        title="Collection Rate"
-        value="94%"
-        description="Last 30 days"
-        trend={{ value: 3, isPositive: true }}
-        icon={<Truck size={24} />} />
-    <DashboardMetric
-        title="Monthly Revenue"
-        value="$5,248"
-        description="$642 more than last month"
-        trend={{ value: 14, isPositive: true }}
-        icon={<CreditCard size={24} />} />
-    <DashboardMetric
-        title="Active Rewards"
-        value="86"
-        description="65% participation rate"
-        trend={{ value: 5, isPositive: true }}
-        icon={<Award size={24} />} />
-</div>
-// Utility function to get authenticated user
+
+const getMetricsComponent = (role?: string) => {
+    switch (role) {
+        case "transporter":
+            return (
+                <TransporterMetrics />
+            )
+        case "generator":
+            return (
+                <GeneratorMetrics />
+
+            )
+        case "disposer":
+            return (
+
+                    <DisposerMetrics />
+
+            )
+        case "recycler":
+            return (
+
+                    <RecyclerMetrics />
+
+            )
+        default:
+            return null
+    }
+}
 
 export default async function Home() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-
-    const { revenueData, wasteCollectionData, scheduleData, recentPayments, upcomingCollections, topPerformers } =
-        await getDasboardData(user?.user_metadata.role)
+    const metricsComponent = getMetricsComponent(user?.user_metadata.role)
+    const { 
+        revenueData, 
+        wasteCollectionData, 
+        scheduleData, 
+        recentPayments,
+        upcomingCollections, 
+        topPerformers 
+    } = await getDasboardData(user?.user_metadata.role)
     return (
         <div className="space-y-8">
             <div>
@@ -146,11 +157,11 @@ export default async function Home() {
             </div>
 
             {/* Metrics */}
-            {newLocal}
+            {metricsComponent}
 
             {/* Charts */}
-            <div className={`grid grid-cols-1 ${user?.role != "admin" ? "" : "lg:grid-cols-2"}  gap-6`}>
-                {user?.role != "house" && (
+            <div className={`grid grid-cols-1 ${user?.user_metadata.role != "recycler" ? "" : "lg:grid-cols-2"}  gap-6`}>
+                {user?.user_metadata.role != "generator" && (
                     <DashboardChart title="Revenue Overview" data={revenueData} dataKeys={["revenue"]} type="area" />
                 )}
                 <DashboardChart title="Waste Collection by Type" data={wasteCollectionData} dataKeys={["value"]} type="pie" />
@@ -197,7 +208,7 @@ export default async function Home() {
                 </DashboardCard>
             </div>
 
-            <div className={`grid grid-cols-1 ${user?.role != "admin" ? "" : "lg:grid-cols-2"}  gap-6`}>
+            <div className={`grid grid-cols-1 ${user?.user_metadata.role != "recycler" ? "" : "lg:grid-cols-2"}  gap-6`}>
                 {/* Upcoming Collections */}
                 <DashboardCard title="Upcoming Collections">
                     <div className="space-y-4">
@@ -217,7 +228,7 @@ export default async function Home() {
                 </DashboardCard>
 
                 {/* Top Performers */}
-                {user?.role != "house" && (
+                {user?.user_metadata.role != "generator" && (
                     <DashboardCard title="Top Performers">
                         <div className="space-y-4">
                             {topPerformers.slice(0, 3).map((performer, index) => (

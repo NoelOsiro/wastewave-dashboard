@@ -136,7 +136,7 @@ export default function Login() {
                   </div>
 
                   <form className="space-y-4" onSubmit={handleSubmit}>
-                    <div className="space-y-4">
+                    {/* <div className="space-y-4">
                       <Label className="text-sm font-medium">I am a:</Label>
                       <RadioGroup value={role} onValueChange={setRole} name="role" className="grid grid-cols-3 gap-4">
                         <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-[#004d29] cursor-pointer has-[:checked]:bg-[#004d29] has-[:checked]:border-primary">
@@ -162,7 +162,7 @@ export default function Login() {
                         </div>
                       </RadioGroup>
                       {errors.role && <p className="text-sm text-destructive">{errors.role}</p>}
-                    </div>
+                    </div> */}
 
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-sm font-medium">
