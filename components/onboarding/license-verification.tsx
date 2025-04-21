@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Upload } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DatePicker } from "@/components/ui/date-picker";
 import { toast } from "sonner";
-
 
 interface LicenseVerificationData {
   file: File | null;
@@ -26,22 +25,37 @@ export function LicenseVerificationStep({ formData, updateFormData }: LicenseVer
   const [file, setFile] = useState<File | null>(formData.file || null);
   const [licenseNumber, setLicenseNumber] = useState(formData.licenseNumber || "");
   const [issuingDate, setIssuingDate] = useState<Date | undefined>(
-    formData.issuingDate ? new Date(formData.issuingDate) : undefined,
+    formData.issuingDate ? new Date(formData.issuingDate) : undefined
   );
   const [expiryDate, setExpiryDate] = useState<Date | undefined>(
-    formData.expiryDate ? new Date(formData.expiryDate) : undefined,
+    formData.expiryDate ? new Date(formData.expiryDate) : undefined
   );
   const [licenseType, setLicenseType] = useState(formData.licenseType || "");
 
-  useEffect(() => {
-    updateFormData({
+  // Memoize the current form state to compare changes
+  const currentFormState = useMemo(
+    () => ({
       file,
       licenseNumber,
       issuingDate: issuingDate?.toISOString(),
       expiryDate: expiryDate?.toISOString(),
       licenseType,
-    });
-  }, [file, licenseNumber, issuingDate, expiryDate, licenseType, updateFormData]);
+    }),
+    [file, licenseNumber, issuingDate, expiryDate, licenseType]
+  );
+
+  useEffect(() => {
+    // Only update if the current state differs from the last prop state
+    if (
+      currentFormState.file !== formData.file ||
+      currentFormState.licenseNumber !== formData.licenseNumber ||
+      currentFormState.issuingDate !== formData.issuingDate ||
+      currentFormState.expiryDate !== formData.expiryDate ||
+      currentFormState.licenseType !== formData.licenseType
+    ) {
+      updateFormData(currentFormState);
+    }
+  }, [currentFormState, formData, updateFormData]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];

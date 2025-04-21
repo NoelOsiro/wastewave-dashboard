@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Truck, Recycle, Building2, User } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { useDebouncedCallback } from "use-debounce";
 import { toast } from "sonner";
 import { StepComponentProps } from "./multi-step-form";
 
@@ -49,19 +48,11 @@ export function RoleSelectionStep({ formData, updateFormData }: StepComponentPro
     },
   ];
 
-  // Debounce form data updates to prevent excessive re-renders
-  const debouncedUpdate = useDebouncedCallback(updateFormData, 300);
-
-  useEffect(() => {
-    if (selectedRole) {
-      debouncedUpdate({ role: selectedRole });
-    }
-  }, [selectedRole, debouncedUpdate]);
-
   // Handle role selection with error handling
   const handleRoleChange = (value: string) => {
     try {
-      setSelectedRole(value)
+      setSelectedRole(value);
+      updateFormData({ role: value });
     } catch (error) {
       toast.error("Failed to select role. Please try again.")
     }

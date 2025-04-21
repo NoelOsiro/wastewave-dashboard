@@ -47,24 +47,27 @@ interface Step {
   description: string;
   component: (props: StepComponentProps<any>) => React.ReactNode;
   isOptional?: boolean;
-  validate?: () => boolean; // Validation function for the step
+  validate?: (formData: FormData) => boolean; // Validation function for the step
+  shouldShow?: (role: string | null) => boolean;
 }
 
 interface MultiStepFormProps {
   steps: Step[];
   onComplete: (formData: FormData) => Promise<void>;
   initialData?: FormData;
+  userRole: string | null;
 }
 
-export function MultiStepForm({ steps, onComplete, initialData = {} }: MultiStepFormProps) {
+export function MultiStepForm({ steps, onComplete, initialData = {}, userRole }: MultiStepFormProps) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [formData, setFormData] = useState<FormData>(initialData);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const currentStep = steps[currentStepIndex];
+  const availableSteps = steps.filter(step => !step.shouldShow || step.shouldShow(userRole));
+  const currentStep = availableSteps[currentStepIndex];
   const isFirstStep = currentStepIndex === 0;
-  const isLastStep = currentStepIndex === steps.length - 1;
-  const progress = ((currentStepIndex + 1) / steps.length) * 100;
+  const isLastStep = currentStepIndex === availableSteps.length - 1;
+  const progress = ((currentStepIndex + 1) / availableSteps.length) * 100;
 
   const handleNext = () => {
     if (isLastStep) {
@@ -84,13 +87,10 @@ export function MultiStepForm({ steps, onComplete, initialData = {} }: MultiStep
     }
   };
 
-  const updateFormData = (
-    stepId: string,
-    data: RoleSelectionData | LicenseVerificationData | VehicleComplianceData,
-  ) => {
+  const updateStepData = (data: RoleSelectionData | LicenseVerificationData | VehicleComplianceData) => {
     setFormData((prev) => ({
       ...prev,
-      [stepId]: data,
+      [currentStep.id]: data,
     }));
   };
 
@@ -106,8 +106,8 @@ export function MultiStepForm({ steps, onComplete, initialData = {} }: MultiStep
     }
   };
 
-  // Check if the current step is valid (defaults to true if no validate function)
-  const isStepValid = currentStep.validate ? currentStep.validate() : true;
+  // Check if the current step is valid using the current form data
+  const isStepValid = currentStep.validate ? currentStep.validate(formData) : true;
 
   return (
     <div className="container max-w-2xl mx-auto py-10">
@@ -116,7 +116,7 @@ export function MultiStepForm({ steps, onComplete, initialData = {} }: MultiStep
           <div className="flex items-center justify-between mb-2">
             <CardTitle>{currentStep.title}</CardTitle>
             <span className="text-sm text-muted-foreground" aria-live="polite">
-              Step {currentStepIndex + 1} of {steps.length}
+              Step {currentStepIndex + 1} of {availableSteps.length}
             </span>
           </div>
           <CardDescription>{currentStep.description}</CardDescription>
@@ -130,7 +130,7 @@ export function MultiStepForm({ steps, onComplete, initialData = {} }: MultiStep
         <CardContent>
           {currentStep.component({
             formData: (formData as any)[currentStep.id] || {},
-            updateFormData: (data) => updateFormData(currentStep.id, data),
+            updateFormData: updateStepData,
           })}
         </CardContent>
 
