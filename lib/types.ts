@@ -1,3 +1,4 @@
+
 export type Payment = {
     id: number;
     transaction_id: string;
@@ -98,3 +99,23 @@ export type Payment = {
       status: "Completed",
     },
   ];
+
+  // Add missing Template type for notifications
+  export type Template = {
+    id: string;
+    title: string;
+    description: string;
+    type: string;
+    last_sent: string | null;
+  };
+
+  // Add missing IHistory interface for notification history
+  export type IHistory = {
+    id: string;
+    title: string;
+    recipients: string;
+    type: string;
+    date: string;
+    status: string;
+    delivery_rate: string;
+  };
