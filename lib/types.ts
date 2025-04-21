@@ -104,11 +104,7 @@ export type Payment = {
     },
   ];
 
-<<<<<<< HEAD
-=======
-  // Add missing Template type for notifications
->>>>>>> 5482651614fa45e4110eda1714044650d28d4eea
-  export type Template = {
+export type Template = {
     id: string;
     title: string;
     description: string;
