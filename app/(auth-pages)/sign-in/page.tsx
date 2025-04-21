@@ -1,3 +1,4 @@
+
 "use client" // Mark as Client Component
 
 import type React from "react"
@@ -7,7 +8,7 @@ import { useState } from "react"
 import { FormMessage, type Message } from "@/components/form-message"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Mail, Lock, Building, Home, Trash2 } from "lucide-react"
+import { Mail, Lock, Building, Home, Truck, Recycle } from "lucide-react"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -19,7 +20,7 @@ export default function Login() {
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [role, setRole] = useState("house") // Default to 'house'
+  const [role, setRole] = useState("generator") // Default to 'generator' (house)
   const [message, setMessage] = useState<Message | null>(null)
   const [errors, setErrors] = useState<{ email?: string; password?: string; role?: string }>({})
   const [pending, setPending] = useState(false)
@@ -40,11 +41,6 @@ export default function Login() {
       newErrors.password = "Password is required"
     } else if (password.length < 6) {
       newErrors.password = "Password must be at least 6 characters"
-    }
-
-    // Role validation (optional, since default is set)
-    if (!role) {
-      newErrors.role = "Please select a role"
     }
 
     setErrors(newErrors)
@@ -72,16 +68,25 @@ export default function Login() {
   
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
-        .select("onboarding_completed")
+        .select("onboarding_completed, role")
         .eq("id", userId)
         .single()
   
       if (profileError) throw profileError
-      if (!profile) throw new Error("User profile not found.")
+      
+      // Update role in the profile if it's different
+      if (profile && profile.role !== role) {
+        const { error: updateError } = await supabase
+          .from("profiles")
+          .update({ role })
+          .eq("id", userId)
+        
+        if (updateError) throw updateError
+      }
   
       toast.success("Sign in successful")
   
-      if (!profile.onboarding_completed) {
+      if (profile && !profile.onboarding_completed) {
         router.push("/onboarding")
       } else {
         router.push("/dashboard")
@@ -138,26 +143,33 @@ export default function Login() {
                   <form className="space-y-4" onSubmit={handleSubmit}>
                     <div className="space-y-4">
                       <Label className="text-sm font-medium">I am a:</Label>
-                      <RadioGroup value={role} onValueChange={setRole} name="role" className="grid grid-cols-3 gap-4">
-                        <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-[#004d29] cursor-pointer has-[:checked]:bg-[#004d29] has-[:checked]:border-primary">
+                      <RadioGroup value={role} onValueChange={setRole} name="role" className="grid grid-cols-4 gap-2">
+                        <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer has-[:checked]:bg-accent has-[:checked]:border-primary">
                           <Home className="h-6 w-6 text-primary" />
-                          <RadioGroupItem value="house" id="house" className="sr-only" />
-                          <Label htmlFor="house" className="text-sm cursor-pointer">
+                          <RadioGroupItem value="generator" id="generator" className="sr-only" />
+                          <Label htmlFor="generator" className="text-sm cursor-pointer">
                             House
                           </Label>
                         </div>
-                        <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-[#004d29] cursor-pointer has-[:checked]:bg-[#004d29] has-[:checked]:border-primary">
+                        <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer has-[:checked]:bg-accent has-[:checked]:border-primary">
                           <Building className="h-6 w-6 text-primary" />
-                          <RadioGroupItem value="house_manager" id="manager" className="sr-only" />
-                          <Label htmlFor="manager" className="text-sm cursor-pointer">
+                          <RadioGroupItem value="recycler" id="recycler" className="sr-only" />
+                          <Label htmlFor="recycler" className="text-sm cursor-pointer">
                             Building Manager
                           </Label>
                         </div>
-                        <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-[#004d29] cursor-pointer has-[:checked]:bg-[#004d29] has-[:checked]:border-primary">
-                          <Trash2 className="h-6 w-6 text-primary" />
-                          <RadioGroupItem value="admin" id="admin" className="sr-only" />
-                          <Label htmlFor="admin" className="text-sm cursor-pointer">
+                        <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer has-[:checked]:bg-accent has-[:checked]:border-primary">
+                          <Recycle className="h-6 w-6 text-primary" />
+                          <RadioGroupItem value="disposer" id="disposer" className="sr-only" />
+                          <Label htmlFor="disposer" className="text-sm cursor-pointer">
                             Waste Company
+                          </Label>
+                        </div>
+                        <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer has-[:checked]:bg-accent has-[:checked]:border-primary">
+                          <Truck className="h-6 w-6 text-primary" />
+                          <RadioGroupItem value="transporter" id="transporter" className="sr-only" />
+                          <Label htmlFor="transporter" className="text-sm cursor-pointer">
+                            Transporter
                           </Label>
                         </div>
                       </RadioGroup>
@@ -207,8 +219,8 @@ export default function Login() {
                       {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
                     </div>
 
-                    <Button aria-disabled={pending} type="submit">
-                      {pending ? "Submitting.." : "Sign In"}
+                    <Button type="submit" className="w-full" disabled={pending}>
+                      {pending ? "Signing in..." : "Sign In"}
                     </Button>
 
                     {message && <FormMessage message={message} />}

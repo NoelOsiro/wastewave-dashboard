@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -15,6 +16,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { createClient } from "@/utils/supabase/client"
+import { toast } from "sonner"
 
 export default function RoleSelection() {
   const router = useRouter()
@@ -32,13 +34,13 @@ export default function RoleSelection() {
     },
     {
       id: "recycler",
-      title: "Recycler/Processor",
-      description: "I process waste for recycling, recovery or reuse",
+      title: "Recycler/Building Manager",
+      description: "I process waste for recycling, recovery or manage buildings",
       icon: Recycle,
     },
     {
       id: "disposer",
-      title: "Disposal Facility",
+      title: "Waste Management Company",
       description: "I operate a facility for final disposal of waste",
       icon: Building2,
     },
@@ -77,11 +79,18 @@ export default function RoleSelection() {
         .eq("id", user.id)
 
       if (error) throw error
-
+      
+      toast.success("Role selected successfully")
       router.refresh()
-      router.push("/onboarding")
+      
+      if (selectedRole === "generator") {
+        router.push("/dashboard")
+      } else {
+        router.push("/onboarding")
+      }
     } catch (error) {
       console.error("Error updating role:", error)
+      toast.error("There was a problem updating your role.")
     } finally {
       setIsSubmitting(false)
     }

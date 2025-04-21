@@ -1,3 +1,4 @@
+
 "use client"
 
 import type React from "react"
@@ -6,12 +7,13 @@ import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
-import { Mail, Lock, User, Building, Home, Trash2 } from "lucide-react"
+import { Mail, Lock, User, Home, Building, Recycle, Truck } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { createClient } from "@/utils/supabase/client"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import { Button } from "@/components/ui/button"
 
 export default function Signup() {
   const [loading, setLoading] = useState(false)
@@ -20,6 +22,7 @@ export default function Signup() {
     name: "",
     email: "",
     password: "",
+    role: "generator" // Default to 'generator' (house)
   })
   const router = useRouter()
 
@@ -33,6 +36,7 @@ export default function Signup() {
   const handleRoleChange = (value: string) => {
     setFormData({
       ...formData,
+      role: value,
     })
   }
 
@@ -50,11 +54,31 @@ export default function Signup() {
         options: {
           data: {
             name: formData.name,
+            role: formData.role,
           },
         },
       })
-      console.log(signUpError)
+      
       if (signUpError) throw signUpError
+
+      // Create a profile entry
+      if (data.user) {
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .upsert({
+            id: data.user.id,
+            name: formData.name,
+            email: formData.email,
+            role: formData.role,
+            onboarding_completed: formData.role === 'generator', // Auto-complete onboarding for houses
+            onboarding_step: formData.role === 'generator' ? 'complete' : 'role-selection',
+          })
+
+        if (profileError) {
+          console.error("Error creating profile:", profileError)
+          throw new Error("Failed to create user profile")
+        }
+      }
 
       toast.success("Account created successfully! Please check your email for verification.")
       router.push("/sign-in")
@@ -88,37 +112,44 @@ export default function Signup() {
                       <div className="p-3 text-sm bg-red-100 border border-red-300 text-red-800 rounded">{error}</div>
                     )}
 
-                    {/* <div className="space-y-4">
+                    <div className="space-y-4">
                       <Label className="text-sm font-medium">I am signing up as:</Label>
                       <RadioGroup
                         value={formData.role}
                         onValueChange={handleRoleChange}
                         name="role"
-                        className="grid grid-cols-3 gap-4"
+                        className="grid grid-cols-4 gap-2"
                       >
                         <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer has-[:checked]:bg-accent has-[:checked]:border-primary">
                           <Home className="h-6 w-6 text-primary" />
-                          <RadioGroupItem value="house" id="house" className="sr-only" />
-                          <Label htmlFor="house" className="text-sm cursor-pointer">
+                          <RadioGroupItem value="generator" id="generator" className="sr-only" />
+                          <Label htmlFor="generator" className="text-sm cursor-pointer">
                             House
                           </Label>
                         </div>
                         <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer has-[:checked]:bg-accent has-[:checked]:border-primary">
                           <Building className="h-6 w-6 text-primary" />
-                          <RadioGroupItem value="house_manager" id="manager" className="sr-only" />
-                          <Label htmlFor="manager" className="text-sm cursor-pointer">
+                          <RadioGroupItem value="recycler" id="recycler" className="sr-only" />
+                          <Label htmlFor="recycler" className="text-sm cursor-pointer">
                             Building Manager
                           </Label>
                         </div>
                         <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer has-[:checked]:bg-accent has-[:checked]:border-primary">
-                          <Trash2 className="h-6 w-6 text-primary" />
-                          <RadioGroupItem value="admin" id="admin" className="sr-only" />
-                          <Label htmlFor="admin" className="text-sm cursor-pointer">
+                          <Recycle className="h-6 w-6 text-primary" />
+                          <RadioGroupItem value="disposer" id="disposer" className="sr-only" />
+                          <Label htmlFor="disposer" className="text-sm cursor-pointer">
                             Waste Company
                           </Label>
                         </div>
+                        <div className="flex flex-col items-center text-center space-y-2 border rounded-lg p-4 hover:bg-accent cursor-pointer has-[:checked]:bg-accent has-[:checked]:border-primary">
+                          <Truck className="h-6 w-6 text-primary" />
+                          <RadioGroupItem value="transporter" id="transporter" className="sr-only" />
+                          <Label htmlFor="transporter" className="text-sm cursor-pointer">
+                            Transporter
+                          </Label>
+                        </div>
                       </RadioGroup>
-                    </div> */}
+                    </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="name" className="text-sm font-medium">
@@ -179,13 +210,13 @@ export default function Signup() {
                       <p className="text-xs text-muted-foreground">Password must be at least 6 characters</p>
                     </div>
 
-                    <button
+                    <Button
                       type="submit"
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md"
+                      className="w-full"
                       disabled={loading}
                     >
                       {loading ? "Signing up..." : "Sign up"}
-                    </button>
+                    </Button>
 
                     <div className="text-center mt-4">
                       <p className="text-sm text-muted-foreground">
@@ -213,7 +244,7 @@ export default function Signup() {
               <div className="bg-background/10 p-6 rounded-lg backdrop-blur-sm">
                 <h3 className="text-xl font-semibold mb-3">Smart Waste Management</h3>
                 <p className="text-sm opacity-80">
-                  Join as a homeowner, building manager, or waste collection company and experience our streamlined
+                  Join as a homeowner, building manager, waste collection company or transporter and experience our streamlined
                   waste management solutions.
                 </p>
               </div>
