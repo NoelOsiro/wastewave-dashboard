@@ -9,8 +9,13 @@ export type Payment = {
     house: string;
     owner: string;
   };
-  
   export type BreakdownItem = {
+    name: string;
+    value: number;
+    totalAmount: string;
+  };
+  
+  export type StatusBreakdownItem = {
     name: string;
     value: number;
     totalAmount: string;
@@ -98,3 +103,22 @@ export type Payment = {
       status: "Completed",
     },
   ];
+
+  export type Template = {
+    id: string;
+    title: string;
+    description: string;
+    type: string;
+    last_sent: string | null;
+  };
+
+  // Add missing IHistory interface for notification history
+  export type IHistory = {
+    id: string;
+    title: string;
+    recipients: string;
+    type: string;
+    date: string;
+    status: string;
+    delivery_rate: string;
+  };
