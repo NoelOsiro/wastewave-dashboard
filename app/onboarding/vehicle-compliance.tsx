@@ -84,11 +84,11 @@ export default function VehicleCompliance() {
       })
 
       // Update onboarding status
-      await updateOnboardingStatus("vehicle_compliance")
+      await updateOnboardingStatus("tracking-document")
 
       setSubmitStatus("success")
       setTimeout(() => {
-        router.push("/onboarding/tracking-document")
+        router.push("/onboarding")
       }, 2000)
     } catch (error: any) {
       console.error("Error registering vehicle:", error)

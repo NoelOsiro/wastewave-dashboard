@@ -2,9 +2,9 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Upload, CheckCircle, AlertCircle } from "lucide-react"
+import { Upload, CheckCircle, AlertCircle, Loader } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createLicense, updateOnboardingStatus, uploadFile } from "@/utils/supabase/onboarding"
 import { DatePicker } from "@/components/ui/date-picker"
+import { createClient } from "@/utils/supabase/client"
 
 export default function LicenseVerification() {
   const router = useRouter()
@@ -24,12 +25,40 @@ export default function LicenseVerification() {
   const [isUploading, setIsUploading] = useState(false)
   const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle")
   const [errorMessage, setErrorMessage] = useState("")
+  const supabase = createClient()
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user?.id)
+        .single()
+
+      if (profile?.role === "transporter") setLicenseType("transport")
+      if (profile?.role === "recycler") setLicenseType("reuse")
+      if (profile?.role === "disposer") setLicenseType("disposal")
+      // skip generator - might not need license
+    }
+
+    fetchRole()
+  }, [])
+  const MAX_SIZE_MB = 5
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0])
+    const selected = e.target.files?.[0]
+    if (selected) {
+      if (selected.size / 1024 / 1024 > MAX_SIZE_MB) {
+        setErrorMessage("File size exceeds 5MB limit")
+        setUploadStatus("error")
+        return
+      }
+      setFile(selected)
+      setUploadStatus("idle")
     }
   }
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -66,13 +95,19 @@ export default function LicenseVerification() {
         file_path: filePath,
       })
 
-      // Update onboarding status
-      await updateOnboardingStatus("license_verification")
-
-      setUploadStatus("success")
-      setTimeout(() => {
-        router.push("/onboarding/vehicle-compliance")
-      }, 2000)
+      if (licenseType === "transport" || licenseType === "reuse") {
+        await updateOnboardingStatus("complete", true)
+        setUploadStatus("success")
+        setTimeout(() => {
+          router.push("/dashboard")
+        }, 2000)
+      } else {
+        await updateOnboardingStatus("vehicle-compliance")
+        setUploadStatus("success")
+        setTimeout(() => {
+          router.push("/onboarding")
+        }, 2000)
+      }
     } catch (error: any) {
       console.error("Error uploading license:", error)
       setErrorMessage(error.message || "Failed to upload license")
@@ -166,8 +201,15 @@ export default function LicenseVerification() {
         </CardContent>
         <CardFooter>
           <Button type="submit" className="w-full" disabled={isUploading} onClick={handleSubmit}>
-            {isUploading ? "Uploading..." : "Submit for Verification"}
+            {isUploading ? (
+              <>
+                <Loader className="animate-spin h-4 w-4 mr-2" /> Uploading...
+              </>
+            ) : (
+              "Submit for Verification"
+            )}
           </Button>
+
         </CardFooter>
       </Card>
     </div>

@@ -20,7 +20,6 @@ export default function Signup() {
     name: "",
     email: "",
     password: "",
-    role: "house",
   })
   const router = useRouter()
 
@@ -34,7 +33,6 @@ export default function Signup() {
   const handleRoleChange = (value: string) => {
     setFormData({
       ...formData,
-      role: value,
     })
   }
 
@@ -52,21 +50,11 @@ export default function Signup() {
         options: {
           data: {
             name: formData.name,
-            role: formData.role,
           },
         },
       })
-
+      console.log(signUpError)
       if (signUpError) throw signUpError
-
-      // Create profile entry
-      const { error: profileError } = await supabase.from("profiles").insert({
-        id: data.user?.id,
-        name: formData.name,
-        role: formData.role,
-      })
-
-      if (profileError) throw profileError
 
       toast.success("Account created successfully! Please check your email for verification.")
       router.push("/sign-in")
@@ -100,7 +88,7 @@ export default function Signup() {
                       <div className="p-3 text-sm bg-red-100 border border-red-300 text-red-800 rounded">{error}</div>
                     )}
 
-                    <div className="space-y-4">
+                    {/* <div className="space-y-4">
                       <Label className="text-sm font-medium">I am signing up as:</Label>
                       <RadioGroup
                         value={formData.role}
@@ -130,7 +118,7 @@ export default function Signup() {
                           </Label>
                         </div>
                       </RadioGroup>
-                    </div>
+                    </div> */}
 
                     <div className="space-y-2">
                       <Label htmlFor="name" className="text-sm font-medium">

@@ -55,44 +55,52 @@ export default function Login() {
     event.preventDefault()
     setMessage(null)
     setPending(true)
-
-    // Validate form before submission
+  
     if (!validateForm()) {
       setPending(false)
       return
     }
-
+  
     try {
-      // Sign in with Supabase Authentication
       const supabase = createClient()
-      const {
-        data: { session },
-        error,
-      } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (error) throw error
-
-      // Role verified, redirect to dashboard
-      setMessage({ type: "success", message: "Sign in successful" })
+      const signInResponse = await supabase.auth.signInWithPassword({ email, password })
+  
+      if (signInResponse.error) throw signInResponse.error
+  
+      const userId = signInResponse.data.session?.user?.id
+      if (!userId) throw new Error("User ID not found.")
+  
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("onboarding_completed")
+        .eq("id", userId)
+        .single()
+  
+      if (profileError) throw profileError
+      if (!profile) throw new Error("User profile not found.")
+  
       toast.success("Sign in successful")
-      router.push("/dashboard")
+  
+      if (!profile.onboarding_completed) {
+        router.push("/onboarding")
+      } else {
+        router.push("/dashboard")
+      }
     } catch (error: unknown) {
       console.error("Sign-in error:", error)
       let errorMessage = "An unexpected error occurred"
-
+  
       if (error instanceof Error) {
         errorMessage = error.message
       }
-
+  
       setMessage({ type: "error", message: errorMessage })
       toast.error(errorMessage)
     } finally {
       setPending(false)
     }
   }
+  
 
   return (
     <>

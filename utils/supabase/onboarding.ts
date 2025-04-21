@@ -1,4 +1,4 @@
-
+"use server"
 import { cookies } from "next/headers"
 import { createClient } from "./server"
 

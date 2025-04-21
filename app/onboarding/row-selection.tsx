@@ -4,7 +4,14 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Truck, Recycle, Building2, User, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { createClient } from "@/utils/supabase/client"
@@ -19,30 +26,27 @@ export default function RoleSelection() {
     {
       id: "transporter",
       title: "Waste Transporter",
-      description: "I collect and transport waste from generators to treatment/disposal facilities",
+      description:
+        "I collect and transport waste from generators to treatment/disposal facilities",
       icon: Truck,
-      nextStep: "/onboarding/license-verification",
     },
     {
       id: "recycler",
       title: "Recycler/Processor",
       description: "I process waste for recycling, recovery or reuse",
       icon: Recycle,
-      nextStep: "/onboarding/license-verification",
     },
     {
       id: "disposer",
       title: "Disposal Facility",
       description: "I operate a facility for final disposal of waste",
       icon: Building2,
-      nextStep: "/onboarding/license-verification",
     },
     {
       id: "generator",
       title: "Waste Generator",
-      description: "I generate waste that needs proper disposal",
+      description: "I generate waste that needs proper disposal (house, business..)",
       icon: User,
-      nextStep: "/dashboard",
     },
   ]
 
@@ -52,17 +56,30 @@ export default function RoleSelection() {
     setIsSubmitting(true)
 
     try {
-      // Update user profile with selected role
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser()
+
+      if (userError || !user) {
+        throw new Error("User not found")
+      }
+
+      const nextStep = selectedRole === "generator" ? "complete" : "license-verification"
+
       const { error } = await supabase
         .from("profiles")
-        .update({ role: selectedRole })
-        .eq("id", (await supabase.auth.getUser()).data.user?.id)
+        .update({
+          role: selectedRole,
+          onboarding_step: nextStep,
+          onboarding_completed: selectedRole === "generator",
+        })
+        .eq("id", user.id)
 
       if (error) throw error
 
-      // Redirect to the appropriate next step based on role
-      const selectedRoleObj = roles.find((role) => role.id === selectedRole)
-      router.push(selectedRoleObj?.nextStep || "/dashboard")
+      router.refresh()
+      router.push("/onboarding")
     } catch (error) {
       console.error("Error updating role:", error)
     } finally {
@@ -78,16 +95,26 @@ export default function RoleSelection() {
           <CardDescription>Choose your role in the waste management chain</CardDescription>
         </CardHeader>
         <CardContent>
-          <RadioGroup value={selectedRole || ""} onValueChange={setSelectedRole} className="space-y-4">
+          <RadioGroup
+            value={selectedRole || ""}
+            onValueChange={setSelectedRole}
+            className="space-y-4"
+          >
             {roles.map((role) => (
               <div
                 key={role.id}
-                className={`flex items-center space-x-2 rounded-lg border p-4 cursor-pointer transition-colors ${selectedRole === role.id ? "border-primary bg-primary/5" : "hover:bg-muted/50"}`}
+                className={`flex items-center space-x-2 rounded-lg border p-4 cursor-pointer transition-colors ${
+                  selectedRole === role.id
+                    ? "border-primary bg-primary/5"
+                    : "hover:bg-muted/50"
+                }`}
                 onClick={() => setSelectedRole(role.id)}
               >
                 <RadioGroupItem value={role.id} id={role.id} className="sr-only" />
                 <role.icon
-                  className={`h-5 w-5 ${selectedRole === role.id ? "text-primary" : "text-muted-foreground"}`}
+                  className={`h-5 w-5 ${
+                    selectedRole === role.id ? "text-primary" : "text-muted-foreground"
+                  }`}
                 />
                 <div className="flex-1">
                   <Label htmlFor={role.id} className="text-base font-medium cursor-pointer">
