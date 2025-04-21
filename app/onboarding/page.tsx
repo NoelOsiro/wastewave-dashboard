@@ -35,12 +35,6 @@ export default async function OnboardingPage() {
       return <LicenseVerification />
     case "vehicle-compliance":
       return <VehicleCompliance />
-    // case "transporter-details":
-    //   return <TransporterDetails />
-    // case "org-details":
-    //   return <OrgDetails />
-    // case "complete":
-    //   return <OnboardingComplete />
     default:
       return <RoleSelection />
   }

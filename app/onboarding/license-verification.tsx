@@ -95,7 +95,7 @@ export default function LicenseVerification() {
         file_path: filePath,
       })
 
-      if (licenseType === "transport" || licenseType === "reuse") {
+      if (licenseType === "disposal" || licenseType === "reuse") {
         await updateOnboardingStatus("complete", true)
         setUploadStatus("success")
         setTimeout(() => {
