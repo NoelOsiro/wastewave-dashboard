@@ -1,3 +1,4 @@
+import { IHistory, Template } from "@/lib/types"
 import { createClient } from "@/utils/supabase/server"
 
 import { redirect } from "next/navigation"
