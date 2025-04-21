@@ -1,4 +1,3 @@
-
 export type Payment = {
     id: number;
     transaction_id: string;
@@ -12,6 +11,12 @@ export type Payment = {
   };
   
   export type BreakdownItem = {
+    name: string;
+    value: number;
+    totalAmount: string;
+  };
+  
+  export type StatusBreakdownItem = {
     name: string;
     value: number;
     totalAmount: string;
