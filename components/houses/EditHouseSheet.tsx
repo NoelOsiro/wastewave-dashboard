@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HouseData, HouseFormValues, houseSchema } from "../hooks/useFormSchema";
+
 
 import { toast } from "sonner";
 import {
@@ -26,6 +26,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Edit } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
+import { houseSchema } from "@/app/(dashboard)/house_manager/houses/hooks/useFormSchema";
+import { HouseData, HouseFormValues } from "@/lib/types";
 
 type EditHouseSheetProps = {
   open: boolean;

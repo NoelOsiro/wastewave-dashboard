@@ -1,9 +1,9 @@
-import New from "@/components/notifications/New";
-import NotificationMetrics from "@/components/notifications/NotificationMetrics";
-import NotificationTabs from "@/components/notifications/NotificationTabs";
-import Templates from "@/components/notifications/Templates";
 import { createClient } from "@/utils/supabase/server";
-import  History  from "@/components/notifications/History"
+import NotificationMetrics from "./NotificationMetrics";
+import NotificationTabs from "./NotificationTabs";
+import New from "./New";
+import History from "./History";
+import Templates from "./Templates";
 
 // Fetch data from Supabase
 async function fetchNotificationData() {

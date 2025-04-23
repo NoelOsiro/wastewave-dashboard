@@ -25,7 +25,7 @@ export async function getHouseCollection(houseId: string): Promise<CollectionEve
 
   if (error) {
     console.error("Error fetching house collection:", error)
-    throw error
+    return []
   }
 
   return data

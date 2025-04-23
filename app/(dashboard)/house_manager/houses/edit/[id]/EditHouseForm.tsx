@@ -3,7 +3,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HouseData, HouseFormValues, houseSchema } from "../../hooks/useFormSchema";
+import {  houseSchema } from "../../hooks/useFormSchema";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { updateHouse } from "./actions";
@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Save, ArrowLeft, Home, User, Mail, Phone, MapPin } from "lucide-react";
 import Link from "next/link";
 import { SubmitButton } from "@/components/submit-button";
+import { HouseData, HouseFormValues } from "@/lib/types";
 
 type EditHouseFormProps = {
   house: HouseData;

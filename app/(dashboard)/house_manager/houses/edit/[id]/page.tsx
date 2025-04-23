@@ -1,7 +1,7 @@
 
 import { notFound } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
 import { EditHouseForm } from "./EditHouseForm";
+import { getHouseById } from "@/utils/supabase/houses";
 
 export const dynamic = "force-dynamic"; // Force SSR on every request
 interface HousePageProps {
@@ -10,18 +10,10 @@ interface HousePageProps {
 export default async function EditHousePage({ params }: HousePageProps) {
   const resolvedParams = await params;
   const id = resolvedParams.id;
-  const supabase = await createClient();
 
   // Fetch house data
-  const { data: house, error } = await supabase
-    .from("houses")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error || !house) {
-    notFound();
-  }
+  const house = await getHouseById(id);
+  if (!house) {notFound();}
 
   return (
     

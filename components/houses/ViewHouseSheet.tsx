@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-import { HouseData } from "../hooks/useFormSchema";
+
 import { toast } from "sonner";
 import {
   Sheet,
@@ -21,6 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { createClient } from "@/utils/supabase/client";
+import { HouseData } from "@/lib/types";
 
 type ViewHouseSheetProps = {
   open: boolean;

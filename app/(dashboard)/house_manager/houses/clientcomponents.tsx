@@ -3,14 +3,15 @@
 "use client";
 
 import { useState } from "react";
-import { HouseTable } from "./components/HouseTable";
+import { HouseTable } from "@/components/houses/HouseTable";
 
-import { HouseData } from "./hooks/useFormSchema";
-import { EditHouseSheet } from "./components/EditHouseSheet";
-import { ViewHouseSheet } from "./components/ViewHouseSheet";
-import { DeleteHouseSheet } from "./components/DeleteHouseSheet";
-import { NewHouseModal } from "./components/NewHouseModal";
+
+import { EditHouseSheet } from "@/components/houses/EditHouseSheet";
+import { ViewHouseSheet } from "@/components/houses/ViewHouseSheet";
+import { DeleteHouseSheet } from "@/components/houses/DeleteHouseSheet";
+import { NewHouseModal } from "@/components/houses/NewHouseModal";
 import { useRouter } from "next/navigation";
+import { HouseData } from "@/lib/types";
 
 type ClientComponentsProps = {
   initialHouses: HouseData[];

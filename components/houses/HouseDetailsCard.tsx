@@ -1,11 +1,12 @@
 
 "use client";
 
-import { HouseData } from "../hooks/useFormSchema";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Edit, Mail, Phone, MapPin, Home, User } from "lucide-react";
 import Link from "next/link";
+import { HouseData } from "@/lib/types";
 
 interface HouseDetailsCardProps {
   house: HouseData;

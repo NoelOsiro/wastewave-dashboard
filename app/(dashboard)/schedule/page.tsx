@@ -3,12 +3,13 @@ import { Plus } from "lucide-react";
 import { Suspense } from "react";
 
 
-import { Calendar } from "./componenents/Calendar";
-import { UpcomingCollections } from "./componenents/UpcomingCollections";
-import { RecentCollections } from "./componenents/RecentCollections";
+
 
 import { fetchCollectionEvents } from "@/lib/supabase";
 import { recentCollectionsData } from "@/lib/types";
+import { Calendar } from "@/components/schedule/Calendar";
+import { UpcomingCollections } from "@/components/schedule/UpcomingCollections";
+import { RecentCollections } from "@/components/schedule/RecentCollections";
 
 export const dynamic = "force-dynamic"; // Force SSR on every request
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { HouseData } from "../hooks/useFormSchema";
+
 
 import { toast } from "sonner";
 import {
@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Eye, Trash2 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
+import { HouseData } from "@/lib/types";
 
 type DeleteHouseSheetProps = {
   open: boolean;

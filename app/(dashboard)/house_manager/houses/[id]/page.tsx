@@ -1,8 +1,9 @@
 
 import { notFound } from "next/navigation";
-import { HouseDetailsCard } from "../components/HouseDetailsCard";
-import { CollectionHistoryCard } from "../components/CollectionHistoryCard";
-import { createClient } from "@/utils/supabase/server";
+import { HouseDetailsCard } from "@/components/houses/HouseDetailsCard";
+import { CollectionHistoryCard } from "@/components/houses/CollectionHistoryCard";
+import { getHouseById } from "@/utils/supabase/houses";
+import { getHouseCollection } from "@/utils/supabase/collectionEvents";
 
 export const dynamic = "force-dynamic"; // Force SSR on every request
 // Define the props type explicitly
@@ -12,28 +13,16 @@ interface HousePageProps {
 export default async function HouseViewPage({ params }: HousePageProps) {
   const resolvedParams = await params;
   const id = resolvedParams.id;
-  const supabase = await createClient();
   
   // Fetch house data
-  const { data: house, error } = await supabase
-    .from("houses")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error || !house) {
-    notFound();
-  }
+  const house = await getHouseById(id);
+  if (!house) {notFound();}
 
   // Fetch collection history
-  const { data: collectionHistory, error: historyError } = await supabase
-    .from("collections")
-    .select("*")
-    .eq("house", id)
-    .order("collection_date", { ascending: false });
+  const collectionHistory = await getHouseCollection(id);
 
-  if (historyError) {
-    console.error("Error fetching collection history:", historyError);
+  if (!collectionHistory || collectionHistory.length == 0) {
+    console.error("Error fetching collection history:");
   }
 
   return (
@@ -51,7 +40,7 @@ export default async function HouseViewPage({ params }: HousePageProps) {
           </div>
           <div className="lg:col-span-1">
             <CollectionHistoryCard 
-              collectionHistory={collectionHistory || []} 
+              collectionHistory={collectionHistory} 
               houseId={id} 
             />
           </div>

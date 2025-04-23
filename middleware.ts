@@ -53,9 +53,9 @@ export async function middleware(request: NextRequest) {
   // DENY specific paths per role
   const roleDeniedPathsMap: Record<string, string[]> = {
     recycler: ["/houses", "/houses/", "/houses/new"], // you can add more
-    transporter: [],
+    transporter: ["/houses", "/houses/", "/houses/new"],
     generator: [],
-    disposer: [],
+    disposer: ["/houses", "/houses/", "/houses/new"],
   }
 
   const deniedPaths = roleDeniedPathsMap[userRole] || []

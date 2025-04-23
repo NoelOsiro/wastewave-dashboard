@@ -9,8 +9,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
-import { HouseData } from "../hooks/useFormSchema";
+
 import Link from "next/link";
+import { HouseData } from "@/lib/types";
 
 type HouseTableProps = {
   initialHouses: HouseData[];

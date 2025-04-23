@@ -20,6 +20,37 @@ export type Payment = {
     value: number;
     totalAmount: string;
   };
+
+  export type HouseData = {
+    id: number;
+    name: string;
+    owner: string;
+    contact: string;
+    email: string;
+    location: string;
+    status: "Active" | "Inactive";
+    last_collection: string;
+    payment_status: string;
+  };
+  
+  export type HouseFormValues = {
+    name: string;
+    owner: string;
+    contact: string;
+    email: string;
+    location: string;
+    status: "Active" | "Inactive";
+  };
+
+  export type Profile = {
+    id: string;
+    name: string;
+    email: string;
+    onboarding_step: string;
+    onboarding_completed: boolean;
+    phone: string;
+    
+  }
   
   export const revenueData = [
     { name: "Jan", revenue: 4000 },
@@ -39,6 +70,7 @@ export type Payment = {
     location: string;
     houses: number;
     status: "Scheduled" | "In Progress" | "Completed" | "Cancelled";
+    collector:string;
   };
   
   export const parseTimeRange = (date: string, time: string) => {

@@ -1,25 +1,6 @@
 import { z } from "zod";
 
-export type HouseData = {
-  id: number;
-  name: string;
-  owner: string;
-  contact: string;
-  email: string;
-  location: string;
-  status: "Active" | "Inactive";
-  last_collection: string;
-  payment_status: string;
-};
 
-export type HouseFormValues = {
-  name: string;
-  owner: string;
-  contact: string;
-  email: string;
-  location: string;
-  status: "Active" | "Inactive";
-};
 
 export const houseSchema = z.object({
   name: z.string().min(1, "House name is required").max(100, "House name must be less than 100 characters"),

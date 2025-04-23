@@ -1,5 +1,6 @@
+import { HouseData, HouseFormValues } from "@/lib/types"
 import { createClient } from "@/utils/supabase/server"
-import type { HouseData, HouseFormValues } from "@/app/(dashboard)/houses/hooks/useFormSchema"
+
 
 export async function getHousesData(): Promise<HouseData[]> {
   const supabase = await createClient()

@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { Metrics } from "./components/Metrics";
+
 import { Suspense } from "react";
 import { fetchHouses } from "@/lib/supabase";
 import Link from "next/link";
 import ClientComponents from "./clientcomponents";
+import { Metrics } from "@/components/houses/Metrics";
 
 
 // Mark as dynamic to force SSR on every request (optional)

@@ -14,9 +14,10 @@ import {
 } from "@/components/ui/table";
 import { CalendarClock, Plus } from "lucide-react";
 import { NewCollectionDialog } from "./NewCollectionDialog";
+import { CollectionEvent } from "@/lib/types";
 
 interface CollectionHistoryCardProps {
-  collectionHistory: any[];
+  collectionHistory: CollectionEvent[];
   houseId: string;
 }
 
@@ -61,7 +62,7 @@ export function CollectionHistoryCard({
                   {collectionHistory.map((collection) => (
                     <TableRow key={collection.id}>
                       <TableCell>
-                        {new Date(collection.collection_date).toLocaleDateString()}
+                        {new Date(collection.date).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
                         <span

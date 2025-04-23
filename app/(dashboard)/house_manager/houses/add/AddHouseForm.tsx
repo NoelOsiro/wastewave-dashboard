@@ -19,8 +19,8 @@ export default function AddHouseForm({ error: initialError }: AddHouseFormProps)
       action={async (formData) => {
         setLoading(true);
         setFormError(undefined);
-        await addHouse(formData); // Call the server action (redirects on success)
-        setLoading(false); // This won't run due to redirect, but included for completeness
+        await addHouse(formData);
+        setLoading(false);
       }}
       className="space-y-6"
     >

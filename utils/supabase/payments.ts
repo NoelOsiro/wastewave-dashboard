@@ -31,11 +31,13 @@ export async function fetchAllPaymentData() {
   // Calculate breakdowns here
   const byMethod: Record<string, number> = {}
   const statusBreakdown = { paid: 0, pending: 0, failed: 0 }
+  const byDate: Record<string, number> = {}
 
   payments.forEach((p) => {
     const amount = Number(p.amount)
     if (!isNaN(amount)) {
       byMethod[p.method] = (byMethod[p.method] || 0) + amount
+      byDate[p.date] = (byDate[p.date] || 0) + amount
     }
 
     if (p.status === "paid") statusBreakdown.paid++
@@ -55,9 +57,14 @@ export async function fetchAllPaymentData() {
     { name: "Failed", value: statusBreakdown.failed, totalAmount: `${statusBreakdown.failed} payments` },
   ]
 
+  const paymentsDateBreakdown = Object.entries(byDate).map(([name, value]) => ({
+    name,
+    value: value,
+  }))
   return {
     payments,
     paymentsBreakdown,
     paymentStatusBreakdown,
+    paymentsDateBreakdown
   }
 }
