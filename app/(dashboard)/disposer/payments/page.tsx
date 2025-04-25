@@ -9,7 +9,6 @@ import { PaymentsTable } from "@/components/payments/PaymentsTable";
 import { fetchAllPaymentData } from "@/utils/supabase/payments";
 
 
-
 export const dynamic = "force-dynamic"; // Force SSR on every request
 
 export default async function PaymentsPage() {
