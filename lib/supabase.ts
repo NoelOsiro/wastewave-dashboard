@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { CollectionEvent } from "./types";
 
 export const fetchHouses = async () => {
   const supabase = await createClient();
@@ -65,10 +66,14 @@ export const fetchPaymentsBreakdown = async () => {
   }));
 };
 
-export const fetchCollectionEvents = async () => {
+export const fetchCollectionEvents = async (): Promise<CollectionEvent[]> => {
   const supabase = await createClient();
-  const { data, error } = await supabase.from('collection_events').select('*');
-  if (error) throw new Error(error.message);
+  const { data, error } = await supabase.from("collection_events").select("*");
+
+  if (error) {
+    console.error("Error fetching collection events:", error.message);
+    throw new Error(`Failed to fetch collection events: ${error.message}`);
+  }
 
   return data.map((event) => ({
     id: event.id,
@@ -78,5 +83,6 @@ export const fetchCollectionEvents = async () => {
     location: event.location,
     houses: event.houses,
     status: event.status,
+    collector: event.collector,
   }));
 };
