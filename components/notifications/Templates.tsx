@@ -1,7 +1,7 @@
 import { DashboardCard } from '@/components/dashboard/DashboardCard'
 import { Plus, Search } from 'lucide-react'
 import React from 'react'
-import { createTemplate } from '../actions'
+import { createTemplate } from '@/app/(dashboard)/notifications/actions'
 interface TemplateProps {
   templates: {
     id: string

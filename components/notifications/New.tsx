@@ -1,7 +1,8 @@
 import { DashboardCard } from '@/components/dashboard/DashboardCard'
 import React from 'react'
-import { sendNotification } from '../actions'
+
 import { Mail, MessageSquare, Send } from 'lucide-react'
+import { sendNotification } from '@/app/(dashboard)/notifications/actions'
 
 const New = () => {
   return (
