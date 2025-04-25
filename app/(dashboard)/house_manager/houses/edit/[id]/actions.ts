@@ -2,8 +2,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
-import { houseSchema, HouseFormValues } from "../../hooks/useFormSchema";
-import { redirect } from "next/navigation";
+import { houseSchema } from "../../hooks/useFormSchema";
 
 export async function updateHouse(houseId: number, formData: FormData) {
   const supabase = await createClient();
