@@ -1,7 +1,7 @@
 "use server"; // Mark the entire file as a server module
 
 import { createClient } from "@/utils/supabase/server";
-import { houseSchema, HouseFormValues } from "../hooks/useFormSchema";
+import { houseSchema} from "../hooks/useFormSchema";
 import { redirect } from "next/navigation";
 
 export async function addHouse(formData: FormData) {
