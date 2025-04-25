@@ -9,27 +9,7 @@ import { LicenseVerificationStep } from "@/components/onboarding/license-verific
 import { VehicleComplianceStep } from "@/components/onboarding/vehicle-compliance";
 import { MultiStepForm } from "@/components/onboarding/multi-step-form";
 import { createLicense, createVehicle, updateOnboardingStatus, uploadFile } from "@/utils/supabase/onboarding";
-
-interface RoleSelectionData {
-  role: string | null;
-}
-
-interface LicenseVerificationData {
-  file: File | null;
-  licenseNumber: string;
-  issuingDate: string | undefined;
-  expiryDate: string | undefined;
-  licenseType: string;
-}
-
-interface VehicleComplianceData {
-  vehicleReg: string;
-  vehicleType: string;
-  vehicleCapacity: string;
-  labelPhoto: File | null;
-  sealingPhoto: File | null;
-  routes: string;
-}
+import { LicenseVerificationData, RoleSelectionData, Step, StepComponentProps, VehicleComplianceData } from "@/lib/types";
 
 interface FormData {
   roleSelection?: RoleSelectionData;
@@ -37,21 +17,41 @@ interface FormData {
   vehicleCompliance?: VehicleComplianceData;
 }
 
-// Generic StepComponentProps to allow specific formData types
-interface StepComponentProps<T> {
-  formData: T;
-  updateFormData: (data: T) => void;
-}
+const steps: Step[] = [
+  {
+    id: "roleSelection",
+    title: "Select Your Role",
+    description: "Choose your role in the waste management chain",
+    component: (props: StepComponentProps<RoleSelectionData>) => <RoleSelectionStep {...props} />,
+    validate: (formData: FormData) => !!formData.roleSelection?.role,
+  },
+  {
+    id: "licenseVerification",
+    title: "License Verification",
+    description: "Upload your waste management license for verification",
+    component: (props: StepComponentProps<LicenseVerificationData>) => <LicenseVerificationStep {...props} />,
+    validate: (formData: FormData) =>
+      !!formData.licenseVerification?.file &&
+      !!formData.licenseVerification?.licenseNumber &&
+      !!formData.licenseVerification?.issuingDate &&
+      !!formData.licenseVerification?.expiryDate &&
+      !!formData.licenseVerification?.licenseType,
+    shouldShow: (role: string | null) => Boolean(role && role !== "generator"),
+  },
+  {
+    id: "vehicleCompliance",
+    title: "Vehicle Compliance Check",
+    description: "Register your waste transport vehicle according to NEMA requirements",
+    component: (props: StepComponentProps<VehicleComplianceData>) => <VehicleComplianceStep {...props} />,
+    validate: (formData: FormData) =>
+      !!formData.vehicleCompliance?.vehicleReg &&
+      !!formData.vehicleCompliance?.vehicleType &&
+      !!formData.vehicleCompliance?.labelPhoto &&
+      !!formData.vehicleCompliance?.routes,
+    shouldShow: (role: string | null) => role === "transporter",
+  },
+];
 
-interface Step<T = any> {
-  id: string;
-  title: string;
-  description: string;
-  component: (props: StepComponentProps<T>) => React.ReactNode;
-  isOptional?: boolean;
-  validate?: (formData: FormData) => boolean;
-  shouldShow?: (role: string | null) => boolean;
-}
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -102,15 +102,10 @@ export default function OnboardingPage() {
 
   const handleFormComplete = async (formData: FormData) => {
     try {
-      const {
-        data: { user },
-        error: authError,
-      } = await supabase.auth.getUser();
-
+      const { data: { user }, error: authError} = await supabase.auth.getUser();
       if (authError || !user) {
         throw new Error("User not authenticated");
       }
-
       if (formData.roleSelection?.role) {
         const { error: authUpdateError } = await supabase.auth.updateUser({
           data: { role: formData.roleSelection.role },
@@ -224,42 +219,6 @@ export default function OnboardingPage() {
       </div>
     );
   }
-
-  const steps: Step[] = [
-    {
-      id: "roleSelection",
-      title: "Select Your Role",
-      description: "Choose your role in the waste management chain",
-      component: (props: StepComponentProps<RoleSelectionData>) => <RoleSelectionStep {...props} />,
-      validate: (formData: FormData) => !!formData.roleSelection?.role,
-    },
-    {
-      id: "licenseVerification",
-      title: "License Verification",
-      description: "Upload your waste management license for verification",
-      component: (props: StepComponentProps<LicenseVerificationData>) => <LicenseVerificationStep {...props} />,
-      validate: (formData: FormData) =>
-        !!formData.licenseVerification?.file &&
-        !!formData.licenseVerification?.licenseNumber &&
-        !!formData.licenseVerification?.issuingDate &&
-        !!formData.licenseVerification?.expiryDate &&
-        !!formData.licenseVerification?.licenseType,
-      shouldShow: (role: string | null) => Boolean(role && role !== "generator"),
-    },
-    {
-      id: "vehicleCompliance",
-      title: "Vehicle Compliance Check",
-      description: "Register your waste transport vehicle according to NEMA requirements",
-      component: (props: StepComponentProps<VehicleComplianceData>) => <VehicleComplianceStep {...props} />,
-      validate: (formData: FormData) =>
-        !!formData.vehicleCompliance?.vehicleReg &&
-        !!formData.vehicleCompliance?.vehicleType &&
-        !!formData.vehicleCompliance?.labelPhoto &&
-        !!formData.vehicleCompliance?.routes,
-      shouldShow: (role: string | null) => role === "transporter",
-    },
-  ];
-
   return <MultiStepForm 
     steps={steps} 
     onComplete={handleFormComplete} 

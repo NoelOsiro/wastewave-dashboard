@@ -16,39 +16,40 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { createClient } from "@/utils/supabase/client"
 
+const roles = [
+  {
+    id: "transporter",
+    title: "Waste Transporter",
+    description:
+      "I collect and transport waste from generators to treatment/disposal facilities",
+    icon: Truck,
+  },
+  {
+    id: "recycler",
+    title: "Recycler/Processor",
+    description: "I process waste for recycling, recovery or reuse",
+    icon: Recycle,
+  },
+  {
+    id: "disposer",
+    title: "Disposal Facility",
+    description: "I operate a facility for final disposal of waste",
+    icon: Building2,
+  },
+  {
+    id: "generator",
+    title: "Waste Generator",
+    description: "I generate waste that needs proper disposal (house, business..)",
+    icon: User,
+  },
+]
+
+
 export default function RoleSelection() {
   const router = useRouter()
   const supabase = createClient()
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const roles = [
-    {
-      id: "transporter",
-      title: "Waste Transporter",
-      description:
-        "I collect and transport waste from generators to treatment/disposal facilities",
-      icon: Truck,
-    },
-    {
-      id: "recycler",
-      title: "Recycler/Processor",
-      description: "I process waste for recycling, recovery or reuse",
-      icon: Recycle,
-    },
-    {
-      id: "disposer",
-      title: "Disposal Facility",
-      description: "I operate a facility for final disposal of waste",
-      icon: Building2,
-    },
-    {
-      id: "generator",
-      title: "Waste Generator",
-      description: "I generate waste that needs proper disposal (house, business..)",
-      icon: User,
-    },
-  ]
 
   const handleContinue = async () => {
     if (!selectedRole) return
@@ -56,10 +57,7 @@ export default function RoleSelection() {
     setIsSubmitting(true)
 
     try {
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser()
+      const { data: { user }, error: userError,} = await supabase.auth.getUser()
 
       if (userError || !user) {
         throw new Error("User not found")

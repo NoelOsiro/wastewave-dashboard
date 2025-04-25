@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HouseFormValues, houseSchema } from "../hooks/useFormSchema";
+
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { House } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
+import { HouseFormValues } from "@/lib/types";
+import { houseSchema } from "@/app/(dashboard)/house_manager/houses/hooks/useFormSchema";
 
 type NewHouseModalProps = {
   open: boolean;

@@ -38,6 +38,7 @@ export function Navigation() {
       <Link 
         href="/sign-in" 
         className="bg-transparent text-white border border-white rounded-full px-5 py-2 flex items-center hover:bg-white hover:text-[#004d29] transition-colors"
+        id='start-cta'
       >
         Get Started <ArrowRight className="ml-2 h-4 w-4" />
       </Link>

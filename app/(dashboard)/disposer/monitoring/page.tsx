@@ -3,9 +3,9 @@ import { DashboardChart } from "@/components/dashboard/DashboardChart"
 import { Home as HomeIcon, Truck, CreditCard, Award, Calendar } from "lucide-react"
 import { DashboardCard } from "@/components/dashboard/DashboardCard"
 import { createClient } from "@/utils/supabase/server"
-import TransporterMetrics from "@/components/dashboard/metrics/transporter_metrics copy"
-import DisposerMetrics from "@/components/dashboard/metrics/disposer_metrics copy 3"
-import GeneratorMetrics from "@/components/dashboard/metrics/generator_metrics copy 2"
+import TransporterMetrics from "@/components/dashboard/metrics/transporter_metrics"
+import DisposerMetrics from "@/components/dashboard/metrics/disposer_metrics"
+import GeneratorMetrics from "@/components/dashboard/metrics/generator_metrics"
 import RecyclerMetrics from "@/components/dashboard/metrics/recycler_metrics"
 
 const revenueData = [

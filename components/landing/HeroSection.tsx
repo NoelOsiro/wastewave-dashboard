@@ -14,6 +14,7 @@ export function HeroSection() {
         <Link
               href="/solutions"
               className="bg-[#c5f76f] text-[#004d29] font-medium rounded-full px-8 py-3 hover:bg-white transition-colors inline-block"
+              id='explore-cta'
             >
               Explore our solutions
             </Link>

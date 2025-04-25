@@ -41,6 +41,48 @@ export type Payment = {
     location: string;
     status: "Active" | "Inactive";
   };
+export interface StepComponentProps<T> {
+  formData: T;
+  updateFormData: (data: T) => void;
+}
+
+interface FormData {
+  roleSelection?: RoleSelectionData;
+  licenseVerification?: LicenseVerificationData;
+  vehicleCompliance?: VehicleComplianceData;
+}
+export interface Step<T = any> {
+  id: string;
+  title: string;
+  description: string;
+  component: (props: StepComponentProps<T>) => React.ReactNode;
+  isOptional?: boolean;
+  validate?: (formData: FormData) => boolean;
+  shouldShow?: (role: string | null) => boolean;
+}
+
+export interface RoleSelectionData {
+  role: string | null;
+}
+
+export interface LicenseVerificationData {
+  file: File | null;
+  licenseNumber: string;
+  issuingDate: string | undefined;
+  expiryDate: string | undefined;
+  licenseType: string;
+}
+
+
+export interface VehicleComplianceData {
+  vehicleReg: string;
+  vehicleType: string;
+  vehicleCapacity: string;
+  labelPhoto: File | null;
+  sealingPhoto: File | null;
+  routes: string;
+}
+
 
   export type Profile = {
     id: string;
@@ -154,3 +196,65 @@ export type Template = {
     status: string;
     delivery_rate: string;
   };
+// types/dashboard.ts
+export enum UserRole {
+  Admin = "admin",
+  House = "house",
+  Collector = "collector",
+  Manager = "manager",
+  Transporter = "transporter",
+  Generator = "generator",
+  Disposer = "disposer",
+  Recycler = "recycler",
+}
+
+export interface RevenueData {
+  [key: string]: string | number;
+  name: string;
+  revenue: number;
+}
+
+export interface WasteCollectionData {
+  [key: string]: string | number;
+  name: string;
+  value: number;
+}
+
+export interface ScheduleData {
+  [key: string]: string | number;
+  name: string;
+  completed: number;
+  pending: number;
+}
+
+export interface PaymentDash {
+  id: number;
+  house: string;
+  amount: string;
+  method: string;
+  status: "Paid" | "Pending";
+  date: string;
+}
+
+export interface Collection {
+  id: number;
+  house: string;
+  date: string;
+  status: "Scheduled" | "Completed" | "Pending";
+}
+
+export interface Performer {
+  id: number;
+  house: string;
+  points: number;
+  wasteSeparation: string;
+}
+
+export interface DashboardData {
+  revenueData: RevenueData[];
+  wasteCollectionData: WasteCollectionData[];
+  scheduleData: ScheduleData[];
+  recentPayments: PaymentDash[];
+  upcomingCollections: Collection[];
+  topPerformers: Performer[];
+}

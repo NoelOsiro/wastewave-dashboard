@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname
 
-  const publicRoutes = ["/", "/sign-in", "/sign-up", "/onboarding"]
+  const publicRoutes = ["/", "/sign-in", "/sign-up", "/onboarding","/forgot-password","/reset-passwrd"]
 
   if (publicRoutes.includes(pathname)) {
     return NextResponse.next()

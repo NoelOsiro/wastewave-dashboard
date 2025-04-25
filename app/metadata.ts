@@ -2,12 +2,12 @@ import { Metadata } from "next";
 
 // SEO Metadata (exported for App Router)
 export const metadata: Metadata = {
-    title: 'Wastewave Dashboard | Efficient Waste Management',
-    description: 'A modern dashboard for managing waste efficiently. Track, analyze, and optimize waste processes with real-time insights.',
+    title: 'Wastewave  | Efficient Waste Management',
+    description: 'A modern platform for managing waste efficiently. Track, analyze, and optimize waste processes with real-time insights.',
     keywords: 'waste management, dashboard, real-time analytics, sustainability',
     openGraph: {
-      title: 'Wastewave Dashboard',
-      description: 'Manage waste smarter with our cutting-edge dashboard.',
+      title: 'Wastewave',
+      description: 'Manage waste smarter with our cutting-edge tech.',
       url: 'https://yourdomain.com', // Replace with your actual domain
       type: 'website',
       images: [
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'Wastewave Dashboard',
+      title: 'Wastewave',
       description: 'Efficient waste management at your fingertips.',
       images: 'https://yourdomain.com/twitter-image.jpg', // Replace with your Twitter image
     },
