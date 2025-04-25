@@ -9,6 +9,8 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+/cypress/
+cypress.config.ts
 
 # testing
 /coverage
@@ -16,8 +18,7 @@
 # next.js
 /.next/
 /out/
-/cypress
-cypress.config.ts
+
 
 # production
 /build
