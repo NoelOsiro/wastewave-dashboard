@@ -25,9 +25,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Edit } from "lucide-react";
-import { createClient } from "@/utils/supabase/client";
 import { houseSchema } from "@/app/(dashboard)/house_manager/houses/hooks/useFormSchema";
 import { HouseData, HouseFormValues } from "@/lib/types";
+import { updatedHouse } from "@/utils/houses";
 
 type EditHouseSheetProps = {
   open: boolean;
@@ -63,18 +63,18 @@ export const EditHouseSheet = ({ open, onOpenChange, house, onSuccess }: EditHou
   }
 
   const onSubmit = async (data: HouseFormValues) => {
-    const supabase = createClient();
-    const { data: updatedData, error } = await supabase
-      .from("houses")
-      .update(data)
-      .eq("id", house?.id) // Use id instead of name for uniqueness
-      .select();
+    if (!house?.id) {
+      toast.error("No house selected");
+      return;
+    }
+    
+    const { success, error } = await updatedHouse(house.id, data);
     if (error) {
       return toast.error("Failed to update house");
     }
-    if (updatedData) {
-      toast.success(`${updatedData[0].name} has been updated successfully`);
-      onSuccess(); // Trigger refetch or revalidation in parent
+    if (success) {
+      toast.success(`${house.name} has been updated successfully`);
+      onSuccess();
       onOpenChange(false);
     }
   };

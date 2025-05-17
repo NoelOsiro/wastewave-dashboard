@@ -4,7 +4,7 @@ import { Topbar } from "@/components/layout/Topbar"
 import { Sidebar } from "@/components/layout/Sidebar"
 import { redirect } from "next/navigation"
 import { Toaster } from "sonner"
-import { createClient } from "@/utils/supabase/server"
+import { currentUser } from "@clerk/nextjs/server"
 
 interface LayoutProps {
   children: React.ReactNode
@@ -12,8 +12,7 @@ interface LayoutProps {
 }
 
 export default async function Layout({ children, initialSidebarOpen = true }: LayoutProps) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await currentUser();
 
   if (!user) {
     redirect("/sign-in")

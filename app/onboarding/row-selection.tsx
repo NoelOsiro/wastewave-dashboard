@@ -14,7 +14,10 @@ import {
 } from "@/components/ui/card"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
-import { createClient } from "@/utils/supabase/client"
+import { useUser } from "@clerk/nextjs"
+import { clerkClient } from "@clerk/nextjs/server"
+import { prisma } from "@/lib/prisma"
+
 
 const roles = [
   {
@@ -47,9 +50,10 @@ const roles = [
 
 export default function RoleSelection() {
   const router = useRouter()
-  const supabase = createClient()
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { isLoaded, user } = useUser();
+  const client = clerkClient()
 
   const handleContinue = async () => {
     if (!selectedRole) return
@@ -57,35 +61,36 @@ export default function RoleSelection() {
     setIsSubmitting(true)
 
     try {
-      const { data: { user }, error: userError,} = await supabase.auth.getUser()
-
-      if (userError || !user) {
+      if (!user) {
         throw new Error("User not found")
       }
       // update user metadata role
-      const { data: updatedUser, error: metadataError } = await supabase.auth.updateUser({
-        data: {
+      const client = await clerkClient();
+      const updatedUser = await client.users.updateUser(user.id, {
+        publicMetadata: {
           role: selectedRole,
         },
       })
 
-      if (metadataError) {
-        throw metadataError
-      }
+
 
 
       const nextStep = selectedRole === "generator" ? "complete" : "license-verification"
 
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          role: selectedRole,
-          onboarding_step: nextStep,
-          onboarding_completed: selectedRole === "generator",
+      try {
+        await prisma.profile.update({
+          where: {
+            id: user.id
+          },
+          data: {
+            role: selectedRole,
+            onboardingStep: nextStep,
+            onboardingCompleted: selectedRole === "generator",
+          }
         })
-        .eq("id", user.id)
-
-      if (error) throw error
+      } catch (error) {
+        throw error
+      }
 
       router.refresh()
       router.push("/onboarding")

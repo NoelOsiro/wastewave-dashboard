@@ -2,8 +2,8 @@
 import { notFound } from "next/navigation";
 import { HouseDetailsCard } from "@/components/houses/HouseDetailsCard";
 import { CollectionHistoryCard } from "@/components/houses/CollectionHistoryCard";
-import { getHouseById } from "@/utils/supabase/houses";
-import { getHouseCollection } from "@/utils/supabase/collectionEvents";
+import { getHouseById } from "@/utils/houses";
+import { getHouseCollection } from "@/utils/collectionEvents";
 
 export const dynamic = "force-dynamic"; // Force SSR on every request
 // Define the props type explicitly

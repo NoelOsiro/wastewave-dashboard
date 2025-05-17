@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,57 +8,118 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/utils/supabase/client";
-import { Profile as Profiletype } from "@/lib/types";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader } from "lucide-react";
 import { toast } from "sonner";
+import { Profiletype } from "@/lib/types";
 
 const Profile = () => {
-  const [profile, setProfile] = useState<Profiletype | null>()
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
-  const [phone, setPhone] = useState("")
-  const [isSubmittting, setIsSubmittting] = useState(false)
-  const [errorMessage, setErrorMessage] = useState("")
-  const supabase = createClient();
+  const [profile, setProfile] = useState<Profiletype | null>(null);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user?.id)
-        .single()
-      setProfile(profile)
-    }
-    fetchProfile()
-  }, [])
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmittting(true)
-    if (!firstName || !lastName || !phone) {
-      setErrorMessage("Please fill in all required fields")
-      setIsSubmittting(false)
-      return
-    }
-    try {
-      // Upload file to Supabase Storage
-      const { data, error } = await supabase.from("profiles").update({
-        name: `${firstName} ${lastName}`,
-        phone: phone
-      }).eq("id", profile?.id).select().single()
-      if (data) {
-        toast.success("Profile updated")
+      try {
+        const response = await fetch("/api/profile");
+        if (!response.ok) throw new Error("Failed to fetch profile");
+        const data = await response.json();
+        setProfile(data);
+        if (data?.name) {
+          const [first, ...last] = data.name.split(" ");
+          setFirstName(first || "");
+          setLastName(last.join(" ") || "");
+        }
+        setPhone(data?.phone || "");
+      } catch (error) {
+        setErrorMessage("Failed to load profile");
+        toast.error("Failed to load profile");
       }
-    } catch (error: any) {
-      setErrorMessage(error.message || "Failed to update")
-      toast.error("Profile update failed")
-    } finally {
-      setIsSubmittting(false)
+    };
+    fetchProfile();
+  }, []);
+
+  const handleProfileSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    if (!firstName || !lastName || !phone) {
+      setErrorMessage("Please fill in all required fields");
+      setIsSubmitting(false);
+      toast.error("Please fill in all required fields");
+      return;
     }
-  }
+
+    try {
+      const response = await fetch("/api/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ firstName, lastName, phone }),
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Failed to update profile");
+      }
+
+      setProfile({
+        ...profile!,
+        name: `${firstName} ${lastName}`,
+        phone,
+      });
+      toast.success("Profile updated");
+    } catch (error) {
+      setErrorMessage((error as Error).message || "Failed to update profile");
+      toast.error((error as Error).message || "Failed to update profile");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsPasswordSubmitting(true);
+    setErrorMessage("");
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setErrorMessage("Please fill in all password fields");
+      setIsPasswordSubmitting(false);
+      toast.error("Please fill in all password fields");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword, confirmPassword }),
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Failed to update password");
+      }
+
+      toast.success("Password updated");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (error) {
+      setErrorMessage((error as Error).message || "Failed to update password");
+      toast.error((error as Error).message || "Failed to update password");
+    } finally {
+      setIsPasswordSubmitting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -71,12 +133,14 @@ const Profile = () => {
         <aside className="lg:w-1/4">
           <div className="flex flex-col items-center space-y-4 rounded-lg border p-6">
             <Avatar className="h-24 w-24">
-              <AvatarImage src="" alt="Profile" />
-              <AvatarFallback className="text-2xl bg-primary/10 text-primary font-medium">WA</AvatarFallback>
+              {/* <AvatarImage src={profile?.image || ""} alt="Profile" /> */}
+              <AvatarFallback className="text-2xl bg-primary/10 text-primary font-medium">
+                {profile?.name ? profile.name.charAt(0).toUpperCase() : "WA"}
+              </AvatarFallback>
             </Avatar>
             <div className="space-y-1 text-center">
               <h3 className="font-medium text-lg">{profile?.email}</h3>
-              <p className="text-sm text-muted-foreground">Administrator</p>
+              <p className="text-sm text-muted-foreground">{profile?.role || "Administrator"}</p>
             </div>
           </div>
         </aside>
@@ -96,7 +160,12 @@ const Profile = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <form onSubmit={handleSubmit}>
+                  {errorMessage && (
+                    <Alert variant="destructive">
+                      <AlertDescription>{errorMessage}</AlertDescription>
+                    </Alert>
+                  )}
+                  <form onSubmit={handleProfileSubmit}>
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <div className="space-y-2">
                         <Label htmlFor="first-name">First Name</Label>
@@ -104,7 +173,7 @@ const Profile = () => {
                           id="first-name"
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
-                          placeholder="e.g. Waste"
+                          placeholder="e.g. John"
                           required
                         />
                       </div>
@@ -114,7 +183,7 @@ const Profile = () => {
                           id="last-name"
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
-                          placeholder="e.g. Wave"
+                          placeholder="e.g. Doe"
                           required
                         />
                       </div>
@@ -123,8 +192,8 @@ const Profile = () => {
                         <Input
                           id="email"
                           type="email"
-                          value={profile?.email}
-                          placeholder="e.g. Waste"
+                          value={profile?.email || ""}
+                          placeholder="e.g. john.doe@example.com"
                           readOnly
                         />
                       </div>
@@ -135,17 +204,20 @@ const Profile = () => {
                           type="tel"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
-                          placeholder="e.g. Waste"
+                          placeholder="e.g. +254123456789"
                           required
                         />
                       </div>
                     </div>
-                    <Button onClick={handleSubmit} disabled={isSubmittting}  >
-                      {isSubmittting ? (
+                    <Button type="submit" disabled={isSubmitting} className="mt-4">
+                      {isSubmitting ? (
                         <>
-                          <Loader className="animate-spin h-4 w-4 mr-2" /> Uploading...
+                          <Loader className="animate-spin h-4 w-4 mr-2" /> Updating...
                         </>
-                      ) : ("Update profile")}</Button>
+                      ) : (
+                        "Update profile"
+                      )}
+                    </Button>
                   </form>
                 </CardContent>
               </Card>
@@ -159,21 +231,54 @@ const Profile = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="currentPassword">Current password</Label>
-                      <Input id="currentPassword" type="password" />
+                  {errorMessage && (
+                    <Alert variant="destructive">
+                      <AlertDescription>{errorMessage}</AlertDescription>
+                    </Alert>
+                  )}
+                  <form onSubmit={handlePasswordSubmit}>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="currentPassword">Current password</Label>
+                        <Input
+                          id="currentPassword"
+                          type="password"
+                          value={currentPassword}
+                          onChange={(e) => setCurrentPassword(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="newPassword">New password</Label>
+                        <Input
+                          id="newPassword"
+                          type="password"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="confirmPassword">Confirm password</Label>
+                        <Input
+                          id="confirmPassword"
+                          type="password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          required
+                        />
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="newPassword">New password</Label>
-                      <Input id="newPassword" type="password" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="confirmPassword">Confirm password</Label>
-                      <Input id="confirmPassword" type="password" />
-                    </div>
-                  </div>
-                  <Button>Change password</Button>
+                    <Button type="submit" disabled={isPasswordSubmitting} className="mt-4">
+                      {isPasswordSubmitting ? (
+                        <>
+                          <Loader className="animate-spin h-4 w-4 mr-2" /> Updating...
+                        </>
+                      ) : (
+                        "Change password"
+                      )}
+                    </Button>
+                  </form>
                 </CardContent>
               </Card>
             </TabsContent>

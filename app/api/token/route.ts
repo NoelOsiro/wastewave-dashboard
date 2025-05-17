@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 const MPESA_BASE_URL = 'https://sandbox.safaricom.co.ke'; // Change to live when ready
 // Define types for the API key data
@@ -18,19 +18,15 @@ interface ErrorResponse {
 }
 export async function GET(request: Request): Promise<NextResponse<MpesaAuthResponse | ErrorResponse>> {
     try {
-        // Initialize Supabase client
-        const supabase = createClient();
+        const apiKey = await prisma.apiKey.findFirst({
+            where: {
+                provider: 'mpesa'
+            }
+        });
 
-    // Fetch API credentials from Supabase
-    const { data, error } = await (await supabase)
-        .from('api_keys')
-        .select('*')
-        .eq('provider', 'mpesa')
-        .single();
+    if (!apiKey) throw new Error('API key not found');
     
-    if (error) throw new Error(error.message);
-    
-    const { consumer_key, consumer_secret } = data as ApiKey;
+    const { consumer_key, consumer_secret } = apiKey as ApiKey;
     
     // Get authentication token using fetch
     const auth = Buffer.from(`${consumer_key}:${consumer_secret}`).toString('base64');

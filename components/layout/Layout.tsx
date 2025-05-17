@@ -2,16 +2,15 @@ import React from "react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
-import { createClient } from "@/utils/supabase/server";
-
+import { currentUser } from "@clerk/nextjs/server";
 interface LayoutProps {
   children: React.ReactNode;
   initialSidebarOpen?: boolean
 }
 
 export async function Layout({ children, initialSidebarOpen = true }: LayoutProps) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  
+  const user = await currentUser()
 
   return (
 

@@ -9,12 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { createClient } from "@/utils/supabase/client";
 import PaymentConfig from "@/components/dashboard/PaymentsConfig";
-
-
-
-
 
 const Settings = () => {
 

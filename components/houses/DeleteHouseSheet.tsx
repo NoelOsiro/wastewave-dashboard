@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Eye, Trash2 } from "lucide-react";
-import { createClient } from "@/utils/supabase/client";
 import { HouseData } from "@/lib/types";
+import { deleteHouse } from "@/utils/houses";
 
 type DeleteHouseSheetProps = {
   open: boolean;
@@ -24,11 +24,8 @@ type DeleteHouseSheetProps = {
 export const DeleteHouseSheet = ({ open, onOpenChange, house, onSuccess }: DeleteHouseSheetProps) => {
   const onDelete = async () => {
     if (!house) return;
-    const supabase = createClient();
-    const { error } = await supabase
-      .from("houses")
-      .delete()
-      .eq("id", house.id); // Use id for uniqueness
+    
+    const { error } = await deleteHouse(house.id);
     if (error) {
       return toast.error("Failed to delete house");
     }

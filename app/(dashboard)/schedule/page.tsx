@@ -1,20 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { Suspense } from "react";
-
-
-
-
-import { fetchCollectionEvents } from "@/lib/supabase";
+import { Suspense } from "react";;
 import { recentCollectionsData } from "@/lib/types";
 import { Calendar } from "@/components/schedule/Calendar";
 import { UpcomingCollections } from "@/components/schedule/UpcomingCollections";
 import { RecentCollections } from "@/components/schedule/RecentCollections";
+import { getCollectionEvents } from "@/utils/collectionEvents";
 
 export const dynamic = "force-dynamic"; // Force SSR on every request
 
 export default async function SchedulePage() {
-  const collectionEvents = await fetchCollectionEvents();
+  const collectionEvents = await getCollectionEvents();
 
   const userData = {
     name: "Waste Admin",

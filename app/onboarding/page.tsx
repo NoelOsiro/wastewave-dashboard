@@ -2,14 +2,17 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { RoleSelectionStep } from "@/components/onboarding/role-selection-step";
 import { LicenseVerificationStep } from "@/components/onboarding/license-verification";
 import { VehicleComplianceStep } from "@/components/onboarding/vehicle-compliance";
 import { MultiStepForm } from "@/components/onboarding/multi-step-form";
-import { createLicense, createVehicle, updateOnboardingStatus, uploadFile } from "@/utils/supabase/onboarding";
+import { createLicense, createVehicle, updateOnboardingStatus, uploadFile } from "@/utils/onboarding";
 import { LicenseVerificationData, RoleSelectionData, Step, StepComponentProps, VehicleComplianceData } from "@/lib/types";
+import { useUser } from "@clerk/nextjs";
+import { prisma } from "@/lib/prisma";
+import { clerkClient } from "@clerk/nextjs/server";
+import { getAuth } from "@clerk/nextjs/server";
 
 interface FormData {
   roleSelection?: RoleSelectionData;
@@ -55,39 +58,33 @@ const steps: Step[] = [
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const supabase = createClient();
   const [userRole, setUserRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({});
-
+  const { isSignedIn, user } = useUser();
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const {
-          data: { user },
-          error: authError,
-        } = await supabase.auth.getUser();
-
-        if (authError || !user) {
+        if (!isSignedIn || !user) {
           toast.error("Please sign in to continue.");
           router.push("/sign-in");
           return;
         }
 
-        const { data: profile, error: profileError } = await supabase
-          .from("profiles")
-          .select("role, onboarding_step")
-          .eq("id", user.id)
-          .single();
+        const profile = await prisma.profile.findUnique({
+          where: {
+            id: user.id,
+          },
+        });
 
-        if (profileError) {
+        if (!profile) {
           throw new Error("Failed to fetch user profile");
         }
 
         if (profile) {
           setUserRole(profile.role);
-          setCurrentStep(profile.onboarding_step);
+          setCurrentStep(profile.onboardingStep);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -98,33 +95,57 @@ export default function OnboardingPage() {
     };
 
     fetchUserData();
-  }, [router, supabase]);
+  }, [router, user]);
 
   const handleFormComplete = async (formData: FormData) => {
     try {
-      const { data: { user }, error: authError} = await supabase.auth.getUser();
-      if (authError || !user) {
+      if (!user) {
         throw new Error("User not authenticated");
       }
       if (formData.roleSelection?.role) {
-        const { error: authUpdateError } = await supabase.auth.updateUser({
-          data: { role: formData.roleSelection.role },
+        // Get Clerk client instance
+        const client = await clerkClient();
+        
+        // Update Clerk user metadata
+        await client.users.updateUser(user.id, {
+          publicMetadata: {
+            ...user.publicMetadata,
+            role: formData.roleSelection.role,
+          },
         });
-        if (authUpdateError) {
-          throw new Error("Failed to update user role");
+
+        // Update Prisma profile
+        const profileUpdateResult = await prisma.profile.update({
+          where: { userId: user.id },
+          data: {
+            role: formData.roleSelection.role,
+            onboardingStep: formData.roleSelection.role === "generator" ? "complete" : "license-verification",
+            onboardingCompleted: formData.roleSelection.role === "generator",
+          },
+        });
+
+        if (!profileUpdateResult) {
+          throw new Error("Failed to update profile");
         }
 
-        const { error: profileUpdateError } = await supabase
-          .from("profiles")
-          .update({
-            role: formData.roleSelection.role,
-            onboarding_step: formData.roleSelection.role === "generator" ? "complete" : "license-verification",
-            onboarding_completed: formData.roleSelection.role === "generator",
-          })
-          .eq("id", user.id);
+        try {
+          const vehicleUpdate = await prisma.profile.update({
+            where: {
+              id: user.id,
+            },
+            data: {
+              role: formData.roleSelection.role,
+              onboardingStep: formData.roleSelection.role === "generator" ? "complete" : "license-verification",
+              onboardingCompleted: formData.roleSelection.role === "generator",
+            },
+          });
 
-        if (profileUpdateError) {
-          throw new Error("Failed to update profile");
+          if (!vehicleUpdate) {
+            throw new Error("Failed to update vehicle profile");
+          }
+        } catch (error) {
+          console.error("Error updating vehicle profile:", error);
+          throw error;
         }
 
         if (formData.roleSelection.role === "generator") {
@@ -140,14 +161,15 @@ export default function OnboardingPage() {
 
         await uploadFile("licenses", filePath, file);
 
-        const { error: licenseError } = await createLicense({
-          license_number: formData.licenseVerification.licenseNumber,
-          issuing_date: formData.licenseVerification.issuingDate,
-          expiry_date: formData.licenseVerification.expiryDate,
-          license_type: formData.licenseVerification.licenseType,
-          file_path: filePath,
-        });
-        if (licenseError) {
+        try {
+          await createLicense({
+            licenseNumber: formData.licenseVerification.licenseNumber,
+            issuingDate: formData.licenseVerification.issuingDate,
+            expiryDate: formData.licenseVerification.expiryDate,
+            licenseType: formData.licenseVerification.licenseType,
+            file: file,
+          });
+        } catch (error) {
           throw new Error("Failed to create license");
         }
 
@@ -165,8 +187,8 @@ export default function OnboardingPage() {
         await uploadFile("vehicles", labelPath, labelPhoto);
 
         let sealingPath = "";
-        if (formData.vehicleCompliance.sealingPhoto) {
-          const sealingPhoto = formData.vehicleCompliance.sealingPhoto;
+        const sealingPhoto = formData.vehicleCompliance.sealingPhoto;
+        if (sealingPhoto) {
           const sealingExt = sealingPhoto.name.split(".").pop();
           const sealingFileName = `vehicle-${formData.vehicleCompliance.vehicleReg.replace(/\s+/g, "-")}-sealing-${Date.now()}.${sealingExt}`;
           sealingPath = `vehicles/${sealingFileName}`;
@@ -174,15 +196,16 @@ export default function OnboardingPage() {
           await uploadFile("vehicles", sealingPath, sealingPhoto);
         }
 
-        const { error: vehicleError } = await createVehicle({
-          registration_number: formData.vehicleCompliance.vehicleReg,
-          vehicle_type: formData.vehicleCompliance.vehicleType,
-          capacity: formData.vehicleCompliance.vehicleCapacity,
-          label_photo_path: labelPath,
-          sealing_photo_path: sealingPath,
-          approved_routes: formData.vehicleCompliance.routes,
-        });
-        if (vehicleError) {
+        try {
+          await createVehicle({
+            vehicleReg: formData.vehicleCompliance.vehicleReg,
+            vehicleType: formData.vehicleCompliance.vehicleType,
+            vehicleCapacity: formData.vehicleCompliance.vehicleCapacity,
+            labelPhoto: labelPhoto,
+            sealingPhoto: sealingPhoto || null,
+            routes: formData.vehicleCompliance.routes,
+          });
+        } catch (error) {
           throw new Error("Failed to create vehicle");
         }
 

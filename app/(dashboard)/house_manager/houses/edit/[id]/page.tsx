@@ -1,7 +1,7 @@
 
 import { notFound } from "next/navigation";
 import { EditHouseForm } from "./EditHouseForm";
-import { getHouseById } from "@/utils/supabase/houses";
+import { getHouseById } from "@/utils/houses";
 
 export const dynamic = "force-dynamic"; // Force SSR on every request
 interface HousePageProps {

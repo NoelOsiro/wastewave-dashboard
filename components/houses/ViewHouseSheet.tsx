@@ -20,8 +20,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { createClient } from "@/utils/supabase/client";
+
 import { HouseData } from "@/lib/types";
+import { getHouseCollection } from "@/utils/collectionEvents";
 
 type ViewHouseSheetProps = {
   open: boolean;
@@ -36,16 +37,11 @@ export const ViewHouseSheet = ({ open, onOpenChange, house, onEdit }: ViewHouseS
   useEffect(() => {
     if (house && open) {
       const fetchCollectionHistory = async () => {
-        const supabase = createClient();
-        const { data, error } = await supabase
-          .from("collections")
-          .select()
-          .eq("house", house.id)
-          .order("collection_date", { ascending: false });
-        if (error) {
-          toast.error("Failed to fetch collection history");
+        const collections = await getHouseCollection(house.id);
+        if (collections) {
+          setCollectionHistory(collections);
         } else {
-          setCollectionHistory(data || []);
+          toast.error("Failed to fetch collection history");
         }
       };
       fetchCollectionHistory();

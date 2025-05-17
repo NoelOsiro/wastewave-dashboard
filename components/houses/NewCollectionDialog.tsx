@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CalendarClock } from "lucide-react";
-import { createClient } from "@/utils/supabase/client";
+import { prisma } from "@/lib/prisma";
+import { createCollectionEvent } from "@/utils/collectionEvents";
 
 interface NewCollectionDialogProps {
   open: boolean;
@@ -37,15 +38,15 @@ export function NewCollectionDialog({
     setIsLoading(true);
 
     try {
-      const supabase = createClient();
-      
-      const { error } = await supabase.from("collections").insert({
-        house: houseId,
-        collection_date: collectionDate,
+      const { success, data, error } = await createCollectionEvent({
+        generatorId: houseId,
         status: "Scheduled",
-        collector: "System", // This would ideally come from the logged-in user
+        wasteType: "",
+        amount: 0,
+        title: collectionDate,
+        location: "",
       });
-
+      
       if (error) throw error;
       
       toast.success("Collection scheduled successfully");
@@ -54,13 +55,11 @@ export function NewCollectionDialog({
       // Optionally refresh the page to show the new collection
       window.location.reload();
     } catch (error) {
-      console.error("Error scheduling collection:", error);
       toast.error("Failed to schedule collection");
     } finally {
       setIsLoading(false);
     }
   };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="glass-card sm:max-w-[425px]">

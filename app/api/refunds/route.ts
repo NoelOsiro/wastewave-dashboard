@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 const MPESA_BASE_URL = 'https://sandbox.safaricom.co.ke';
@@ -28,16 +28,15 @@ interface ErrorResponse {
 
 export async function POST(request: Request): Promise<NextResponse<ReversalResponse | ErrorResponse>> {
   try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('api_keys')
-      .select('*')
-      .eq('provider', 'mpesa')
-      .single();
+    const apiKey = await prisma.apiKey.findFirst({
+      where: {
+        provider: 'mpesa',
+      },
+    });
     
-    if (error) throw new Error(error.message);
+    if (!apiKey) throw new Error('Failed to get API key');
     
-    const { consumer_key, consumer_secret, initiator_name, security_credential } = data as ApiKey;
+    const { consumer_key, consumer_secret, initiator_name, security_credential } = apiKey as ApiKey;
     const { transactionId, amount } = await request.json() as ReversalRequest;
 
     // Generate access token

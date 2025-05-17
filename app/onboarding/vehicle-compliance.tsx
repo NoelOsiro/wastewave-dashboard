@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { createVehicle, updateOnboardingStatus, uploadFile } from "@/utils/supabase/onboarding"
+import { createVehicle, updateOnboardingStatus, uploadFile } from "@/utils/onboarding"
 
 export default function VehicleCompliance() {
   const router = useRouter()

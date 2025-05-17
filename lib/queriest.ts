@@ -1,9 +1,9 @@
-// lib/supabase/queries.ts
-import { createClient } from "@/utils/supabase/server";
+// lib/prisma/queries.ts
+import { prisma } from "@/lib/prisma";
 import { DashboardData, UserRole } from "./types";
 
 
-// Fallback hardcoded data (for testing or if DB is empty)
+// Fallback hardcoded data (same as provided)
 const fallbackData: DashboardData = {
   revenueData: [
     { name: "Jan", revenue: 4000 },
@@ -15,11 +15,11 @@ const fallbackData: DashboardData = {
     { name: "Jul", revenue: 3490 },
   ],
   wasteCollectionData: [
-    { name: "Plastic", value: 400 },
-    { name: "Paper", value: 300 },
-    { name: "Organic", value: 500 },
-    { name: "Metal", value: 200 },
-    { name: "Glass", value: 278 },
+    { name: "plastic", value: 400 },
+    { name: "paper", value: 300 },
+    { name: "organic", value: 500 },
+    { name: "metal", value: 200 },
+    { name: "glass", value: 278 },
   ],
   scheduleData: [
     { name: "Mon", completed: 24, pending: 5 },
@@ -54,112 +54,259 @@ const fallbackData: DashboardData = {
 };
 
 export async function getDashboardData(role: UserRole, userId: string): Promise<DashboardData> {
-  const supabase = await createClient();
-
   try {
     switch (role) {
       case UserRole.Admin:
         // Fetch all data for admin
-        const [revenueRes, wasteRes, scheduleRes, paymentsRes, collectionsRes, performersRes] = await Promise.all([
-          supabase.from("revenue").select("*").limit(7),
-          supabase.from("waste_collections").select("*").limit(5),
-          supabase.from("schedules").select("*").limit(7),
-          supabase.from("payments").select("*").order("date", { ascending: false }).limit(5),
-          supabase.from("collections").select("*").order("date", { ascending: true }).limit(5),
-          supabase.from("performers").select("*").order("points", { ascending: false }).limit(5),
+        const [revenueData, wasteCollectionData, scheduleData, paymentsData, collectionsData, performersData] = await Promise.all([
+          // Revenue: Aggregate MpesaTransaction amounts by month (simplified)
+          prisma.mpesaTransaction.groupBy({
+            by: ['transactionDate'],
+            where: { status: 'Completed' },
+            _sum: { amount: true },
+            orderBy: { transactionDate: 'asc' },
+            take: 7,
+          }).then(data =>
+            data.map(d => ({
+              name: new Date(d.transactionDate).toLocaleString('default', { month: 'short' }),
+              revenue: d._sum.amount || 0,
+            }))
+          ),
+          // Waste Collections: Aggregate WasteTransaction by wasteType
+          prisma.wasteTransaction.groupBy({
+            by: ['wasteType'],
+            _sum: { amount: true },
+            orderBy: {
+              _sum: {
+                amount: 'desc'  // or 'asc' for ascending order
+              }
+            },
+            take: 5,
+          }).then(data =>
+            data.map(d => ({
+              name: d.wasteType,
+              value: d._sum.amount || 0,
+            }))
+          ),
+          // Schedules: Aggregate CollectionRequest by day (simplified)
+          prisma.collectionRequest.groupBy({
+            by: ['requestedTime'],
+            where: { status: { in: ['pending', 'collected'] } },
+            _count: { id: true },
+            orderBy: { requestedTime: 'asc' },
+            take: 7,
+          }).then(data =>
+            data.map(d => ({
+              name: new Date(d.requestedTime).toLocaleString('default', { weekday: 'short' }),
+              completed: d._count.id || 0,
+              pending: d._count.id || 0,
+            }))
+          ),
+          // Payments: Fetch recent MpesaTransactions
+          prisma.mpesaTransaction.findMany({
+            where: { status: { in: ['Completed', 'Pending'] } },
+            include: { payer: { include: { Generator: true } } },
+            orderBy: { transactionDate: 'desc' },
+            take: 5,
+          }).then(data =>
+            data.map((t, index) => ({
+              id: index + 1,
+              house: t.payer.Generator?.address || 'Unknown',
+              amount: `$${t.amount.toFixed(2)}`,
+              method: t.phoneNumber.includes('254') ? 'M-Pesa' : 'SasaPay', // Simplified logic
+              status: t.status === 'Completed' ? 'Paid' : 'Pending',
+              date: new Date(t.transactionDate).toLocaleString('default', { hour: 'numeric', minute: 'numeric' }),
+            }))
+          ),
+          // Collections: Fetch upcoming CollectionRequests
+          prisma.collectionRequest.findMany({
+            where: { status: 'pending' },
+            include: { generator: true },
+            orderBy: { requestedTime: 'asc' },
+            take: 5,
+          }).then(data =>
+            data.map((c, index) => ({
+              id: index + 1,
+              house: c.generator.address,
+              date: new Date(c.requestedTime).toLocaleString('default', {
+                weekday: 'short',
+                hour: 'numeric',
+                minute: 'numeric',
+              }),
+              status: 'Scheduled',
+            }))
+          ),
+          // Performers: Derive from Generator (placeholder, needs schema extension)
+          prisma.generator.findMany({
+            include: { collectionRequests: true },
+            orderBy: { id: 'desc' }, // Placeholder sorting
+            take: 5,
+          }).then(data =>
+            data.map((g, index) => ({
+              id: index + 1,
+              house: g.address,
+              points: g.collectionRequests.length * 100, // Placeholder logic
+              wasteSeparation: `${Math.min(90 + g.collectionRequests.length, 98)}%`, // Placeholder
+            }))
+          ),
         ]);
 
-        if (revenueRes.error || wasteRes.error || scheduleRes.error || paymentsRes.error || collectionsRes.error || performersRes.error) {
-          throw new Error("Failed to fetch admin data");
-        }
-
         return {
-          revenueData: revenueRes.data || fallbackData.revenueData,
-          wasteCollectionData: wasteRes.data || fallbackData.wasteCollectionData,
-          scheduleData: scheduleRes.data || fallbackData.scheduleData,
-          recentPayments: paymentsRes.data || fallbackData.recentPayments,
-          upcomingCollections: collectionsRes.data || fallbackData.upcomingCollections,
-          topPerformers: performersRes.data || fallbackData.topPerformers,
+          revenueData: revenueData.length ? revenueData : fallbackData.revenueData,
+          wasteCollectionData: wasteCollectionData.length ? wasteCollectionData : fallbackData.wasteCollectionData,
+          scheduleData: scheduleData.length ? scheduleData : fallbackData.scheduleData,
+          recentPayments: paymentsData.length ? paymentsData : fallbackData.recentPayments,
+          upcomingCollections: collectionsData.length ? collectionsData : fallbackData.upcomingCollections,
+          topPerformers: performersData.length ? performersData : fallbackData.topPerformers,
         };
 
       case UserRole.House:
+      case UserRole.Generator: // Map House to Generator
         // Fetch house-specific data
-        const [housePaymentsRes, houseCollectionsRes] = await Promise.all([
-          supabase.from("payments").select("*").eq("user_id", userId).order("date", { ascending: false }).limit(5),
-          supabase.from("collections").select("*").eq("user_id", userId).order("date", { ascending: true }).limit(5),
+        const [housePayments, houseCollections] = await Promise.all([
+          prisma.mpesaTransaction.findMany({
+            where: { payerId: userId, status: { in: ['Completed', 'Pending'] } },
+            include: { payer: { include: { Generator: true } } },
+            orderBy: { transactionDate: 'desc' },
+            take: 5,
+          }).then(data =>
+            data.map((t, index) => ({
+              id: index + 1,
+              house: t.payer.Generator?.address || 'Unknown',
+              amount: `$${t.amount.toFixed(2)}`,
+              method: t.phoneNumber.includes('254') ? 'M-Pesa' : 'SasaPay',
+              status: t.status === 'Completed' ? 'Paid' : 'Pending',
+              date: new Date(t.transactionDate).toLocaleString('default', { hour: 'numeric', minute: 'numeric' }),
+            }))
+          ),
+          prisma.collectionRequest.findMany({
+            where: { generator: { userId } },
+            include: { generator: true },
+            orderBy: { requestedTime: 'asc' },
+            take: 5,
+          }).then(data =>
+            data.map((c, index) => ({
+              id: index + 1,
+              house: c.generator.address,
+              date: new Date(c.requestedTime).toLocaleString('default', {
+                weekday: 'short',
+                hour: 'numeric',
+                minute: 'numeric',
+              }),
+              status: 'Scheduled',
+            }))
+          ),
         ]);
 
-        if (housePaymentsRes.error || houseCollectionsRes.error) {
-          throw new Error("Failed to fetch house data");
-        }
-
         return {
-          revenueData: [], // Houses don't see revenue
+          revenueData: [],
           wasteCollectionData: fallbackData.wasteCollectionData, // Could fetch user-specific waste data
           scheduleData: fallbackData.scheduleData, // Could fetch user-specific schedules
-          recentPayments: housePaymentsRes.data || fallbackData.recentPayments,
-          upcomingCollections: houseCollectionsRes.data || fallbackData.upcomingCollections,
-          topPerformers: [], // Houses don't see performers
+          recentPayments: housePayments.length ? housePayments : fallbackData.recentPayments,
+          upcomingCollections: houseCollections.length ? houseCollections : fallbackData.upcomingCollections,
+          topPerformers: [],
         };
 
       case UserRole.Collector:
         // Fetch collector-specific data
-        const [collectorCollectionsRes] = await Promise.all([
-          supabase.from("collections").select("*").eq("collector_id", userId).order("date", { ascending: true }).limit(5),
-        ]);
-
-        if (collectorCollectionsRes.error) {
-          throw new Error("Failed to fetch collector data");
-        }
+        const collectorCollections = await prisma.collectionRequest.findMany({
+          where: { collector: { userId } },
+          include: { generator: true },
+          orderBy: { requestedTime: 'asc' },
+          take: 5,
+        }).then(data =>
+          data.map((c, index) => ({
+            id: index + 1,
+            house: c.generator.address,
+            date: new Date(c.requestedTime).toLocaleString('default', {
+              weekday: 'short',
+              hour: 'numeric',
+              minute: 'numeric',
+            }),
+            status: 'Scheduled',
+          }))
+        );
 
         return {
           revenueData: [],
-          wasteCollectionData: fallbackData.wasteCollectionData, // Could fetch collector-specific waste data
+          wasteCollectionData: fallbackData.wasteCollectionData,
           scheduleData: [],
           recentPayments: [],
-          upcomingCollections: collectorCollectionsRes.data || fallbackData.upcomingCollections,
+          upcomingCollections: collectorCollections.length ? collectorCollections : fallbackData.upcomingCollections,
           topPerformers: [],
         };
 
       case UserRole.Manager:
         // Fetch manager-specific data
-        const [managerCollectionsRes, managerPerformersRes] = await Promise.all([
-          supabase.from("collections").select("*").eq("manager_id", userId).order("date", { ascending: true }).limit(5),
-          supabase.from("performers").select("*").eq("manager_id", userId).order("points", { ascending: false }).limit(5),
+        const [managerCollections, managerPerformers] = await Promise.all([
+          prisma.collectionRequest.findMany({
+            where: { collector: { userId } }, // Placeholder: Adjust for manager-specific logic
+            include: { generator: true },
+            orderBy: { requestedTime: 'asc' },
+            take: 5,
+          }).then(data =>
+            data.map((c, index) => ({
+              id: index + 1,
+              house: c.generator.address,
+              date: new Date(c.requestedTime).toLocaleString('default', {
+                weekday: 'short',
+                hour: 'numeric',
+                minute: 'numeric',
+              }),
+              status: 'Scheduled',
+            }))
+          ),
+          prisma.generator.findMany({
+            include: { collectionRequests: true },
+            orderBy: { id: 'desc' }, // Placeholder sorting
+            take: 5,
+          }).then(data =>
+            data.map((g, index) => ({
+              id: index + 1,
+              house: g.address,
+              points: g.collectionRequests.length * 100,
+              wasteSeparation: `${Math.min(90 + g.collectionRequests.length, 98)}%`,
+            }))
+          ),
         ]);
-
-        if (managerCollectionsRes.error || managerPerformersRes.error) {
-          throw new Error("Failed to fetch manager data");
-        }
 
         return {
           revenueData: [],
           wasteCollectionData: [],
           scheduleData: [],
           recentPayments: [],
-          upcomingCollections: managerCollectionsRes.data || fallbackData.upcomingCollections,
-          topPerformers: managerPerformersRes.data || fallbackData.topPerformers,
+          upcomingCollections: managerCollections.length ? managerCollections : fallbackData.upcomingCollections,
+          topPerformers: managerPerformers.length ? managerPerformers : fallbackData.topPerformers,
         };
 
       case UserRole.Transporter:
-      case UserRole.Generator:
       case UserRole.Disposer:
       case UserRole.Recycler:
-        // Fetch role-specific data (placeholder, adjust as needed)
-        const [roleCollectionsRes] = await Promise.all([
-          supabase.from("collections").select("*").eq("role_id", userId).order("date", { ascending: true }).limit(5),
-        ]);
-
-        if (roleCollectionsRes.error) {
-          throw new Error(`Failed to fetch ${role} data`);
-        }
+        // Fetch role-specific data
+        const roleCollections = await prisma.collectionRequest.findMany({
+          where: { collector: { userId } }, // Adjust based on role
+          include: { generator: true },
+          orderBy: { requestedTime: 'asc' },
+          take: 5,
+        }).then(data =>
+          data.map((c, index) => ({
+            id: index + 1,
+            house: c.generator.address,
+            date: new Date(c.requestedTime).toLocaleString('default', {
+              weekday: 'short',
+              hour: 'numeric',
+              minute: 'numeric',
+            }),
+            status: 'Scheduled',
+          }))
+        );
 
         return {
           revenueData: [],
-          wasteCollectionData: fallbackData.wasteCollectionData, // Adjust based on role
+          wasteCollectionData: fallbackData.wasteCollectionData,
           scheduleData: [],
           recentPayments: [],
-          upcomingCollections: roleCollectionsRes.data || fallbackData.upcomingCollections,
+          upcomingCollections: roleCollections.length ? roleCollections : fallbackData.upcomingCollections,
           topPerformers: [],
         };
 
@@ -168,6 +315,6 @@ export async function getDashboardData(role: UserRole, userId: string): Promise<
     }
   } catch (error) {
     console.error("Error fetching dashboard data:", error);
-    return fallbackData; // Fallback to hardcoded data on error
+    return fallbackData;
   }
 }

@@ -1,11 +1,10 @@
 "use server"; // Mark the entire file as a server module
 
-import { createClient } from "@/utils/supabase/server";
+import { createHouse } from "@/utils/houses";
 import { houseSchema} from "../hooks/useFormSchema";
 import { redirect } from "next/navigation";
 
 export async function addHouse(formData: FormData) {
-  const supabase = await createClient();
 
   const rawData = {
     name: formData.get("name") as string,
@@ -22,10 +21,7 @@ export async function addHouse(formData: FormData) {
     redirect(`/houses/add?error=${encodeURIComponent(errorMessage)}`);
   }
 
-  const { data, error } = await supabase
-    .from("houses")
-    .insert([result.data])
-    .select();
+  const error = await createHouse(result.data);
 
   if (error) {
     redirect(`/houses/add?error=${encodeURIComponent("Failed to add house")}`);

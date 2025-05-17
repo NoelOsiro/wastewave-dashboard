@@ -1,11 +1,11 @@
 
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import { prisma } from "@/lib/prisma";
 import { houseSchema } from "../../hooks/useFormSchema";
+import { updatedHouse } from "@/utils/houses";
 
-export async function updateHouse(houseId: number, formData: FormData) {
-  const supabase = await createClient();
+export async function updateHouse(houseId: string, formData: FormData) {
 
   const rawData = {
     name: formData.get("name") as string,
@@ -22,15 +22,10 @@ export async function updateHouse(houseId: number, formData: FormData) {
     throw new Error(errorMessage);
   }
 
-  const { data, error } = await supabase
-    .from("houses")
-    .update(result.data)
-    .eq("id", houseId)
-    .select();
+  const {error} = await updatedHouse(houseId, result.data)
 
   if (error) {
-    throw new Error("Failed to update house: " + error.message);
+    throw new Error("Failed to update house: " + error);
   }
 
-  return data;
 }

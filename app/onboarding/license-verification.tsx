@@ -11,9 +11,10 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { createLicense, updateOnboardingStatus, uploadFile } from "@/utils/supabase/onboarding"
+import { createLicense, updateOnboardingStatus, uploadFile } from "@/utils/onboarding"
 import { DatePicker } from "@/components/ui/date-picker"
-import { createClient } from "@/utils/supabase/client"
+import { useUser } from "@clerk/nextjs"
+import { prisma } from "@/lib/prisma"
 
 export default function LicenseVerification() {
   const router = useRouter()
@@ -25,16 +26,15 @@ export default function LicenseVerification() {
   const [isUploading, setIsUploading] = useState(false)
   const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle")
   const [errorMessage, setErrorMessage] = useState("")
-  const supabase = createClient()
+  const { isLoaded, user } = useUser();
 
   useEffect(() => {
     const fetchRole = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user?.id)
-        .single()
+      const profile = await prisma.profile.findUnique({
+        where: {
+          id: user?.id
+        }
+      })
 
       if (profile?.role === "transporter") setLicenseType("transport")
       if (profile?.role === "recycler") setLicenseType("reuse")
@@ -79,7 +79,6 @@ export default function LicenseVerification() {
     setUploadStatus("idle")
 
     try {
-      // Upload file to Supabase Storage
       const fileExt = file.name.split(".").pop()
       const fileName = `${licenseNumber.replace(/\s+/g, "-")}-${Date.now()}.${fileExt}`
       const filePath = `licenses/${fileName}`
@@ -88,11 +87,11 @@ export default function LicenseVerification() {
 
       // Save license metadata to database
       await createLicense({
-        license_number: licenseNumber,
-        issuing_date: issuingDate?.toISOString(),
-        expiry_date: expiryDate?.toISOString(),
-        license_type: licenseType,
-        file_path: filePath,
+        licenseNumber: licenseNumber,
+        issuingDate: issuingDate?.toISOString(),
+        expiryDate: expiryDate?.toISOString(),
+        licenseType: licenseType,
+        file: file,
       })
 
       if (licenseType === "disposal" || licenseType === "reuse") {
@@ -102,7 +101,7 @@ export default function LicenseVerification() {
           router.push("/dashboard")
         }, 2000)
       } else {
-        await updateOnboardingStatus("vehicle-compliance")
+        await updateOnboardingStatus("vehicle-compliance", true)
         setUploadStatus("success")
         setTimeout(() => {
           router.push("/onboarding")

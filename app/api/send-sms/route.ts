@@ -1,13 +1,7 @@
-import { createClient } from "@/utils/supabase/server";
+import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 const AT_BASE_URL = "https://api.sandbox.africastalking.com/version1/message"; // Use https://api.africastalking.com for production
-
-interface ApiKey {
-  consumer_key: string; // Username
-  consumer_secret: string; // API Key
-  short_code: string; // Sender ID
-}
 
 interface SmsRequest {
   phoneNumber: string; // e.g., "+254712345678"
@@ -33,18 +27,17 @@ interface ErrorResponse {
 
 export async function POST(request: Request): Promise<NextResponse<SmsResponse | ErrorResponse>> {
   try {
-    const supabase = await createClient();
-    const { data: apiKeyData, error: apiKeyError } = await supabase
-      .from("api_keys")
-      .select("*")
-      .eq("provider", "africastalking")
-      .single();
+    const apiKey = await prisma.apiKey.findFirst({
+      where: {
+        provider: 'africastalking',
+      },
+    });
 
-    if (apiKeyError || !apiKeyData) {
-      throw new Error(apiKeyError?.message || "Africa’s Talking API keys not found");
+    if (!apiKey) {
+      throw new Error("Africa’s Talking API keys not found");
     }
 
-    const { consumer_key: username, consumer_secret: apiKey, short_code: from } = apiKeyData as ApiKey;
+    const { consumer_key: username, consumer_secret: consumer_secret, initiator_name: from } = apiKey;
     const { phoneNumber, message } = (await request.json()) as SmsRequest;
 
     // Validate inputs
@@ -66,7 +59,7 @@ export async function POST(request: Request): Promise<NextResponse<SmsResponse |
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        apiKey,
+        consumer_secret,
         Accept: "application/json",
       },
       body: new URLSearchParams({
@@ -91,20 +84,6 @@ export async function POST(request: Request): Promise<NextResponse<SmsResponse |
         { error: `SMS failed: ${recipient.status} - ${smsData.SMSMessageData.Message}` },
         { status: 400 }
       );
-    }
-
-    // Log the sent SMS in Supabase (optional)
-    const { error: logError } = await supabase.from("sms_logs").insert({
-      phone_number: phoneNumber,
-      message,
-      status: recipient.status,
-      message_id: recipient.messageId,
-      cost: recipient.cost,
-      sent_at: new Date().toISOString(),
-    });
-
-    if (logError) {
-      console.error("Failed to log SMS:", logError.message);
     }
 
     return NextResponse.json(smsData);

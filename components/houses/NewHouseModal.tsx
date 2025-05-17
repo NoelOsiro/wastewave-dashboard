@@ -2,15 +2,27 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { House } from "lucide-react";
-import { createClient } from "@/utils/supabase/client";
 import { HouseFormValues } from "@/lib/types";
 import { houseSchema } from "@/app/(dashboard)/house_manager/houses/hooks/useFormSchema";
 
@@ -23,19 +35,37 @@ type NewHouseModalProps = {
 export const NewHouseModal = ({ open, onOpenChange, onSuccess }: NewHouseModalProps) => {
   const form = useForm<HouseFormValues>({
     resolver: zodResolver(houseSchema),
-    defaultValues: { name: "", owner: "", contact: "", email: "", location: "", status: "Active" },
+    defaultValues: {
+      name: "",
+      owner: "",
+      contact: "",
+      email: "",
+      location: "",
+      status: "Active",
+    },
     mode: "onChange",
   });
 
   const onSubmit = async (data: HouseFormValues) => {
-    const supabase = createClient();
-    const { data: insertedData, error } = await supabase.from("houses").insert([data]).select();
-    if (error) return toast.error("Failed to add new house");
-    if (insertedData) {
-      toast.success(`${insertedData[0].name} has been added successfully`);
+    try {
+      const response = await fetch("/api/houses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Failed to add new house");
+      }
+
+      toast.success(`${data.name} has been added successfully`);
       onSuccess();
       form.reset();
       onOpenChange(false);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to add new house";
+      toast.error(errorMessage);
     }
   };
 
@@ -50,18 +80,120 @@ export const NewHouseModal = ({ open, onOpenChange, onSuccess }: NewHouseModalPr
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField control={form.control} name="name" render={({ field, fieldState }) => (
-              <FormItem>
-                <FormLabel>House Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g. Garcia Residence" {...field} className={fieldState.error ? "border-red-500" : ""} />
-                </FormControl>
-                <FormMessage className="text-red-500" />
-              </FormItem>
-            )} />
-            {/* Other fields: owner, contact, email, location, status */}
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <FormLabel>House Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="e.g. Garcia Residence"
+                      {...field}
+                      className={fieldState.error ? "border-red-500" : ""}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-red-500" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="owner"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <FormLabel>Owner Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="e.g. John Doe"
+                      {...field}
+                      className={fieldState.error ? "border-red-500" : ""}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-red-500" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="contact"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <FormLabel>Contact</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="e.g. +254123456789"
+                      {...field}
+                      className={fieldState.error ? "border-red-500" : ""}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-red-500" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="e.g. john.doe@example.com"
+                      {...field}
+                      className={fieldState.error ? "border-red-500" : ""}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-red-500" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="location"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <FormLabel>Location</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="e.g. 123 Green St, Nairobi"
+                      {...field}
+                      className={fieldState.error ? "border-red-500" : ""}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-red-500" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <SelectTrigger className={form.formState.errors.status ? "border-red-500" : ""}>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Active">Active</SelectItem>
+                        <SelectItem value="Inactive">Inactive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage className="text-red-500" />
+                </FormItem>
+              )}
+            />
             <DialogFooter>
-              <Button type="submit">Add House</Button>
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Adding..." : "Add House"}
+              </Button>
             </DialogFooter>
           </form>
         </Form>

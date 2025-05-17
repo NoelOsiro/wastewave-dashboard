@@ -1,104 +1,137 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+WasteWise: Next.js Waste Management Platform
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
+ A Next.js platform for managing waste collection, transportation, and recycling with Clerk authentication, Azure SQL, and Prisma ORM.
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
 
-## Features
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Middleware
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+  Features ·
+  Demo ·
+  Deploy to Vercel ·
+  Clone and Run Locally ·
+  Feedback and Issues
 
-## Demo
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
 
-## Deploy to Vercel
+Features
 
-Vercel deployment will guide you through creating a Supabase account and project.
+Built with Next.js App Router
+Server Components, Client Components, Route Handlers, and Server Actions
+Middleware for authentication with Clerk
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+Authentication via Clerk
+Seamless user management and session handling
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
 
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
+Database management with Azure SQL and Prisma ORM
+Schema migrations and type-safe queries
 
-## Clone and run locally
 
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
+Styling with Tailwind CSS
+UI components with shadcn/ui
+Onboarding for roles (e.g., Generator, Transporter, Recycler)
+M-Pesa integration for payments
+File uploads for license and vehicle compliance
 
-2. Create a Next.js app using the Supabase Starter template npx command
+Demo
+A fully working demo is coming soon. Check back for updates!
+Deploy to Vercel
+You can deploy this project to Vercel with the following steps:
 
-   ```bash
-   npx create-next-app --example with-supabase with-supabase-app
-   ```
+Clone the Repository:Clone this repository to your GitHub account or fork it.
 
-   ```bash
-   yarn create next-app --example with-supabase with-supabase-app
-   ```
+Deploy with Vercel:Click the button below to deploy directly to Vercel. You’ll be prompted to configure environment variables during deployment.
 
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
-   ```
 
-3. Use `cd` to change into the app's directory
+Set Environment Variables:During deployment, add the following environment variables in Vercel’s dashboard (see Clone and Run Locally for details):
 
-   ```bash
-   cd with-supabase-app
-   ```
+CLERK_SECRET_KEY
+CLERK_PUBLISHABLE_KEY
+DATABASE_URL (Azure SQL connection string)
+NEXT_PUBLIC_Mpesa_CONSUMER_KEY (if using M-Pesa)
+NEXT_PUBLIC_Mpesa_CONSUMER_SECRET (if using M-Pesa)
 
-4. Rename `.env.example` to `.env.local` and update the following:
 
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY]
-   ```
+Complete Deployment:Vercel will build and deploy the app. Once deployed, your app will be accessible at https://your-project-name.vercel.app.
 
-   Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` can be found in [your Supabase project's API settings](https://app.supabase.com/project/_/settings/api)
 
-5. You can now run the Next.js local development server:
+Clone and Run Locally
+Follow these steps to set up and run the project locally:
 
-   ```bash
-   npm run dev
-   ```
+Prerequisites:
 
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+Node.js (v18 or higher)
+pnpm (recommended, or use npm/yarn)
+A Clerk account for authentication
+An Azure SQL database
+(Optional) M-Pesa credentials for payment integration
 
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
 
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
+Clone the Repository:
+git clone https://github.com/your-username/wastewise.git
+cd wastewise
 
-## Feedback and issues
 
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
+Install Dependencies:
+pnpm install
 
-## More Supabase examples
+Or use npm/yarn:
+npm install
 
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+
+Set Up Environment Variables:Copy .env.example to .env.local and update the following:
+CLERK_SECRET_KEY=your_clerk_secret_key
+CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+DATABASE_URL=your_azure_sql_connection_string
+NEXT_PUBLIC_Mpesa_CONSUMER_KEY=your_mpesa_consumer_key
+NEXT_PUBLIC_Mpesa_CONSUMER_SECRET=your_mpesa_consumer_secret
+
+
+Clerk Keys: Find these in your Clerk Dashboard under API Keys.
+Azure SQL Connection String: Get this from your Azure Portal under your SQL database’s connection settings. Example:Server=tcp:your-server.database.windows.net,1433;Initial Catalog=your-database;Persist Security Info=False;User ID=your-username;Password=your-password;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+
+
+M-Pesa Keys: Obtain from the Safaricom Developer Portal if using M-Pesa.
+
+
+Set Up Prisma:
+
+Update prisma/schema.prisma with your models (e.g., User, Generator, MpesaTransaction).
+Run migrations to set up the Azure SQL database:npx prisma migrate dev --name init
+
+
+
+
+Run the Development Server:
+pnpm dev
+
+Or:
+npm run dev
+
+The app should now be running at http://localhost:3000.
+
+Customize shadcn/ui (Optional):If you want to change the default shadcn/ui styles, delete components.json and re-initialize:
+npx shadcn-ui@latest init
+
+Follow the prompts to select your preferred styles.
+
+
+Feedback and Issues
+Please file feedback and issues on the project’s GitHub Issues page.
+Project Structure
+
+app/: Next.js App Router routes and pages (e.g., onboarding, dashboard)
+components/: Reusable UI components (e.g., NewHouseModal, MultiStepForm)
+lib/: Utilities and server-side logic
+prisma.ts: Prisma client setup
+onboarding.ts: Server actions for onboarding
+generators.ts: Server actions for house/generator management
+
+
+prisma/: Prisma schema and migrations
+public/uploads/: Local storage for file uploads (e.g., licenses, vehicle photos)
+
+Contributing
+Contributions are welcome! Please open a pull request or issue on GitHub.
+License
+This project is licensed under the MIT License.

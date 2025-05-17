@@ -1,56 +1,47 @@
-import { createClient } from "@/utils/supabase/server";
+import { prisma } from "@/lib/prisma";
+import { MpesaCallbackBody, MpesaMetadata } from "@/lib/types";
 import { NextResponse } from "next/server";
 
-interface MpesaCallbackBody {
-  Body: {
-    stkCallback: {
-      MerchantRequestID: string;
-      CheckoutRequestID: string;
-      ResultCode: number;
-      ResultDesc: string;
-      CallbackMetadata?: {
-        Item: Array<{ Name: string; Value: string | number }>;
-      };
-    };
-  };
-}
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient();
     const callbackData = (await request.json()) as MpesaCallbackBody;
     const { stkCallback } = callbackData.Body;
-
     const { CheckoutRequestID, ResultCode, ResultDesc, CallbackMetadata } = stkCallback;
 
-    // Extract metadata (e.g., M-Pesa receipt number)
-    const metadata = CallbackMetadata?.Item.reduce(
+    // Extract metadata
+    const metadata: MpesaMetadata = CallbackMetadata?.Item?.reduce(
       (acc, item) => ({ ...acc, [item.Name]: item.Value }),
-      {} as Record<string, string | number>
-    );
+      {} as MpesaMetadata
+    ) || {} as MpesaMetadata;
 
-    // Update transaction status in Supabase
+    // Update transaction status in Prisma
     const status = ResultCode === 0 ? "Completed" : "Failed";
-    const { error } = await supabase
-      .from("transactions")
-      .update({
-        status,
-        result_code: ResultCode,
-        result_desc: ResultDesc,
-        mpesa_receipt_number: metadata?.MpesaReceiptNumber || null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("checkout_request_id", CheckoutRequestID);
 
-    if (error) {
-      console.error("Failed to update transaction:", error.message);
-      return NextResponse.json({ error: "Failed to process callback" }, { status: 500 });
+    const updatedTransaction = await prisma.mpesaTransaction.update({
+      where: { checkoutRequestId: CheckoutRequestID },
+      data: {
+        status,
+        resultCode: ResultCode,
+        resultDesc: ResultDesc,
+        mpesaReceiptNumber: metadata.MpesaReceiptNumber?.toString() || null,
+        transactionDate: metadata.TransactionDate
+          ? new Date(metadata.TransactionDate.toString())
+          : undefined,
+        phoneNumber: metadata.PhoneNumber?.toString() || undefined,
+        amount: metadata.Amount ? Number(metadata.Amount) : undefined,
+      },
+    });
+
+    if (!updatedTransaction) {
+      console.error("Transaction not found for CheckoutRequestID:", CheckoutRequestID);
+      return NextResponse.json({ error: "Transaction not found" }, { status: 404 });
     }
 
     return NextResponse.json({ message: "Callback processed successfully" });
-  } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : "Unknown error";
-    console.error("Callback error:", errorMessage);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    console.error("Callback error:", errorMessage, { error });
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

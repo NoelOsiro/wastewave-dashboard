@@ -1,21 +1,21 @@
 // app/dashboard/page.tsx
-import { createClient } from "@/utils/supabase/server";
 import { getMetricsComponent } from "@/lib/dashboard/metrics"; // Fixed import path
 import { DashboardChart } from "@/components/dashboard/DashboardChart";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { Calendar } from "lucide-react"; // Import types
 import { DashboardData, UserRole } from "@/lib/types";
 import { getDashboardData } from "@/lib/queriest";
+import { currentUser } from '@clerk/nextjs/server'
 
 export default async function Home() {
-  const supabase = await createClient();
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-  if (userError || !user) {
+  const user = await currentUser();
+
+  if (!user) {
     return <div className="text-center text-red-500">Error: Unable to fetch user data</div>;
   }
 
-  const role = (user.user_metadata.role as UserRole) || UserRole.House; // Fallback to 'house' if role is undefined
+  const role = (user.publicMetadata.role as UserRole) || UserRole.House; // Fallback to 'house' if role is undefined
   const dashboardData: DashboardData = await getDashboardData(role, user.id);
   const metricsComponent = getMetricsComponent(role);
 

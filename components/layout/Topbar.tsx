@@ -17,7 +17,9 @@ import { Input } from "@/components/ui/input";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import Link from "next/link";
-import { createClient } from "@/utils/supabase/client";
+import { auth } from "@clerk/nextjs/server";
+import { useClerk } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 interface TopbarProps {
   initialSidebarOpen: boolean
@@ -38,13 +40,9 @@ export const Topbar: React.FC<TopbarProps> = ({ initialSidebarOpen, user }) => {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(initialSidebarOpen)
   const [isMobile, setIsMobile] = useState(false)
+  const { signOut } = useClerk();
+  const router = useRouter();
   
-  // Dummy user data - in a real app, this would come from auth context
-  // const user = {
-  //   name: "Waste Admin",
-  //   role: "Administrator",
-  //   email: "admin@wastewave.com"
-  // };
   // Mobile detection (moved from Layout)
   useEffect(() => {
     const checkIfMobile = () => {
@@ -130,19 +128,17 @@ export const Topbar: React.FC<TopbarProps> = ({ initialSidebarOpen, user }) => {
     setUnreadNotifications(0);
   };
 
-  const handleLogout = async () => {
-    const supabase = createClient();
-    const { error } = await supabase.auth.signOut();
-    
-    if (error) {
-      console.error('Error logging out:', error.message);
-      // Optionally show an error toast/notification
-      return;
-    }
-    
-    // Redirect to login page or home page after logout
-    window.location.href = '/sign-in';
-  };
+  
+
+const handleLogout = async () => {
+  try {
+    await signOut();
+    router.push('/sign-in');
+  } catch (error) {
+    console.error('Error logging out:', error);
+    // Optionally show an error toast/notification
+  }
+};
   
   return (
     <header className="h-16 bg-background border-b border-border flex items-center px-4 z-10">

@@ -1,18 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-
 import { Suspense } from "react";
-import { fetchHouses } from "@/lib/supabase";
 import Link from "next/link";
 import ClientComponents from "./clientcomponents";
 import { Metrics } from "@/components/houses/Metrics";
+import { getHousesData } from "@/utils/houses";
 
 
 // Mark as dynamic to force SSR on every request (optional)
 export const dynamic = "force-dynamic";
 
 export default async function HousesPage() {
-  const houses = await fetchHouses();
+  const houses = await getHousesData();
 
   return (
     <div className="space-y-8">

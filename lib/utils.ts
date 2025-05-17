@@ -1,4 +1,3 @@
-import { createClient } from "@/utils/supabase/server";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 

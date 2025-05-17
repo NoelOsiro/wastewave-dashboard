@@ -1,12 +1,11 @@
 import { Layout } from "@/components/layout/Layout";
 import { Suspense, use } from "react";
-import { fetchPayments, fetchPaymentsBreakdown, fetchPaymentStatusBreakdown } from "@/lib/supabase";
 import { Metrics } from "@/components/payments/Metrics";
 import { RevenueChart } from "@/components/payments/RevenueChart";
 import { PaymentStatus } from "@/components/payments/PaymentStatus";
 import { PaymentMethodsChart } from "@/components/payments/PaymentMethodsChart";
 import { PaymentsTable } from "@/components/payments/PaymentsTable";
-import { fetchAllPaymentData } from "@/utils/supabase/payments";
+import { fetchAllPaymentData } from "@/utils/payments";
 
 
 export const dynamic = "force-dynamic"; // Force SSR on every request

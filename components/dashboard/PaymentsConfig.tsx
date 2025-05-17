@@ -5,8 +5,9 @@ import { Label } from "@/components/ui/label";
 import { Button } from "../ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../ui/card";
 import { useState } from "react";
-import { createClient } from "@/utils/supabase/client";
+
 import { toast } from "sonner";
+import { prisma } from "@/lib/prisma";
 
 export default function PaymentConfig() {
     const [config, setConfig] = useState({
@@ -20,7 +21,6 @@ export default function PaymentConfig() {
     });
 
     const [loading, setLoading] = useState(false);
-    const supabase = createClient();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setConfig((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -33,17 +33,16 @@ export default function PaymentConfig() {
     const handleSave = async () => {
         setLoading(true);
 
-        const { error } = await supabase
-            .from("api_keys")
-            .insert([config]);
+        const apiKey = await prisma.apiKey.create({
+            data: config
+        });
 
         setLoading(false);
 
-        if (error) {
-            console.error("Error inserting data:", error);
-            toast.error("Failed to save settings!");
-        } else {
+        if (apiKey) {
             toast.success("Payment settings saved!");
+        } else {
+            toast.error("Failed to save settings!");
         }
     };
 

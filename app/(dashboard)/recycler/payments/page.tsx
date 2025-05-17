@@ -1,18 +1,18 @@
 import { Layout } from "@/components/layout/Layout";
 import { Suspense, use } from "react";
-import { fetchPayments, fetchPaymentsBreakdown, fetchPaymentStatusBreakdown } from "@/lib/supabase";
 import { Metrics } from "./componenents/Metrics";
 import { RevenueChart } from "./componenents/RevenueChart";
 import { PaymentMethodsChart } from "./componenents/PaymentMethodsChart";
 import { PaymentStatus } from "./componenents/PaymentStatus";
 import { PaymentsTable } from "./componenents/PaymentsTable";
+import { getAllPaymentsBreakdown, getAllPaymentData, getAllPaymentStatusBreakdown } from "@/utils/payments";
 
 export const dynamic = "force-dynamic"; // Force SSR on every request
 
 export default async function PaymentsPage() {
-  const payments = await fetchPayments();
-  const paymentStatusBreakdown = await fetchPaymentStatusBreakdown();
-  const paymentsBreakdown = await fetchPaymentsBreakdown();
+  const payments = await getAllPaymentData();
+  const paymentStatusBreakdown = await getAllPaymentStatusBreakdown();
+  const paymentsBreakdown = await getAllPaymentsBreakdown();
   const userData = {
     name: "Waste Admin",
     email: "admin@wastewave.com",
@@ -51,7 +51,7 @@ export default async function PaymentsPage() {
         )}
         
         
-        <PaymentsTable initialPayments={payments} />
+        {/* <PaymentsTable initialPayments={payments} /> */}
       </div>
   );
 }

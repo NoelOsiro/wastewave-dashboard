@@ -1,17 +1,17 @@
-import { createClient } from "@/utils/supabase/server";
+
 import NotificationMetrics from "./NotificationMetrics";
 import NotificationTabs from "./NotificationTabs";
 import New from "./New";
 import History from "./History";
 import Templates from "./Templates";
+import { fetchNotificationHistory, fetchNotificationMetrics, fetchNotificationTemplates } from "@/utils/notifications";
 
-// Fetch data from Supabase
+// Fetch data from Backend
 async function fetchNotificationData() {
-  const supabase = await createClient();
 
-  const { data: templates } = await supabase.from("notification_templates").select("*");
-  const { data: history } = await supabase.from("notifications").select("*").order("date", { ascending: false });
-  const { data: metrics } = await supabase.rpc("get_notification_metrics"); // Assuming a custom RPC function
+  const templates = await fetchNotificationTemplates();
+  const history = await fetchNotificationHistory();
+  const metrics = await fetchNotificationMetrics();
 
   return {
     templates: templates || [],
