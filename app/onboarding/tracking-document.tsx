@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-import { createTrackingDocument, updateOnboardingStatus } from "@/utils/onboarding"
+import {  updateOnboardingStatus } from "@/utils/onboarding"
 import { DatePicker } from "@/components/ui/date-picker"
 import { TimePicker } from "@/components/ui/time-picker"
 
@@ -46,15 +46,15 @@ export default function TrackingDocument() {
       }
 
       // Create tracking document in database
-      const document = await createTrackingDocument({
-        waste_type: wasteType,
-        quantity: Number.parseFloat(quantity),
-        container_count: Number.parseInt(containerCount),
-        collection_point: collectionPoint,
-        disposal_point: disposalPoint,
-        collection_date: combinedDate.toISOString(),
-        digital_signature: "Electronically signed",
-      })
+      // const document = await createTrackingDocument({
+      //   waste_type: wasteType,
+      //   quantity: Number.parseFloat(quantity),
+      //   container_count: Number.parseInt(containerCount),
+      //   collection_point: collectionPoint,
+      //   disposal_point: disposalPoint,
+      //   collection_date: combinedDate.toISOString(),
+      //   digital_signature: "Electronically signed",
+      // })
 
       // Update onboarding status
       await updateOnboardingStatus("tracking_document", true)
