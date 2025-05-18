@@ -19,16 +19,16 @@ export const UpcomingCollections = ({ events }: UpcomingCollectionsProps) => {
                 <h4 className="font-medium">{event.title}</h4>
                 <div className="flex items-center text-muted-foreground text-sm mt-1">
                   <Calendar size={14} className="mr-1" />
-                  <span>{new Date(event.date).toLocaleDateString()}</span>
+                  <span>{new Date(event.createdAt).toLocaleDateString()}</span>
                   <span className="mx-1">•</span>
                   <Clock size={14} className="mr-1" />
-                  <span>{event.time}</span>
+                  <span>{event.requestedTime}</span>
                 </div>
                 <div className="flex items-center text-muted-foreground text-sm mt-1">
                   <MapPin size={14} className="mr-1" />
                   <span>{event.location}</span>
                   <span className="mx-1">•</span>
-                  <span>{event.houses} houses</span>
+                  <span>24 houses</span>
                 </div>
               </div>
               <span

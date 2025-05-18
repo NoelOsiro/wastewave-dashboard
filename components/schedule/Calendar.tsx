@@ -33,15 +33,15 @@ export const Calendar = ({ initialEvents }: CalendarProps) => {
   };
 
   const calendarEvents = initialEvents.map((event) => {
-    const { start, end } = parseTimeRange(event.date, event.time);
+    const { start, end } = parseTimeRange(event.createdAt, event.requestedTime);
     return {
       id: event.id.toString(),
-      title: event.title,
+      title: event.title || "",
       start,
       end,
       extendedProps: {
         location: event.location,
-        houses: event.houses,
+        houses: "24",
         status: event.status,
       },
     };
