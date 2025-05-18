@@ -45,6 +45,7 @@ export async function updateProfile(data: {
   lastName: string;
   phone: string;
 }): Promise<{ success: boolean; error?: string }> {
+  const client= await clerkClient();
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
@@ -60,7 +61,7 @@ export async function updateProfile(data: {
     });
 
     // Update Clerk user metadata
-    await clerkClient.users.updateUser(userId, {
+    await client.users.updateUser(userId, {
       firstName: data.firstName,
       lastName: data.lastName,
     });
@@ -77,6 +78,7 @@ export async function updatePassword(data: {
   newPassword: string;
   confirmPassword: string;
 }): Promise<{ success: boolean; error?: string }> {
+  const client= await clerkClient();
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
@@ -87,7 +89,7 @@ export async function updatePassword(data: {
 
     // Verify current password (Clerk doesn't store passwords, so this may need external validation)
     // For now, assume Clerk's password update API
-    await clerkClient.users.updateUser(userId, {
+    await client.users.updateUser(userId, {
       password: data.newPassword,
     });
 
