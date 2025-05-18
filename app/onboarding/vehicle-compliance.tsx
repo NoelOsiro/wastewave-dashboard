@@ -75,16 +75,16 @@ export default function VehicleCompliance() {
 
       // Save vehicle data to database
       await createVehicle({
-        registration_number: vehicleReg,
-        vehicle_type: vehicleType,
-        capacity: vehicleCapacity,
-        label_photo_path: labelPath,
-        sealing_photo_path: sealingPath,
-        approved_routes: routes,
+        vehicleReg,
+        vehicleType,
+        vehicleCapacity,
+        labelPhoto,
+        sealingPhoto,
+        routes,
       })
 
       // Update onboarding status
-      await updateOnboardingStatus("tracking-document")
+      await updateOnboardingStatus("vehicle-compliance", true)
 
       setSubmitStatus("success")
       setTimeout(() => {
