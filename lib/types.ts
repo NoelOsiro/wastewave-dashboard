@@ -22,7 +22,7 @@ export type StatusBreakdownItem = {
   value: number;
   totalAmount: string;
 };
-export type HouseStatus = "Active" | "Inactive";
+export type HouseStatus = "Active" | "Inactive" | "Pending" | string;
 
 export type HouseData = {
   id: string;
