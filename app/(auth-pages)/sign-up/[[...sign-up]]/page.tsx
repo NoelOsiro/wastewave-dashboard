@@ -1,12 +1,7 @@
 "use client";
-
-import RenderSignUpForm from "@/components/auth/SignUpForm";
 import { SignUp } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
-
 
 export default function Signup() {
-  const router = useRouter();
 
   return (
     <div className="flex min-h-screen w-full flex-col md:flex-row">

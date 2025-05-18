@@ -3,9 +3,6 @@ import type React from "react"
 import { backdround } from "@/components/auth/BackGround"
 import { SignIn } from "@clerk/nextjs"
 
-
-
-
 export default function Login() {
 
   return (
