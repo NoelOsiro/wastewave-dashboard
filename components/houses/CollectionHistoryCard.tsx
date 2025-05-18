@@ -62,7 +62,7 @@ export function CollectionHistoryCard({
                   {collectionHistory.map((collection) => (
                     <TableRow key={collection.id}>
                       <TableCell>
-                        {new Date(collection.date).toLocaleDateString()}
+                        {new Date(collection.createdAt).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
                         <span
@@ -77,7 +77,7 @@ export function CollectionHistoryCard({
                           {collection.status || "Completed"}
                         </span>
                       </TableCell>
-                      <TableCell>{collection.collector || "System"}</TableCell>
+                      <TableCell>{collection.collector?.userId || "System"}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
