@@ -26,7 +26,7 @@ export default function LicenseVerification() {
   const [isUploading, setIsUploading] = useState(false)
   const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle")
   const [errorMessage, setErrorMessage] = useState("")
-  const { isLoaded, user } = useUser();
+  const { user } = useUser();
 
   useEffect(() => {
     const fetchRole = async () => {
@@ -107,9 +107,9 @@ export default function LicenseVerification() {
           router.push("/onboarding")
         }, 2000)
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error uploading license:", error)
-      setErrorMessage(error.message || "Failed to upload license")
+      setErrorMessage(error as string || "Failed to upload license")
       setUploadStatus("error")
     } finally {
       setIsUploading(false)

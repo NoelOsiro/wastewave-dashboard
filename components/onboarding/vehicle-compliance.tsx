@@ -73,6 +73,7 @@ export function VehicleComplianceStep({ formData, updateFormData }: VehicleCompl
       try {
         setLabelPhoto(file);
       } catch (error) {
+        console.error("Error processing label photo:", error);
         toast.error("Could not process the label photo. Please try again.");
       } finally {
         setIsUploading(false);
@@ -87,6 +88,7 @@ export function VehicleComplianceStep({ formData, updateFormData }: VehicleCompl
       try {
         setSealingPhoto(file);
       } catch (error) {
+        console.error("Error processing sealing photo:", error);
         toast.error("Could not process the sealing photo. Please try again.");
       } finally {
         setIsUploading(false);

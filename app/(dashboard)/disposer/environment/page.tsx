@@ -1,5 +1,5 @@
 import { DashboardChart } from "@/components/dashboard/DashboardChart"
-import { Home as HomeIcon, Calendar } from "lucide-react"
+import { Calendar } from "lucide-react"
 import { DashboardCard } from "@/components/dashboard/DashboardCard"
 import TransporterMetrics from "@/components/dashboard/metrics/transporter_metrics"
 import DisposerMetrics from "@/components/dashboard/metrics/disposer_metrics"

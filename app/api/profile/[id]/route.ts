@@ -1,4 +1,3 @@
-import { prisma } from "@/lib/prisma";
 import { fetchProfile } from "@/utils/profile";
 import { NextResponse } from "next/server";
 

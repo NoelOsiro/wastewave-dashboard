@@ -1,5 +1,4 @@
 import { DashboardChart } from "@/components/dashboard/DashboardChart";
-import { revenueData } from "@/lib/types";
 interface Iprops {
   data:{name:string,value:number}[]
 }

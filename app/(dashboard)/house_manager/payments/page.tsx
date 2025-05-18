@@ -1,10 +1,10 @@
-import { Suspense } from "react";
 import { Metrics } from "@/components/payments/Metrics";
-import { RevenueChart } from "@/components/payments/RevenueChart";
-import { PaymentStatus } from "@/components/payments/PaymentStatus";
 import { PaymentMethodsChart } from "@/components/payments/PaymentMethodsChart";
 import { PaymentsTable } from "@/components/payments/PaymentsTable";
+import { PaymentStatus } from "@/components/payments/PaymentStatus";
+import { RevenueChart } from "@/components/payments/RevenueChart";
 import { fetchAllPaymentData } from "@/utils/payments";
+import { Suspense } from "react";
 
 
 
@@ -12,15 +12,6 @@ export const dynamic = "force-dynamic"; // Force SSR on every request
 
 export default async function PaymentsPage() {
   const { payments, paymentsBreakdown, paymentStatusBreakdown, paymentsDateBreakdown } = await fetchAllPaymentData()
-
-  console.log(paymentsDateBreakdown);
-  const userData = {
-    name: "Waste Admin",
-    email: "admin@wastewave.com",
-    role: "house-manager",
-    image: "https://images.unsplash.com/photo-1502685104226-e9b3c4f2e0a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
-  }
-
   return (
     <div className="space-y-8">
       <div>

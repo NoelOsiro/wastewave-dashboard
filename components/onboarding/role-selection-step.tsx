@@ -54,6 +54,7 @@ export function RoleSelectionStep({ formData, updateFormData }: StepComponentPro
       setSelectedRole(value);
       updateFormData({ role: value });
     } catch (error) {
+      console.error("Error selecting role:", error);
       toast.error("Failed to select role. Please try again.")
     }
   }

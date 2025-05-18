@@ -1,7 +1,5 @@
 // app/(dashboard)/loading.tsx
 "use client";
-
-import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Loading() {

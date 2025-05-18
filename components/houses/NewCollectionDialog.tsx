@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CalendarClock } from "lucide-react";
-import { prisma } from "@/lib/prisma";
 import { createCollectionEvent } from "@/utils/collectionEvents";
 
 interface NewCollectionDialogProps {
@@ -38,7 +37,7 @@ export function NewCollectionDialog({
     setIsLoading(true);
 
     try {
-      const { success, data, error } = await createCollectionEvent({
+      const { error } = await createCollectionEvent({
         generatorId: houseId,
         status: "Scheduled",
         wasteType: "",

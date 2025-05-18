@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader } from "lucide-react";
@@ -39,7 +39,7 @@ const Profile = () => {
         }
         setPhone(data?.phone || "");
       } catch (error) {
-        setErrorMessage("Failed to load profile");
+        setErrorMessage(error as string);
         toast.error("Failed to load profile");
       }
     };

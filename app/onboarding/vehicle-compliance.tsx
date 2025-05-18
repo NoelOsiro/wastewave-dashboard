@@ -90,9 +90,9 @@ export default function VehicleCompliance() {
       setTimeout(() => {
         router.push("/onboarding")
       }, 2000)
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error registering vehicle:", error)
-      setErrorMessage(error.message || "Failed to register vehicle")
+      setErrorMessage(error as string || "Failed to register vehicle")
       setSubmitStatus("error")
     } finally {
       setIsSubmitting(false)

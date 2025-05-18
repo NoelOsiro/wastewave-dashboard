@@ -1,7 +1,6 @@
 
 "use server";
 
-import { prisma } from "@/lib/prisma";
 import { houseSchema } from "../../hooks/useFormSchema";
 import { updatedHouse } from "@/utils/houses";
 

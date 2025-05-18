@@ -43,7 +43,7 @@ export type HouseFormValues = {
   contact: string;
   email: string;
   location: string;
-  status: "Active" | "Inactive";
+  status: "Active" | "Inactive"|"Pending"|string;
 };
 export interface StepComponentProps<T> {
   formData: T;

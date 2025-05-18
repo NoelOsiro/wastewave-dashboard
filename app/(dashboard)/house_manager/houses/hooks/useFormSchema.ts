@@ -6,5 +6,5 @@ export const houseSchema = z.object({
   contact: z.string().min(1, "Contact is required").max(50, "Contact is too long"),
   email: z.string().email("Invalid email address").min(1, "Email is required"),
   location: z.string().min(1, "Location is required").max(200, "Location is too long"),
-  status: z.enum(["Active", "Inactive"], { message: "Status must be Active or Inactive" }),
+  status: z.string(),
 });
