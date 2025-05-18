@@ -20,14 +20,14 @@ import {
   MapPin,
   Truck
 } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import { SerializedUser } from "@/lib/types";
 
 
 
 
 interface SidebarProps {
   initialSidebarOpen: boolean
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  user: any // Adjust type
 }
 const getNavItems = (role:string) => {
   const commonLinks = [
@@ -173,23 +173,48 @@ const getNavItems = (role:string) => {
           href: "/help",
         },
       ]
+    case "admin":
+      return [
+        ...commonLinks,
+        {
+          title: "Users",
+          icon: Users,
+          href: "/admin/users",
+        },
+        {
+          title: "Roles",
+          icon: Award,
+          href: "/admin/roles",
+        },
+        {
+          title: "Settings",
+          icon: Settings,
+          href: "/admin/settings",
+        },
+      ]
 
     default:
       return commonLinks
   }
 }
-export const Sidebar: React.FC<SidebarProps> = ({ initialSidebarOpen, user}) => {
+export const Sidebar: React.FC<SidebarProps> = ({ initialSidebarOpen}) => {
   const [open, setOpen] = useState(initialSidebarOpen)
   const pathname = usePathname();
-
-  
-  
-  const sidebarLinks = getNavItems(user?.user_metadata.role);
-  
+  const { user } = useUser();
+  const serializedUser: SerializedUser | null = user
+    ? {
+        id: user.id,
+        email: user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)?.emailAddress || null,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.publicMetadata.role as string | null,
+        imageUrl: user.imageUrl,
+      }
+    : null;
+  const sidebarLinks = getNavItems(serializedUser?.role as string);
   const isCurrentPath = (path: string) => {
     return pathname === path;
   };
-  
   return (
     <>
       {/* Mobile sidebar backdrop */}

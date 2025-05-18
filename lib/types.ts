@@ -287,3 +287,12 @@ export interface MpesaMetadata {
   Amount?: number;
   [key: string]: string | number | undefined;
 }
+
+export type SerializedUser = {
+  id: string;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  role: string | null;
+  imageUrl: string | null;
+};

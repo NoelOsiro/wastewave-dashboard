@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Menu, Bell, Moon, Sun, Search, Settings } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -18,12 +18,12 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
-import { useClerk } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { SerializedUser } from "@/lib/types";
 
 interface TopbarProps {
   initialSidebarOpen: boolean
-  user: any
 }
 
 interface PageLink {
@@ -32,7 +32,7 @@ interface PageLink {
   description: string;
 }
 
-export const Topbar: React.FC<TopbarProps> = ({ initialSidebarOpen, user }) => {
+export const Topbar: React.FC<TopbarProps> = ({ initialSidebarOpen }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [unreadNotifications, setUnreadNotifications] = useState(3);
@@ -42,7 +42,18 @@ export const Topbar: React.FC<TopbarProps> = ({ initialSidebarOpen, user }) => {
   const [isMobile, setIsMobile] = useState(false)
   const { signOut } = useClerk();
   const router = useRouter();
-  
+
+  const { user } = useUser();
+  const serializedUser: SerializedUser | null = user
+    ? {
+      id: user.id,
+      email: user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)?.emailAddress || null,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.publicMetadata.role as string | null,
+      imageUrl: user.imageUrl,
+    }
+    : null;
   // Mobile detection (moved from Layout)
   useEffect(() => {
     const checkIfMobile = () => {
@@ -67,22 +78,22 @@ export const Topbar: React.FC<TopbarProps> = ({ initialSidebarOpen, user }) => {
     { title: "Settings", url: "/settings", description: "System configuration and preferences" },
     { title: "Profile", url: "/profile", description: "Your account information" }
   ];
-  
+
   // Filtered page links based on search query
-  const filteredLinks = pageLinks.filter(link => 
-    link.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredLinks = pageLinks.filter(link =>
+    link.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     link.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  
+
   // Check for user's preferred color scheme
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const isDark = localStorage.getItem('theme') === 'dark' || 
-        ((!localStorage.getItem('theme')) && 
-        window.matchMedia('(prefers-color-scheme: dark)').matches);
-      
+      const isDark = localStorage.getItem('theme') === 'dark' ||
+        ((!localStorage.getItem('theme')) &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches);
+
       setIsDarkMode(isDark);
-      
+
       if (isDark) {
         document.documentElement.classList.add('dark');
       } else {
@@ -90,22 +101,22 @@ export const Topbar: React.FC<TopbarProps> = ({ initialSidebarOpen, user }) => {
       }
     }
   }, []);
-  
+
   // Update current time every minute
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 60000);
-    
+
     return () => {
       clearInterval(timer);
     };
   }, []);
-  
+
   // Toggle dark mode
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
-    
+
     if (isDarkMode) {
       document.documentElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
@@ -114,11 +125,11 @@ export const Topbar: React.FC<TopbarProps> = ({ initialSidebarOpen, user }) => {
       localStorage.setItem('theme', 'dark');
     }
   };
-  
+
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      month: 'short', 
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
       day: 'numeric',
       year: 'numeric'
     });
@@ -128,30 +139,30 @@ export const Topbar: React.FC<TopbarProps> = ({ initialSidebarOpen, user }) => {
     setUnreadNotifications(0);
   };
 
-  
 
-const handleLogout = async () => {
-  try {
-    await signOut();
-    router.push('/sign-in');
-  } catch (error) {
-    console.error('Error logging out:', error);
-    // Optionally show an error toast/notification
-  }
-};
-  
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      router.push('/sign-in');
+    } catch (error) {
+      console.error('Error logging out:', error);
+      // Optionally show an error toast/notification
+    }
+  };
+
   return (
     <header className="h-16 bg-background border-b border-border flex items-center px-4 z-10">
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center">
-          <button 
+          <button
             className="p-2 rounded-full hover:bg-accent lg:hidden"
             onClick={toggleSidebar}
             aria-label="Toggle sidebar"
           >
             <Menu size={20} />
           </button>
-          
+
           {/* <div className="hidden md:flex flex-col ml-4">
             <span className="font-medium text-sm">{user.name}</span>
             <span className="text-xs text-muted-foreground">{user.role}</span>
@@ -196,15 +207,15 @@ const handleLogout = async () => {
             </PopoverContent>
           </Popover>
         </div>
-        
+
         <div className="flex items-center space-x-4">
           <div className="hidden md:block text-sm text-muted-foreground">
             {formatDate(currentTime)}
           </div>
-          
+
           <Popover>
             <PopoverTrigger asChild>
-              <button 
+              <button
                 className="p-2 rounded-full hover:bg-accent relative"
                 aria-label="Notifications"
               >
@@ -220,7 +231,7 @@ const handleLogout = async () => {
               <div className="flex items-center justify-between p-4 border-b">
                 <h4 className="font-medium">Notifications</h4>
                 {unreadNotifications > 0 && (
-                  <button 
+                  <button
                     onClick={markAllAsRead}
                     className="text-xs text-primary hover:underline"
                   >
@@ -258,34 +269,34 @@ const handleLogout = async () => {
               </div>
             </PopoverContent>
           </Popover>
-          
-          <button 
+
+          <button
             className="p-2 rounded-full hover:bg-accent"
             onClick={toggleDarkMode}
             aria-label="Toggle dark mode"
           >
             {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
-          
+
           {/* Profile Avatar Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="focus:outline-none" aria-label="User profile">
                 <Avatar className="h-8 w-8 cursor-pointer hover:ring-2 hover:ring-primary transition-all">
-                  <AvatarImage src="" alt="Profile" />
-                  <AvatarFallback className="bg-primary/10 text-primary font-medium">{user.user_metadata.name[0]}</AvatarFallback>
+                  <AvatarImage src={serializedUser?.imageUrl || ""} alt="Profile" />
+                  <AvatarFallback className="bg-primary/10 text-primary font-medium">{serializedUser?.firstName?.[0] || 'U'}</AvatarFallback>
                 </Avatar>
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <div className="flex items-center p-3">
                 <Avatar className="h-10 w-10 mr-3">
-                  <AvatarImage src="" alt="Profile" />
-                  <AvatarFallback className="bg-primary/10 text-primary font-medium">{user.user_metadata.name[0]}</AvatarFallback>
+                  <AvatarImage src={serializedUser?.imageUrl || ""} alt="Profile" />
+                  <AvatarFallback className="bg-primary/10 text-primary font-medium">{serializedUser?.firstName?.[0] || 'U'}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="text-sm font-medium">{user.user_metadata.name}</p>
-                  <p className="text-xs text-muted-foreground">{user.email}</p>
+                  <p className="text-sm font-medium">{serializedUser?.firstName}</p>
+                  <p className="text-xs text-muted-foreground">{serializedUser?.email}</p>
                 </div>
               </div>
               <DropdownMenuSeparator />

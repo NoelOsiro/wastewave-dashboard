@@ -21,10 +21,10 @@ export default async function Layout({ children, initialSidebarOpen = true }: La
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       <TooltipProvider delayDuration={200}>
-        <Topbar initialSidebarOpen={initialSidebarOpen} user={user} />
+        <Topbar initialSidebarOpen={initialSidebarOpen} />
 
         <div className="flex flex-1 overflow-hidden">
-          <Sidebar initialSidebarOpen={initialSidebarOpen} user={user} />
+          <Sidebar initialSidebarOpen={initialSidebarOpen} />
 
           <main
             className={`flex-1 overflow-y-auto transition-all duration-300 ease-in-out bg-background ${
