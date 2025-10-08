@@ -10,6 +10,11 @@ export const metadata: Metadata = {
   title: `Account general settings | Dashboard - ${CONFIG.appName}`,
 };
 
-export default function Page() {
-  return <AccountGeneralView />;
+type Props = {
+  params: { id: string };
+};
+
+export default function Page({ params }: Props) {
+  const { id } = params;
+  return <AccountGeneralView id={id} />;
 }
