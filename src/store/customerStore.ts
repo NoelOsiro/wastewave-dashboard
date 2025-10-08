@@ -3,9 +3,7 @@ import type { ICustomerItem } from 'src/types/customer';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-import axios, { endpoints } from 'src/lib/axios';
-
-import { JWT_STORAGE_KEY } from 'src/auth/context/jwt';
+import { supabase } from 'src/lib/supabase';
 
 type CustomerState = {
   customers: ICustomerItem[];
@@ -13,7 +11,7 @@ type CustomerState = {
   error: Error | null;
   setCustomers: (customers: ICustomerItem[]) => void;
   fetchCustomers: () => Promise<void>;
-  addCustomer: (customer: ICustomerItem) => Promise<void>;
+  addCustomer: (customer: Partial<ICustomerItem>) => Promise<void>;
   editCustomer: (customer: ICustomerItem) => Promise<void>;
   deleteCustomer: (customer: ICustomerItem) => Promise<void>;
 };
@@ -28,32 +26,27 @@ export const useCustomerStore = create<CustomerState>()(
       fetchCustomers: async () => {
         try {
           set({ loading: true, error: null });
-          const accessToken = sessionStorage.getItem(JWT_STORAGE_KEY);
-          const response = await axios.get<ICustomerItem[]>(endpoints.customer.list, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json'
-            }
-          });
-          set({ customers: response.data, loading: false });
+          const { data, error } = await supabase
+            .from('customers')
+            .select('*');
+          if (error) throw error;
+          set({ customers: data || [], loading: false });
         } catch (error) {
           const errorMessage = error instanceof Error ? error : new Error('Failed to fetch customers');
           set({ error: errorMessage, loading: false });
           throw errorMessage;
         }
       },
-      addCustomer: async (customer) => {
+  addCustomer: async (customer) => {
         try {
           set({ loading: true, error: null });
-          const accessToken = sessionStorage.getItem(JWT_STORAGE_KEY);
-          const response = await axios.post(endpoints.customer.create, customer, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json'
-            }
-          });
+          const { data, error } = await supabase
+            .from('customers')
+            .insert([customer])
+            .select();
+          if (error) throw error;
           set((state) => ({
-            customers: [...state.customers, response.data],
+            customers: data ? [...state.customers, ...data] : state.customers,
             loading: false
           }));
         } catch (error) {
@@ -66,13 +59,12 @@ export const useCustomerStore = create<CustomerState>()(
       editCustomer: async (customer) => {
         try {
           set({ loading: true, error: null });
-          const accessToken = sessionStorage.getItem(JWT_STORAGE_KEY);
-          await axios.put(`${endpoints.customer.update}${customer.id}`, customer, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json'
-            }
-          });
+          const { error } = await supabase
+            .from('customers')
+            .update(customer)
+            .eq('id', customer.id)
+            .select();
+          if (error) throw error;
           set((state) => ({
             customers: state.customers.map((c) =>
               c.id === customer.id ? { ...c, ...customer } : c
@@ -89,13 +81,11 @@ export const useCustomerStore = create<CustomerState>()(
       deleteCustomer: async (customer) => {
         try {
           set({ loading: true, error: null });
-          const accessToken = sessionStorage.getItem(JWT_STORAGE_KEY);
-          await axios.delete(`${endpoints.customer.delete}${customer.id}`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json'
-            }
-          });
+          const { error } = await supabase
+            .from('customers')
+            .delete()
+            .eq('id', customer.id);
+          if (error) throw error;
           set((state) => ({
             customers: state.customers.filter((c) => c.id !== customer.id),
             loading: false

@@ -19,23 +19,13 @@ import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
-
 export const NewCustomerSchema = zod.object({
-  id: zod.string().optional(),
   name: zod.string().min(1, 'Name is required'),
-  username: zod.string().min(1, 'Username is required'),
-  city: zod.string().optional(),
-  role: zod.string().optional(),
   email: zod.string().min(1, 'Email is required'),
-  state: zod.string().optional(),
-  status: zod.string().optional(),
+  building: zod.string().min(1, 'Building is required'),
+  status: zod.string().min(1, 'Status is required'),
   address: zod.string().min(1, 'Address is required'),
-  country: zod.string().optional(),
-  zipCode: zod.string().optional(),
-  service_type: zod.string().min(1, 'Service type is required'),
-  avatarUrl: zod.string().optional(),
-  phoneNumber: zod.string().min(1, 'Phone number is required'),
-  isVerified: zod.boolean().optional(),
+  phone: zod.string().min(1, 'Phone is required'),
 });
 
 export type NewCustomerSchemaType = zod.infer<typeof NewCustomerSchema>;
@@ -53,21 +43,12 @@ export default function CustomerNewEditForm({ currentCustomer }: Props) {
   const methods = useForm<NewCustomerSchemaType>({
     resolver: zodResolver(NewCustomerSchema),
     defaultValues: {
-      id: '',
       name: '',
-      username: '',
-      city: '',
-      role: '',
       email: '',
-      state: '',
+      building: '',
       status: '',
       address: '',
-      country: '',
-      zipCode: '',
-      service_type: '',
-      avatarUrl: '',
-      phoneNumber: '',
-      isVerified: false,
+      phone: '',
       ...currentCustomer,
     },
   });
@@ -95,17 +76,13 @@ export default function CustomerNewEditForm({ currentCustomer }: Props) {
       } else {
         toast.promise(
           addCustomer({
-            ...data,
-            id: data.id ?? '',
-            city: data.city ?? '',
-            role: data.role ?? '',
-            state: data.state ?? '',
-            status: data.status ?? '',
-            country: data.country ?? '',
-            zipCode: data.zipCode ?? '',
-            avatarUrl: data.avatarUrl ?? '',
-            isVerified: data.isVerified ?? false,
-          }),
+            name: data.name,
+            email: data.email,
+            building: data.building,
+            status: data.status,
+            address: data.address,
+            phone: data.phone,
+          } as Partial<ICustomerItem>),
           {
             loading: 'Creating customer...',
             success: 'Create success!',
@@ -134,19 +111,11 @@ export default function CustomerNewEditForm({ currentCustomer }: Props) {
               }}
             >
               <Field.Text name="name" label="Name" />
-              <Field.Text name="username" label="Username" />
               <Field.Text name="email" label="Email" />
-              <Field.Text name="phoneNumber" label="Phone Number" />
-              <Field.Text name="service_type" label="Service Type" />
-              <Field.Text name="address" label="Address" />
-              <Field.Text name="city" label="City" />
-              <Field.Text name="state" label="State" />
-              <Field.Text name="country" label="Country" />
-              <Field.Text name="zipCode" label="Zip Code" />
-              <Field.Text name="role" label="Role" />
+              <Field.Text name="building" label="Building" />
               <Field.Text name="status" label="Status" />
-              <Field.Text name="avatarUrl" label="Avatar URL" />
-              <Field.Checkbox name="isVerified" label="Is Verified" />
+              <Field.Text name="address" label="Address" />
+              <Field.Text name="phone" label="Phone" />
             </Box>
 
             <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>

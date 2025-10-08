@@ -24,7 +24,6 @@ import { RouterLink } from 'src/routes/components';
 
 // Mock data and store
 import { _roles, USER_STATUS_OPTIONS } from 'src/_mock';
-import { _customerList } from 'src/_mock/_customerList';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useCustomerStore } from 'src/store/customerStore';
 
@@ -108,7 +107,7 @@ export function CustomerListView() {
   }, [error]);
 
   // Use store data or fallback to mock
-  const tableData = useMemo(() => (customers.length > 0 ? customers : _customerList), [customers]);
+  const tableData = useMemo(() => (customers.length > 0 ? customers : []), [customers]);
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -433,7 +432,7 @@ function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
   }
 
   if (role.length) {
-    inputData = inputData.filter((user) => role.includes(user.role));
+    inputData = inputData.filter((user) => role.includes(user.status));
   }
 
   return inputData;

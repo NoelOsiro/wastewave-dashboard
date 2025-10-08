@@ -72,99 +72,82 @@ export const navData: NavSectionProps['data'] = [
         children: [
           // { title: 'Profile', path: paths.dashboard.user.root },
           // { title: 'Cards', path: paths.dashboard.user.cards },
-          { title: 'Summary', path: paths.dashboard.customer.root },
-          { title: 'List', path: paths.dashboard.customer.list },
+          { title: 'Total', path: paths.dashboard.customer.root },
+          { title: 'My Customers', path: paths.dashboard.customer.list },
           // { title: 'Create', path: paths.dashboard.user.new },
           // { title: 'Edit', path: paths.dashboard.customer.demo.edit },
           // { title: 'Account', path: paths.dashboard.customer.account },
-        ],
-      },
-      {
-        title: 'Equipment',
-        path: paths.dashboard.equipment.root,
-        icon: ICONS.user,
-        children: [
-          { title: 'Profile', path: paths.dashboard.equipment.root },
-          { title: 'All', path: paths.dashboard.equipment.cards },
-          { title: 'List', path: paths.dashboard.equipment.list },
-          { title: 'Create', path: paths.dashboard.equipment.new },
-          // { title: 'Edit', path: paths.dashboard.equipment.demo.edit },
-          // { title: 'Account', path: paths.dashboard.equipment.account },
         ],
       },
       
     ],
   },
   {
-    subheader: 'Management',
+    subheader: 'Account',
     items: [
       {
-        title: 'Support',
+        title: 'Account',
         path: paths.dashboard.user.root,
         icon: ICONS.user,
         children: [
-          { title: 'Profile', path: paths.dashboard.user.root },
-          { title: 'Cards', path: paths.dashboard.user.cards },
-          { title: 'List', path: paths.dashboard.user.list },
-          { title: 'Create', path: paths.dashboard.user.new },
-          { title: 'Edit', path: paths.dashboard.user.demo.edit },
-          { title: 'Account', path: paths.dashboard.user.account },
+          { title: 'Overview', path: paths.dashboard.general.banking },
+          { title: 'Payments', path: paths.dashboard.general.invoice },
         ],
       },
-      {
-        title: 'Tickets',
-        path: paths.dashboard.user.root,
-        icon: ICONS.user,
-        children: [
-          { title: 'Profile', path: paths.dashboard.user.root },
-          { title: 'Cards', path: paths.dashboard.user.cards },
-          { title: 'List', path: paths.dashboard.user.list },
-          { title: 'Create', path: paths.dashboard.user.new },
-          { title: 'Edit', path: paths.dashboard.user.demo.edit },
-          { title: 'Account', path: paths.dashboard.user.account },
-        ],
-      },
-      {
-        title: 'Payments',
-        path: paths.dashboard.payment.root,
-        icon: ICONS.user,
-        children: [
-          { title: 'Overview', path: paths.dashboard.payment.root },
-          { title: 'Cards', path: paths.dashboard.payment.cards },
-          { title: 'List', path: paths.dashboard.payment.list },
-          { title: 'Create', path: paths.dashboard.payment.new },
-          { title: 'Edit', path: paths.dashboard.payment.demo.edit },
-          { title: 'Account', path: paths.dashboard.payment.account },
-        ],
-      },
+      // {
+      //   title: 'Tickets',
+      //   path: paths.dashboard.user.root,
+      //   icon: ICONS.user,
+      //   children: [
+      //     { title: 'Profile', path: paths.dashboard.user.root },
+      //     { title: 'Cards', path: paths.dashboard.user.cards },
+      //     { title: 'List', path: paths.dashboard.user.list },
+      //     { title: 'Create', path: paths.dashboard.user.new },
+      //     { title: 'Edit', path: paths.dashboard.user.demo.edit },
+      //     { title: 'Account', path: paths.dashboard.user.account },
+      //   ],
+      // },
+      // {
+      //   title: 'Payments',
+      //   path: paths.dashboard.payment.root,
+      //   icon: ICONS.user,
+      //   children: [
+      //     { title: 'Overview', path: paths.dashboard.payment.root },
+      //     { title: 'Cards', path: paths.dashboard.payment.cards },
+      //     { title: 'List', path: paths.dashboard.payment.list },
+      //     { title: 'Create', path: paths.dashboard.payment.new },
+      //     { title: 'Edit', path: paths.dashboard.payment.demo.edit },
+      //     { title: 'Account', path: paths.dashboard.payment.account },
+      //   ],
+      // },
     ],
   },
-  {
-    subheader: 'Management',
-    items: [
-      {
-        title: 'Packages',
-        path: paths.dashboard.package.root,
-        icon: ICONS.file,
-        children: [
-          { title: 'All', path: paths.dashboard.package.cards },
-          { title: 'List', path: paths.dashboard.package.list },
-        ],
-      },
-      {
-        title: 'Vouchers',
-        path: paths.dashboard.voucher.root,
-        icon: ICONS.user,
-        children: [
-          { title: 'Overview', path: paths.dashboard.voucher.root },
-          { title: 'List', path: paths.dashboard.voucher.list },
-          // { title: 'Create', path: paths.dashboard.voucher.new },
-          // { title: 'Edit', path: paths.dashboard.voucher.demo.edit },
-          // { title: 'Account', path: paths.dashboard.voucher.account },
-        ],
-      },
-    ],
-  },
+  // {
+  //   subheader: 'Management',
+  //   items: [
+  //     {
+  //       title: 'Packages',
+  //       path: paths.dashboard.package.root,
+  //       icon: ICONS.file,
+  //       children: [
+  //         { title: 'All', path: paths.dashboard.package.cards },
+  //         { title: 'List', path: paths.dashboard.package.list },
+  //       ],
+  //     },
+  //     {
+  //       title: 'Vouchers',
+  //       path: paths.dashboard.voucher.root,
+  //       icon: ICONS.user,
+  //       children: [
+  //         { title: 'Overview', path: paths.dashboard.voucher.root },
+  //         { title: 'List', path: paths.dashboard.voucher.list },
+  //         // { title: 'Create', path: paths.dashboard.voucher.new },
+  //         // { title: 'Edit', path: paths.dashboard.voucher.demo.edit },
+  //         // { title: 'Account', path: paths.dashboard.voucher.account },
+  //       ],
+  //     },
+  //   ],
+  // },
   // /**
   //  * Item State
   //  */

@@ -6,7 +6,6 @@ import Button from '@mui/material/Button';
 import { useTheme } from '@mui/material/styles';
 
 import { _appFeatured, _appInvoices } from 'src/_mock';
-import { useDashStore } from 'src/store/dashboardSttore';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { SeoIllustration } from 'src/assets/illustrations';
 
@@ -18,7 +17,6 @@ import { AppWidget } from '../app-widget';
 import { AppWelcome } from '../app-welcome';
 import { AppFeatured } from '../app-featured';
 import { AppNewInvoice } from '../app-new-invoice';
-import { AppTopRelated } from '../app-top-related';
 import { AppAreaInstalled } from '../app-area-installed';
 import { AppWidgetSummary } from '../app-widget-summary';
 import { AppCurrentDownload } from '../app-current-download';
@@ -27,8 +25,7 @@ import { AppCurrentDownload } from '../app-current-download';
 
 export function OverviewAppView() {
   const { user } = useAuthContext();
-
-  const { leave_requests } = useDashStore();
+  console.log(user);
 
   const theme = useTheme();
 
@@ -37,7 +34,7 @@ export function OverviewAppView() {
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 8 }}>
           <AppWelcome
-            title={`Welcome back 👋 \n ${user?.first_name} ${user?.last_name}`}
+            title={`Welcome back 👋 \n ${user?.displayName}`}
             description="Fill your Profile to get started"
             img={<SeoIllustration hideBackground />}
             action={
@@ -52,8 +49,8 @@ export function OverviewAppView() {
           <AppFeatured list={_appFeatured} />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 4 }}>
-          {user?.role === 'admin' && (
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+
             <AppWidgetSummary
               title="Total Active Users"
               percent={2.6}
@@ -62,48 +59,8 @@ export function OverviewAppView() {
                 categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
                 series: [15, 18, 12, 51, 68, 11, 39, 37],
               }}
-            />)}
-          {user?.role === 'employee' && (
-            <AppWidgetSummary
-              title="Total Active Users"
-              percent={2.6}
-              total={3654}
-              chart={{
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-                series: [15, 18, 12, 51, 68, 11, 39, 37],
-              }}
-            />)}
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 4 }}>
-          {user?.role === 'admin' && (
-            <AppWidgetSummary
-              title="Total Hotspot users"
-              percent={0.2}
-              total={2448}
-              chart={{
-                colors: [theme.palette.info.main],
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-                series: [20, 41, 63, 33, 28, 35, 50, 46],
-              }}
-            />)}
-          {user?.role === 'employee' && (
-            <AppWidgetSummary
-              title="Total Hotspot users"
-              percent={0.2}
-              total={2448}
-              chart={{
-                colors: [theme.palette.info.main],
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-                series: [20, 41, 63, 33, 28, 35, 50, 46],
-              }}
-            />)}
-
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 4 }}>
-          {user?.role === 'admin' && (
-            <AppWidgetSummary
+            />
+             <AppWidgetSummary
               title="Total PPPoE users"
               percent={-0.1}
               total={1206}
@@ -112,9 +69,8 @@ export function OverviewAppView() {
                 categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
                 series: [18, 19, 31, 8, 16, 37, 12, 33],
               }}
-            />)}
-          {user?.role === 'employee' && (
-            <AppWidgetSummary
+            />
+             <AppWidgetSummary
               title="Total PPPoE users"
               percent={-0.1}
               total={1206}
@@ -123,11 +79,12 @@ export function OverviewAppView() {
                 categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
                 series: [18, 19, 31, 8, 16, 37, 12, 33],
               }}
-            />)}
+            />
+
         </Grid>
 
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          {user?.role === 'admin' && (<AppCurrentDownload
+<AppCurrentDownload
             title="Client Distribution"
             subheader=""
             chart={{
@@ -136,65 +93,10 @@ export function OverviewAppView() {
                 { label: 'PPPoE', value: 1206 },
               ],
             }}
-          />)}
-          {user?.role === 'employee' && (
-            <AppCurrentDownload
-              title="Client Distribution"
-              subheader=""
-              chart={{
-                series: [
-                  { label: 'Hotspot', value: 2448 },
-                  { label: 'PPPoE', value: 1206 },
-                ],
-              }}
-            />)}
+          />
         </Grid>
 
         <Grid size={{ xs: 12, md: 6, lg: 8 }}>
-          {user?.role === 'admin' && (<AppAreaInstalled
-            title="Sessions active monthly"
-            subheader="(+43%) than last year"
-            chart={{
-              categories: [
-                "Jan",
-                "Feb",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-              ],
-              series: [
-                {
-                  name: '2022',
-                  data: [
-                    { name: 'Active', data: [12, 10, 18, 22, 20, 12, 8, 21, 20, 14, 15, 16] },
-                    { name: 'Inactive', data: [12, 10, 18, 22, 20, 12, 8, 21, 20, 14, 15, 16] },
-                  ],
-                },
-                {
-                  name: '2023',
-                  data: [
-                    { name: 'Active', data: [6, 18, 14, 9, 20, 6, 22, 19, 8, 22, 8, 17] },
-                    { name: 'Inactive', data: [6, 18, 14, 9, 20, 6, 22, 19, 8, 22, 8, 17] },
-                  ],
-                },
-                {
-                  name: '2024',
-                  data: [
-                    { name: 'Active', data: [6, 20, 15, 18, 7, 24, 6, 10, 12, 17, 18, 10] },
-                    { name: 'Inactive', data: [6, 20, 15, 18, 7, 24, 6, 10, 12, 17, 18, 10] },
-                  ],
-                },
-              ],
-            }}
-          />)}
-          {user?.role === 'employee' && (
             <AppAreaInstalled
               title="Sessions active monthly"
               subheader="(+43%) than last year"
@@ -237,7 +139,7 @@ export function OverviewAppView() {
                   },
                 ],
               }}
-            />)}
+            />
 
         </Grid>
 
@@ -254,15 +156,6 @@ export function OverviewAppView() {
             ]}
           />
         </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          {user?.role === 'admin' && (<AppTopRelated title="Leave applications" list={leave_requests} />)}
-          {user?.role === 'employee' && (
-            <AppTopRelated title="Related applications" list={leave_requests} />
-          )}
-        </Grid>
-
-
 
         <Grid size={{ xs: 12, md: 12, lg: 12 }}>
           <Box sx={{ gap: 3, display: 'flex', flexDirection: 'row' }}>

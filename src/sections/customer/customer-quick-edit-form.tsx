@@ -30,38 +30,24 @@ type Props = {
 
 export const CustomerQuickEditSchema = zod.object({
   id: zod.string().optional(),
-  name: zod.string().min(1, { message: 'Name is required!' }),
-  city: zod.string().optional(),
-  role: zod.string().optional(),
-  email: zod.string().min(1, { message: 'Email is required!' }),
-  state: zod.string().optional(),
-  status: zod.string().optional(),
-  address: zod.string().min(1, { message: 'Address is required!' }),
-  country: zod.string().optional(),
-  zipCode: zod.string().optional(),
-  service_type: zod.string().min(1, { message: 'Service type is required!' }),
-  avatarUrl: zod.string().optional(),
-  phoneNumber: zod.string().min(1, { message: 'Phone number is required!' }),
-  isVerified: zod.boolean().optional(),
+    name: zod.string().min(1, 'Name is required'),
+    email: zod.string().min(1, 'Email is required'),
+    building: zod.string().min(1, 'Building is required'),
+    status: zod.string().min(1, 'Status is required'),
+    address: zod.string().min(1, 'Address is required'),
+    phone: zod.string().min(1, 'Phone is required'),
 });
 
 export function CustomerQuickEditForm({ currentCustomer, open, onClose }: Props) {
   const editCustomer = useCustomerStore((state) => state.editCustomer);
   const defaultValues: CustomerQuickEditSchemaType = {
     id: '',
-    name: '',
-    city: '',
-    role: '',
-    email: '',
-    state: '',
-    status: '',
-    address: '',
-    country: '',
-    zipCode: '',
-    service_type: '',
-    avatarUrl: '',
-    phoneNumber: '',
-    isVerified: false,
+      name: '',
+      email: '',
+      building: '',
+      status: '',
+      address: '',
+      phone: '',
   };
 
   const methods = useForm<CustomerQuickEditSchemaType>({
@@ -111,17 +97,10 @@ export function CustomerQuickEditForm({ currentCustomer, open, onClose }: Props)
           >
             <Field.Text name="name" label="Name" />
             <Field.Text name="email" label="Email" />
-            <Field.Text name="phoneNumber" label="Phone Number" />
-            <Field.Text name="service_type" label="Service Type" />
-            <Field.Text name="address" label="Address" />
-            <Field.Text name="city" label="City" />
-            <Field.Text name="state" label="State" />
-            <Field.Text name="country" label="Country" />
-            <Field.Text name="zipCode" label="Zip Code" />
-            <Field.Text name="role" label="Role" />
+            <Field.Text name="building" label="Building" />
             <Field.Text name="status" label="Status" />
-            <Field.Text name="avatarUrl" label="Avatar URL" />
-            <Field.Checkbox name="isVerified" label="Is Verified" />
+            <Field.Text name="address" label="Address" />
+            <Field.Text name="phone" label="Phone" />
           </Box>
         </DialogContent>
 

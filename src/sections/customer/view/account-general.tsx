@@ -4,48 +4,33 @@ import { z as zod } from 'zod';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid2';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
-
-import { fData } from 'src/utils/format-number';
 
 import { useCustomerStore } from 'src/store/customerStore';
 
 import { toast } from 'src/components/snackbar';
-import { Form, Field, schemaHelper } from 'src/components/hook-form';
+import { Form, Field } from 'src/components/hook-form';
 
-import { useMockedUser } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
 export type UpdateUserSchemaType = zod.infer<typeof UpdateUserSchema>;
 
 export const UpdateUserSchema = zod.object({
-  displayName: zod.string().min(1, { message: 'Name is required!' }),
+  name: zod.string().min(1, { message: 'Name is required!' }),
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
     .email({ message: 'Email must be a valid email address!' }),
-  photoURL: schemaHelper.file({ message: 'Avatar is required!' }),
-  phoneNumber: schemaHelper.phoneNumber({ isValid: isValidPhoneNumber }),
-  country: schemaHelper.nullableInput(zod.string().min(1, { message: 'Country is required!' }), {
-    // message for null value
-    message: 'Country is required!',
-  }),
+  building: zod.string().min(1, { message: 'Building is required!' }),
+  status: zod.string().min(1, { message: 'Status is required!' }),
   address: zod.string().min(1, { message: 'Address is required!' }),
-  state: zod.string().min(1, { message: 'State is required!' }),
-  city: zod.string().min(1, { message: 'City is required!' }),
-  zipCode: zod.string().min(1, { message: 'Zip code is required!' }),
-  about: zod.string().min(1, { message: 'About is required!' }),
-  // Not required
-  isPublic: zod.boolean(),
+  phone: zod.string().min(1, { message: 'Phone is required!' }),
 });
 
 // ----------------------------------------------------------------------
@@ -57,8 +42,9 @@ type AccountGeneralProps = {
 };
 
 export function AccountGeneral({ customer }: AccountGeneralProps) {
-  const { user } = useMockedUser();
   const customers = useCustomerStore((state) => state.customers);
+  const editCustomer = useCustomerStore((state) => state.editCustomer);
+  const addCustomer = useCustomerStore((state) => state.addCustomer);
 
   // If customer prop is provided, try to find the latest from store by id
   const storeCustomer = useMemo(() => {
@@ -78,44 +64,29 @@ export function AccountGeneral({ customer }: AccountGeneralProps) {
 
   const currentUser: UpdateUserSchemaType = storeCustomer
     ? {
-        displayName: storeCustomer.name,
+        name: storeCustomer.name,
         email: storeCustomer.email,
-        photoURL: getAvatarUrl(storeCustomer),
-        phoneNumber: storeCustomer.phoneNumber,
-        country: storeCustomer.country,
+        building: storeCustomer.building,
+        status: storeCustomer.status,
         address: storeCustomer.address,
-        state: storeCustomer.state,
-        city: storeCustomer.city,
-        zipCode: storeCustomer.zipCode,
-        about: '',
-        isPublic: !!storeCustomer.isVerified,
+        phone: storeCustomer.phone,
       }
     : {
-        displayName: user?.displayName,
-        email: user?.email,
-        photoURL: user?.photoURL,
-        phoneNumber: user?.phoneNumber,
-        country: user?.country,
-        address: user?.address,
-        state: user?.state,
-        city: user?.city,
-        zipCode: user?.zipCode,
-        about: user?.about,
-        isPublic: user?.isPublic,
+        name: '',
+        email: '',
+        building: '',
+        status: '',
+        address: '',
+        phone: '',
       };
 
   const defaultValues: UpdateUserSchemaType = {
-    displayName: '',
+    name: '',
     email: '',
-    photoURL: null,
-    phoneNumber: '',
-    country: null,
+    building: '',
+    status: '',
     address: '',
-    state: '',
-    city: '',
-    zipCode: '',
-    about: '',
-    isPublic: false,
+    phone: '',
   };
 
   const methods = useForm<UpdateUserSchemaType>({
@@ -132,10 +103,25 @@ export function AccountGeneral({ customer }: AccountGeneralProps) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      toast.success('Update success!');
-      console.info('DATA', data);
+      // Map form data to ICustomerItem
+      const customerPayload: ICustomerItem = {
+        id: storeCustomer?.id ?? '',
+        name: data.name,
+        email: data.email,
+        building: data.building,
+        status: data.status,
+        address: data.address,
+        phone: data.phone,
+      };
+      if (storeCustomer) {
+        await editCustomer(customerPayload);
+        toast.success('Customer updated!');
+      } else {
+        await addCustomer(customerPayload);
+        toast.success('Customer created!');
+      }
     } catch (error) {
+      toast.error('Operation failed!');
       console.error(error);
     }
   });
@@ -152,37 +138,7 @@ export function AccountGeneral({ customer }: AccountGeneralProps) {
               textAlign: 'center',
             }}
           >
-            <Field.UploadAvatar
-              name="photoURL"
-              value={getAvatarUrl(currentUser)}
-              maxSize={3145728}
-              helperText={
-                <Typography
-                  variant="caption"
-                  sx={{
-                    mt: 3,
-                    mx: 'auto',
-                    display: 'block',
-                    textAlign: 'center',
-                    color: 'text.disabled',
-                  }}
-                >
-                  Allowed *.jpeg, *.jpg, *.png, *.gif
-                  <br /> max size of {fData(3145728)}
-                </Typography>
-              }
-            />
-
-            <Field.Switch
-              name="isPublic"
-              labelPlacement="start"
-              label="Public profile"
-              sx={{ mt: 5 }}
-            />
-
-            <Button variant="soft" color="error" sx={{ mt: 3 }}>
-              Delete user
-            </Button>
+            {/* Avatar, public profile, and delete button removed to match ICustomerItem */}
           </Card>
         </Grid>
 
@@ -196,20 +152,16 @@ export function AccountGeneral({ customer }: AccountGeneralProps) {
                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
               }}
             >
-              <Field.Text name="displayName" label="Name" />
+              <Field.Text name="name" label="Name" />
               <Field.Text name="email" label="Email address" />
-              <Field.Phone name="phoneNumber" label="Phone number" />
+              <Field.Text name="building" label="Building" />
+              <Field.Text name="status" label="Status" />
               <Field.Text name="address" label="Address" />
-
-              <Field.CountrySelect name="country" label="Country" placeholder="Choose a country" />
-
-              <Field.Text name="state" label="State/region" />
-              <Field.Text name="city" label="City" />
-              <Field.Text name="zipCode" label="Zip/code" />
+              <Field.Text name="phone" label="Phone number" />
             </Box>
 
             <Stack spacing={3} sx={{ mt: 3, alignItems: 'flex-end' }}>
-              <Field.Text name="about" multiline rows={4} label="About" />
+              {/* About field removed to match ICustomerItem */}
 
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                 Save changes

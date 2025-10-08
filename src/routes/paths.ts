@@ -104,6 +104,7 @@ export const paths = {
       booking: `${ROOTS.DASHBOARD}/booking`,
       file: `${ROOTS.DASHBOARD}/file`,
       course: `${ROOTS.DASHBOARD}/course`,
+      invoice: `${ROOTS.DASHBOARD}/invoice`,
     },
     user: {
       root: `${ROOTS.DASHBOARD}/user`,

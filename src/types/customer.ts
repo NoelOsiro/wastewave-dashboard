@@ -77,19 +77,11 @@ export type ICustomerCard = {
 export type ICustomerItem = {
   id: string;
   name: string;
-  username: string;
-  city: string;
-  role: string;
   email: string;
-  state: string;
+  building: string;
   status: string;
   address: string;
-  country: string;
-  zipCode: string;
-  service_type: string;
-  avatarUrl: string;
-  phoneNumber: string;
-  isVerified: boolean;
+  phone: string;
 };
 
 export type ICustomerAccountBillingHistory = {
