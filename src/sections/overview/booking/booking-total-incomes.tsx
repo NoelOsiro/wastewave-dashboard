@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import { useTheme, alpha as hexAlpha } from '@mui/material/styles';
 
-import { fPercent, fCurrency, fShortenNumber } from 'src/utils/format-number';
+import { fPercent,fShortenNumber } from 'src/utils/format-number';
 
 import { CONFIG } from 'src/global-config';
 

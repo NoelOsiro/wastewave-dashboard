@@ -8,7 +8,7 @@ import type {
 } from '@mui/x-data-grid';
 
 import { useState, useEffect } from 'react';
-import { useBoolean, useSetState } from 'minimal-shared/hooks';
+import { useSetState } from 'minimal-shared/hooks';
 
 import Card from '@mui/material/Card';
 import {
@@ -47,7 +47,6 @@ const HIDE_COLUMNS_TOGGLABLE = ['category', 'actions'];
 // ----------------------------------------------------------------------
 
 export function LeaveBalanceListView() {
-    const confirmDialog = useBoolean();
 
     const { balances, balancesLoading } = useGetLeaveBalances();
 
