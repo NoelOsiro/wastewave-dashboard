@@ -5,13 +5,10 @@ import type { ILeaveItem2 } from 'src/types/product';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Rating from '@mui/material/Rating';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
-import { svgIconClasses } from '@mui/material/SvgIcon';
 
 import { fDate } from 'src/utils/format-time';
-import { fShortenNumber } from 'src/utils/format-number';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
@@ -113,7 +110,7 @@ function Item({ item, sx, ...other }: ItemProps) {
             {fDate(item.start_date)}
           </Box>
 
-          <Box sx={{ gap: 0.5, display: 'flex', alignItems: 'center' }}>
+          {/* <Box sx={{ gap: 0.5, display: 'flex', alignItems: 'center' }}>
             <Rating
               readOnly
               size="small"
@@ -124,7 +121,7 @@ function Item({ item, sx, ...other }: ItemProps) {
               sx={{ [` .${svgIconClasses.root}`]: { width: 16, height: 16 } }}
             />
             {fShortenNumber(item.totalReviews)}
-          </Box>
+          </Box> */}
         </Stack>
       </div>
     </Box>
