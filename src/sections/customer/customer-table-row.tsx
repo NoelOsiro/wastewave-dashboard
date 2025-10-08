@@ -55,12 +55,12 @@ export function CustomerTableRow({ row, selected, editHref, onSelectRow, onDelet
           <Stack>
             <Box sx={{ fontWeight: 600 }}>{row.name}</Box>
             <Box component="span" sx={{ color: 'text.secondary', fontSize: 13 }}>
-              {row.username}
+              {row.name} 
             </Box>
           </Stack>
         </TableCell>
-        <TableCell>{row.phoneNumber}</TableCell>
-        <TableCell>{row.service_type}</TableCell>
+        <TableCell>{row.phone}</TableCell>
+        <TableCell>{row.address}</TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.email}</TableCell>
         <TableCell>
