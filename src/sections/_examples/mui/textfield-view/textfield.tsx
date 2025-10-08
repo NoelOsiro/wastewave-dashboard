@@ -75,7 +75,7 @@ export function Textfields({ variant }: Props) {
           required
           fullWidth
           label="Activated"
-          defaultValue="Hello Minimal"
+          defaultValue="Hello WasteWave"
         />
 
         <TextField
@@ -91,7 +91,7 @@ export function Textfields({ variant }: Props) {
           disabled
           fullWidth
           label="Disabled"
-          defaultValue="Hello Minimal"
+          defaultValue="Hello WasteWave"
         />
       </ComponentBox>
 
@@ -116,7 +116,7 @@ export function Textfields({ variant }: Props) {
           disabled
           fullWidth
           label="Disabled"
-          defaultValue="Hello Minimal"
+          defaultValue="Hello WasteWave"
           slotProps={{
             input: {
               startAdornment: (
@@ -187,7 +187,7 @@ export function Textfields({ variant }: Props) {
           variant={variant}
           fullWidth
           label="Error"
-          defaultValue="Hello Minimal"
+          defaultValue="Hello WasteWave"
           helperText="Incorrect entry."
         />
 
@@ -196,7 +196,7 @@ export function Textfields({ variant }: Props) {
           error
           fullWidth
           label="Error"
-          defaultValue="Hello Minimal"
+          defaultValue="Hello MWasteWave"
           helperText="Incorrect entry."
         />
       </ComponentBox>
