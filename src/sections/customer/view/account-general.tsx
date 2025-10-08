@@ -138,7 +138,12 @@ export function AccountGeneral({ customer }: AccountGeneralProps) {
               textAlign: 'center',
             }}
           >
-            {/* Avatar, public profile, and delete button removed to match ICustomerItem */}
+            <Field.UploadAvatar
+              name="photoURL"
+              value={getAvatarUrl(currentUser)}
+              maxSize={3145728}
+
+            />
           </Card>
         </Grid>
 

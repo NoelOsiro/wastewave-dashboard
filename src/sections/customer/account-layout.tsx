@@ -63,7 +63,7 @@ export function AccountLayout({ customerId, children, ...other }: DashboardConte
         heading="Account"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.customer.root },
+          { name: 'Customer', href: paths.dashboard.customer.root },
           { name: 'Account' },
         ]}
         sx={{ mb: 3 }}

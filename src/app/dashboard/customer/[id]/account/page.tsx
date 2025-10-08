@@ -14,8 +14,6 @@ type Props = {
   params: { id: string };
 };
 
-import { _customerList } from 'src/_mock/_customerList';
-
 export default function Page({ params }: Props) {
   const { id } = params;
   return <AccountGeneralView id={id} />;
