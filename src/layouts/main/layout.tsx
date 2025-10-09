@@ -103,18 +103,18 @@ export function MainLayout({
             {/** @slot Sign in button */}
             <SignInButton />
 
-            {/** @slot Purchase button */}
+            {/** @slot Register button */}
             <Button
               variant="contained"
               rel="noopener"
               target="_blank"
-              href={paths.minimalStore}
+              href={paths.auth.supabase.signUp}
               sx={(theme) => ({
                 display: 'none',
                 [theme.breakpoints.up(layoutQuery)]: { display: 'inline-flex' },
               })}
             >
-              Purchase
+              Register
             </Button>
           </Box>
         </>

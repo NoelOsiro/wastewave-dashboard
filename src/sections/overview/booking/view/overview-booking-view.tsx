@@ -35,36 +35,37 @@ export function OverviewBookingView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const totalActive = customers.length;
-  const totalPPPoE = customers.filter((c) => c.status === 'pending').length;
-  const totalHotspot = customers.filter((c) => c.status === 'active').length;
+  const totalCustomers = customers.length;
+  const totalActive = customers.filter((c) => c.status === 'active').length;
+  const totalPending = customers.filter((c) => c.status === 'pending').length;
+  const totalInactive = customers.filter((c) => c.status === 'inactive').length;
 
   return (
     <DashboardContent maxWidth="xl">
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 4 }}>
           <BookingWidgetSummary
-            title="Total Active Users"
+            title="Total Customers"
             percent={0}
-            total={totalActive}
+            total={totalCustomers}
             icon={<BookingIllustration />}
           />
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }}>
           <BookingWidgetSummary
-            title="PPPoE Users"
+            title="Active Customers"
             percent={0}
-            total={totalPPPoE}
+            total={totalActive}
             icon={<CheckInIllustration />}
           />
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }}>
           <BookingWidgetSummary
-            title="Hotspot Users"
+            title="Pending Customers"
             percent={0}
-            total={totalHotspot}
+            total={totalPending}
             icon={<CheckoutIllustration />}
           />
         </Grid>
@@ -93,8 +94,8 @@ export function OverviewBookingView() {
                 }}
               >
                 <BookingTotalIncomes
-                  title="Total users"
-                  total={totalActive}
+                  title="Total Customers"
+                  total={totalCustomers}
                   percent={2.6}
                   chart={{
                     categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
@@ -103,7 +104,7 @@ export function OverviewBookingView() {
                 />
 
                 <BookingBooked
-                  title="Status"
+                  title="Customer Status"
                   data={_bookingsOverview}
                   sx={{ boxShadow: { md: 'none' } }}
                 />
@@ -112,8 +113,9 @@ export function OverviewBookingView() {
               <BookingCheckInWidgets
                 chart={{
                   series: [
-                    { label: 'PPoE Users', percent: 73.9, total: 38566 },
-                    { label: 'Hotspot Users', percent: 45.6, total: 18472 },
+                    { label: 'Active', percent: totalActive ? 100 * totalActive / totalCustomers : 0, total: totalActive },
+                    { label: 'Pending', percent: totalPending ? 100 * totalPending / totalCustomers : 0, total: totalPending },
+                    { label: 'Inactive', percent: totalInactive ? 100 * totalInactive / totalCustomers : 0, total: totalInactive },
                   ],
                 }}
                 sx={{ boxShadow: { md: 'none' } }}
@@ -121,31 +123,34 @@ export function OverviewBookingView() {
             </Box>
 
             <BookingStatistics
-              title="Statistics"
+              title="Customer Statistics"
               chart={{
                 series: [
                   {
                     name: 'Weekly',
                     categories: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
                     data: [
-                      { name: 'PPoE', data: [24, 41, 35, 151, 49] },
-                      { name: 'Hotspot', data: [20, 56, 77, 88, 99] },
+                      { name: 'Active', data: [24, 41, 35, 151, 49] },
+                      { name: 'Pending', data: [20, 56, 77, 88, 99] },
+                      { name: 'Inactive', data: [5, 10, 8, 12, 7] },
                     ],
                   },
                   {
                     name: 'Monthly',
                     categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
                     data: [
-                      { name: 'PPoE', data: [83, 112, 119, 88, 103, 112, 114, 108, 93] },
-                      { name: 'Hotspot', data: [46, 46, 43, 58, 40, 59, 54, 42, 51] },
+                      { name: 'Active', data: [83, 112, 119, 88, 103, 112, 114, 108, 93] },
+                      { name: 'Pending', data: [46, 46, 43, 58, 40, 59, 54, 42, 51] },
+                      { name: 'Inactive', data: [10, 12, 9, 15, 8, 13, 11, 14, 10] },
                     ],
                   },
                   {
                     name: 'Yearly',
                     categories: ['2018', '2019', '2020', '2021', '2022', '2023'],
                     data: [
-                      { name: 'PPoE', data: [76, 42, 29, 41, 27, 96] },
-                      { name: 'Hotspot', data: [46, 44, 24, 43, 44, 43] },
+                      { name: 'Active', data: [76, 42, 29, 41, 27, 96] },
+                      { name: 'Pending', data: [46, 44, 24, 43, 44, 43] },
+                      { name: 'Inactive', data: [8, 12, 7, 10, 9, 11] },
                     ],
                   },
                 ],

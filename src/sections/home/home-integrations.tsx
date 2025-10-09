@@ -47,19 +47,19 @@ export function HomeIntegrations({ sx, ...other }: BoxProps) {
     <SectionTitle
       caption="Seamless Integration"
       title="Works with all major"
-      txtGradient="networking"
+      txtGradient="waste management partners"
       description={
         <>
           <Box component="span" sx={{ mb: 1, display: 'block' }}>
-            Comprehensive support for all major networking equipment and payment processors.
+            Effortlessly connect with municipal systems, recycling centers, and logistics providers.
           </Box>
 
           <Box
             component="span"
             sx={{ fontStyle: 'italic', color: 'text.disabled', typography: 'caption' }}
           >
-            * RouterOS, MikroTik, Ubiquiti, and Cisco supported.
-            <br />* M-Pesa, bank transfers, and card payments available.
+            * Integrates with city waste departments, recycling partners, and payment gateways.
+            <br />* Mobile money, bank transfers, and card payments supported.
           </Box>
         </>
       }

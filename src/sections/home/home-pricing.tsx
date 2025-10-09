@@ -30,10 +30,10 @@ export function HomePricing({ sx, ...other }: BoxProps) {
 
   const renderDescription = () => (
     <SectionTitle
-      caption="Internet Plans"
+      caption="Waste Management Packages"
       title="Affordable"
       txtGradient="Pricing"
-      description="Choose the perfect internet plan for your needs with transparent pricing in KES. No hidden fees, no surprises."
+      description="Choose the perfect waste management package for your home or business. Transparent pricing in KES. No hidden fees, no surprises."
       sx={{ mb: 8, textAlign: 'center' }}
     />
   );
@@ -293,26 +293,68 @@ function PlanCard({ plan, sx, ...other }: PlanCardProps) {
 
 // ----------------------------------------------------------------------
 
-const PLANS = Array.from({ length: 3 }, (_, index) => ({
-  license: ['Basic', 'Standard', 'Premium'][index],
-  price: [2500, 4500, 8500][index],
-  speed: ['10 Mbps', '25 Mbps', '50 Mbps'][index],
-  commons: [
-    'Unlimited data',
-    '24/7 customer support',
-    'Free router installation',
-    '99.9% uptime guarantee',
-    'No throttling',
-  ],
-  options: [
-    'Email support',
-    'Priority support',
-    'Dedicated support line',
-    'Free service calls',
-  ],
-  icons: [
-    `${CONFIG.assetsDir}/assets/icons/platforms/ic-wifi.svg`,
-    `${CONFIG.assetsDir}/assets/icons/platforms/ic-speed.svg`,
-    `${CONFIG.assetsDir}/assets/icons/platforms/ic-support.svg`,
-  ],
-}));
+const PLANS = [
+  {
+    license: 'Basic',
+    price: 1500,
+    commons: [
+      'Weekly waste pickup',
+      'Standard bin included',
+      'SMS pickup reminders',
+      'Access to recycling drop-off',
+    ],
+    options: [
+      'Email support',
+      'Mobile app access',
+      'Bin cleaning (extra)',
+      'Flexible scheduling',
+    ],
+    icons: [
+      `${CONFIG.assetsDir}/assets/icons/platforms/ic-trash.svg`,
+      `${CONFIG.assetsDir}/assets/icons/platforms/ic-calendar.svg`,
+      `${CONFIG.assetsDir}/assets/icons/platforms/ic-support.svg`,
+    ],
+  },
+  {
+    license: 'Standard',
+    price: 3000,
+    commons: [
+      'Twice-weekly waste pickup',
+      'Large bin included',
+      'SMS & email reminders',
+      'Access to recycling & composting',
+    ],
+    options: [
+      'Priority support',
+      'Mobile app access',
+      'Bin cleaning included',
+      'Flexible scheduling',
+    ],
+    icons: [
+      `${CONFIG.assetsDir}/assets/icons/platforms/ic-trash.svg`,
+      `${CONFIG.assetsDir}/assets/icons/platforms/ic-calendar.svg`,
+      `${CONFIG.assetsDir}/assets/icons/platforms/ic-support.svg`,
+    ],
+  },
+  {
+    license: 'Premium',
+    price: 5000,
+    commons: [
+      'Daily waste pickup',
+      'Extra-large bin included',
+      'Personalized reminders',
+      'Full recycling & composting',
+    ],
+    options: [
+      'Dedicated support line',
+      'Mobile app access',
+      'Bin cleaning included',
+      'On-demand pickups',
+    ],
+    icons: [
+      `${CONFIG.assetsDir}/assets/icons/platforms/ic-trash.svg`,
+      `${CONFIG.assetsDir}/assets/icons/platforms/ic-calendar.svg`,
+      `${CONFIG.assetsDir}/assets/icons/platforms/ic-support.svg`,
+    ],
+  },
+];

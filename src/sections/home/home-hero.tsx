@@ -81,7 +81,7 @@ export function HomeHero({ sx, ...other }: BoxProps) {
         <Box component="span" sx={{ width: 1, opacity: 0.24 }}>
           Experience the future of
         </Box>
-        internet with
+        waste management with
         <Box
           component={m.span}
           animate={{ backgroundPosition: '200% center' }}
@@ -115,7 +115,7 @@ export function HomeHero({ sx, ...other }: BoxProps) {
           [theme.breakpoints.up(lgKey)]: { fontSize: 20, lineHeight: '36px' },
         }}
       >
-        {`Experience lightning-fast internet with 99.9% uptime. \nGet connected today with our affordable and reliable internet plans.`}
+        {`Smart, sustainable, and efficient waste management for communities and businesses.\nJoin WasteWave and keep your environment clean with our modern solutions.`}
       </Typography>
     </m.div>
   );
