@@ -12,10 +12,8 @@ import SvgIcon from '@mui/material/SvgIcon';
 import { ScrollProgress, useScrollProgress } from 'src/components/animate/scroll-progress';
 
 import { HomeHero } from '../home-hero';
-import { HomeFAQs } from '../home-faqs';
 import { HomeMinimal } from '../home-minimal';
 import { HomePricing } from '../home-pricing';
-import { HomeTestimonials } from '../home-testimonials';
 import { HomeIntegrations } from '../home-integrations';
 import { HomeAdvertisement } from '../home-advertisement';
 
@@ -52,9 +50,9 @@ export function HomeView() {
 
         <HomePricing />
 
-        <HomeTestimonials />
+        {/* <HomeTestimonials /> */}
 
-        <HomeFAQs />
+        {/* <HomeFAQs /> */}
 
         {/* <HomeZoneUI /> */}
 

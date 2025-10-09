@@ -6,7 +6,6 @@ import { useRef, useState } from 'react';
 import { m, useScroll, useSpring, useTransform, useMotionValueEvent } from 'framer-motion';
 
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
@@ -17,10 +16,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import Avatar, { avatarClasses } from '@mui/material/Avatar';
 
 import { paths } from 'src/routes/paths';
-import { RouterLink } from 'src/routes/components';
 
 import { _mock } from 'src/_mock';
-import { CONFIG } from 'src/global-config';
 
 import { Iconify } from 'src/components/iconify';
 import { varFade, MotionContainer } from 'src/components/animate';
@@ -156,48 +153,6 @@ export function HomeHero({ sx, ...other }: BoxProps) {
       }}
     >
       <m.div {...motionProps}>
-        <Stack spacing={2.5} sx={{ alignItems: 'center' }}>
-          <Button
-            component={RouterLink}
-            href={paths.dashboard.root}
-            color="inherit"
-            size="large"
-            variant="contained"
-            startIcon={<Iconify width={24} icon="iconoir:flash" />}
-          >
-            <span>
-              Live tutorial
-              <Box
-                component="small"
-                sx={{
-                  mt: '-3px',
-                  opacity: 0.64,
-                  display: 'flex',
-                  fontSize: theme.typography.pxToRem(10),
-                  fontWeight: theme.typography.fontWeightMedium,
-                }}
-              >
-                v{CONFIG.appVersion}
-              </Box>
-            </span>
-          </Button>
-
-          <Link
-            color="inherit"
-            variant="body2"
-            target="_blank"
-            rel="noopener"
-            href={paths.freeUI}
-            underline="always"
-            sx={{ gap: 0.75, alignItems: 'center', display: 'inline-flex' }}
-          >
-            <Iconify width={16} icon="eva:external-link-fill" />
-            Get started
-          </Link>
-        </Stack>
-      </m.div>
-
-      <m.div {...motionProps}>
         <Button
           color="inherit"
           size="large"
@@ -205,7 +160,7 @@ export function HomeHero({ sx, ...other }: BoxProps) {
           target="_blank"
           rel="noopener"
           href={paths.figmaUrl}
-          startIcon={<Iconify width={24} icon="solar:figma-outline" />}
+          startIcon={<Iconify width={24} icon="solar:user-id-bold" />}
           sx={{ borderColor: 'text.primary' }}
         >
           Sign Up
@@ -214,36 +169,7 @@ export function HomeHero({ sx, ...other }: BoxProps) {
     </Box>
   );
 
-  const renderIcons = () => (
-    <Stack spacing={3} sx={{ textAlign: 'center' }}>
-      <m.div {...motionProps}>
-        <Typography variant="overline" sx={{ opacity: 0.4 }}>
-          Available For
-        </Typography>
-      </m.div>
 
-      <Box sx={{ gap: 2.5, display: 'flex' }}>
-        {['js', 'ts', 'nextjs', 'vite', 'figma'].map((platform) => (
-          <m.div {...motionProps} key={platform}>
-            <Box
-              component="img"
-              alt={platform}
-              src={`${CONFIG.assetsDir}/assets/icons/platforms/ic-${platform}.svg`}
-              sx={[
-                {
-                  width: 24,
-                  height: 24,
-                  ...theme.applyStyles('dark', {
-                    ...(platform === 'nextjs' && { filter: 'invert(1)' }),
-                  }),
-                },
-              ]}
-            />
-          </m.div>
-        ))}
-      </Box>
-    </Stack>
-  );
 
   return (
     <Box
@@ -301,7 +227,6 @@ export function HomeHero({ sx, ...other }: BoxProps) {
 
           <m.div style={{ y: y3 }}>{renderRatings()}</m.div>
           <m.div style={{ y: y4 }}>{renderButtons()}</m.div>
-          <m.div style={{ y: y5 }}>{renderIcons()}</m.div>
         </Container>
 
         <HeroBackground />

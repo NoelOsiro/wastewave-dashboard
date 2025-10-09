@@ -86,7 +86,7 @@ const renderDescription = () => (
       }}
     >
       Get started with
-      <br /> Minimal kit
+      <br /> WasteWave
       <Box
         component="span"
         sx={(theme) => ({
@@ -115,9 +115,9 @@ const renderDescription = () => (
           variant="contained"
           target="_blank"
           rel="noopener"
-          href={paths.minimalStore}
+          href={paths.auth.supabase.signIn}
         >
-          Purchase now
+          Sign In
         </Button>
       </m.div>
 
@@ -128,7 +128,7 @@ const renderDescription = () => (
           variant="outlined"
           target="_blank"
           rel="noopener"
-          href={paths.freeUI}
+          href={paths.auth.supabase.signUp}
           startIcon={<Iconify width={16} icon="eva:external-link-fill" sx={{ mr: 0.5 }} />}
           sx={{
             color: 'common.white',
@@ -136,7 +136,7 @@ const renderDescription = () => (
             '&:hover': { borderColor: 'currentColor' },
           }}
         >
-          Get free version
+          Register
         </Button>
       </m.div>
     </Box>

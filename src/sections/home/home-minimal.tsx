@@ -133,17 +133,17 @@ export function HomeMinimal({ sx, ...other }: BoxProps) {
 const ITEMS = [
   {
     icon: `${CONFIG.assetsDir}/assets/icons/home/ic-make-brand.svg`,
-    title: 'High-Speed Internet',
-    description: 'Lightning-fast connections with 99.9% uptime for seamless browsing and streaming.',
+    title: 'Reliable Waste Collection',
+    description: 'Scheduled pickups and efficient waste removal for homes and businesses.',
   },
   {
     icon: `${CONFIG.assetsDir}/assets/icons/home/ic-design.svg`,
-    title: 'Affordable Plans',
-    description: 'Flexible packages to suit every need and budget, with no hidden fees.',
+    title: 'Flexible Service Plans',
+    description: 'Choose from a range of waste management packages tailored to your needs.',
   },
   {
     icon: `${CONFIG.assetsDir}/assets/icons/home/ic-development.svg`,
-    title: '24/7 Support',
-    description: 'Our expert team is always ready to assist you with any issues or questions.',
+    title: 'Dedicated Support',
+    description: 'Our team is available to help with service requests and customer inquiries.',
   },
 ];
