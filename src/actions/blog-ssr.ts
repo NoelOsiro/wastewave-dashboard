@@ -3,19 +3,38 @@ import axios, { endpoints } from 'src/lib/axios';
 // ----------------------------------------------------------------------
 
 export async function getPosts() {
-  const res = await axios.get(endpoints.post.list);
+  const url = endpoints.post.list;
 
-  return res.data;
+  if (!url || url.trim() === '') {
+    console.warn('getPosts: Missing API endpoint URL');
+    return { posts: [] };
+  }
+
+  try {
+    const res = await axios.get(url);
+    return res.data;
+  } catch (err: any) {
+    console.error('getPosts failed:', err.message);
+    return { posts: [] };
+  }
 }
 
 // ----------------------------------------------------------------------
 
 export async function getPost(title: string) {
-  const URL = title ? `${endpoints.post.details}?title=${title}` : '';
+  if (!title) {
+    throw new Error('Post title is required');
+  }
 
-  const res = await axios.get(URL);
+  const url = `${endpoints.post.details}?title=${encodeURIComponent(title)}`;
 
-  return res.data;
+  try {
+    const res = await axios.get(url);
+    return res.data;
+  } catch (err: any) {
+    console.error('getPost failed:', err.message);
+    throw new Error(`Failed to fetch post: ${err.message}`);
+  }
 }
 
 // ----------------------------------------------------------------------

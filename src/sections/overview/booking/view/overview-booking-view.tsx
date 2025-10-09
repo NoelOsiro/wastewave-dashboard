@@ -36,8 +36,8 @@ export function OverviewBookingView() {
   }, []);
 
   const totalActive = customers.length;
-  const totalPPPoE = customers.filter((c) => c.service_type === 'ppoe').length;
-  const totalHotspot = customers.filter((c) => c.service_type === 'hotspot').length;
+  const totalPPPoE = customers.filter((c) => c.status === 'pending').length;
+  const totalHotspot = customers.filter((c) => c.status === 'active').length;
 
   return (
     <DashboardContent maxWidth="xl">
