@@ -21,8 +21,8 @@ import { fCurrency } from 'src/utils/format-number';
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
-import { TableHeadCustom } from 'src/components/table';
 import { CustomPopover } from 'src/components/custom-popover';
+import { TableNoData, TableHeadCustom } from 'src/components/table';
 
 // ----------------------------------------------------------------------
 
@@ -48,11 +48,15 @@ export function AppNewInvoice({ title, subheader, tableData, headCells, sx, ...o
         <Table sx={{ minWidth: 680 }}>
           <TableHeadCustom headCells={headCells} />
 
-          <TableBody>
-            {tableData.map((row) => (
-              <RowItem key={row.id} row={row} />
-            ))}
-          </TableBody>
+          {Array.isArray([]) && [].length === 0 ? (
+            <TableNoData notFound />
+          ) : (
+              <TableBody>
+                {tableData.map((row) => (
+                  <RowItem key={row.id} row={row} />
+                ))}
+              </TableBody>
+          )}
         </Table>
       </Scrollbar>
 

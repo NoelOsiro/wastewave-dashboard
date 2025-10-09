@@ -1,7 +1,6 @@
 import type { CardProps } from '@mui/material/Card';
 import type { ChartOptions } from 'src/components/chart';
 
-import { sumBy } from 'es-toolkit';
 import { varAlpha } from 'minimal-shared/utils';
 
 import Box from '@mui/material/Box';
@@ -31,9 +30,9 @@ type Props = CardProps & {
 export function BookingAvailable({ title, subheader, chart, sx, ...other }: Props) {
   const theme = useTheme();
 
-  const total = sumBy(chart.series, (series) => series.value);
+  const total = chart.series.filter((i) => i.label === 'Available')[0].value ;
 
-  const chartSeries = (chart.series.filter((i) => i.label === 'Sold out')[0].value / total) * 100;
+  const chartSeries = (chart.series.filter((i) => i.label === 'Available')[0].value / total) * 100;
 
   const chartColors = chart.colors ?? [theme.palette.primary.light, theme.palette.primary.main];
 
@@ -56,7 +55,7 @@ export function BookingAvailable({ title, subheader, chart, sx, ...other }: Prop
         dataLabels: {
           name: { offsetY: -12 },
           value: { offsetY: 6 },
-          total: { label: 'Tours', formatter: () => fNumber(total) },
+          total: { label: 'Packets', formatter: () => fNumber(total === 0 ? 0 : Math.ceil(total/40)) },
         },
       },
     },
@@ -102,7 +101,7 @@ export function BookingAvailable({ title, subheader, chart, sx, ...other }: Prop
               }}
             />
             <Box sx={{ color: 'text.secondary', flexGrow: 1 }}>{item.label}</Box>
-            {item.value} tours
+            {item.value} sheets
           </Box>
         ))}
       </Box>

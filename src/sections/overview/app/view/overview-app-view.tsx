@@ -2,29 +2,26 @@
 
 import { useEffect } from 'react';
 
-import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid2';
 import Button from '@mui/material/Button';
 import { useTheme } from '@mui/material/styles';
 
-import {  _mock, _appInvoices } from 'src/_mock';
+import { _mock } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { SeoIllustration } from 'src/assets/illustrations';
 import { useCustomerStore } from 'src/store/customerStore';
 
-import { svgColorClasses } from 'src/components/svg-color';
-
 import { useAuthContext } from 'src/auth/hooks';
 
-import { AppWidget } from '../app-widget';
 import { AppWelcome } from '../app-welcome';
 import { AppFeatured } from '../app-featured';
 import { AppNewInvoice } from '../app-new-invoice';
-import { AppAreaInstalled } from '../app-area-installed';
 import { AppWidgetSummary } from '../app-widget-summary';
 import { AppCurrentDownload } from '../app-current-download';
+import { BookingAvailable } from '../../booking/booking-available';
 
 // ----------------------------------------------------------------------
+
 
 export function OverviewAppView() {
   const { user } = useAuthContext();
@@ -35,7 +32,7 @@ export function OverviewAppView() {
     fetchCustomers();
   }, [fetchCustomers]);
   const totalCustomers = customers.length;
-  const activeCustomers = customers.filter((c) => c.status === 'active').length;
+  const activeCustomers = customers.filter((c) => c.status === 'paid').length;
   const pendingCustomers = customers.filter((c) => c.status === 'pending').length;
   const _appFeatured = [
     {
@@ -60,6 +57,9 @@ export function OverviewAppView() {
 
   const theme = useTheme();
 
+
+
+
   return (
     <DashboardContent maxWidth="xl">
       <Grid container spacing={3}>
@@ -83,9 +83,9 @@ export function OverviewAppView() {
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
 
           <AppWidgetSummary
-            title="Total Active Users"
+            title="Total Paid Customers"
             percent={2.6}
-            total={3654}
+            total={activeCustomers}
             chart={{
               categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
               series: [15, 18, 12, 51, 68, 11, 39, 37],
@@ -94,9 +94,9 @@ export function OverviewAppView() {
         </Grid>
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <AppWidgetSummary
-            title="Total PPPoE users"
+            title="Total Not paid"
             percent={-0.1}
-            total={1206}
+            total={pendingCustomers}
             chart={{
               colors: [theme.palette.error.main],
               categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
@@ -104,115 +104,48 @@ export function OverviewAppView() {
             }}
           />
         </Grid>
+
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <AppWidgetSummary
-            title="Total PPPoE users"
-            percent={-0.1}
-            total={1206}
+          <AppCurrentDownload
+            title="Client Distribution"
+            subheader=""
             chart={{
-              colors: [theme.palette.error.main],
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [18, 19, 31, 8, 16, 37, 12, 33],
+              series: [
+                { label: 'Paid', value: activeCustomers },
+                { label: 'Not Paid', value: pendingCustomers },
+              ],
             }}
           />
         </Grid>
+        <Grid size={{ xs: 12, md: 6, lg: 6 }}>
+          <BookingAvailable
+                          title="Papers sheets"
+                          chart={{
+                            series: [
+                              { label: 'Houses', value: totalCustomers },
+                              { label: 'Available', value: totalCustomers * 6},
+                            ],
+                          }}
+                        />
+        </Grid>
 
-      <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-        <AppCurrentDownload
-          title="Client Distribution"
-          subheader=""
-          chart={{
-            series: [
-              { label: 'Hotspot', value: 2448 },
-              { label: 'PPPoE', value: 1206 },
-            ],
-          }}
-        />
-      </Grid>
+        <Grid size={{ xs: 12, lg: 8 }}>
 
-      <Grid size={{ xs: 12, md: 6, lg: 8 }}>
-        <AppAreaInstalled
-          title="Sessions active monthly"
-          subheader="(+43%) than last year"
-          chart={{
-            categories: [
-              'Jan',
-              'Feb',
-              'Mar',
-              'Apr',
-              'May',
-              'Jun',
-              'Jul',
-              'Aug',
-              'Sep',
-              'Oct',
-              'Nov',
-              'Dec',
-            ],
-            series: [
-              {
-                name: '2022',
-                data: [
-                  { name: 'Active', data: [12, 10, 18, 22, 20, 12, 8, 21, 20, 14, 15, 16] },
-                  { name: 'Inactive', data: [12, 10, 18, 22, 20, 12, 8, 21, 20, 14, 15, 16] },
-                ],
-              },
-              {
-                name: '2023',
-                data: [
-                  { name: 'Active', data: [6, 18, 14, 9, 20, 6, 22, 19, 8, 22, 8, 17] },
-                  { name: 'Inactive', data: [6, 18, 14, 9, 20, 6, 22, 19, 8, 22, 8, 17] },
-                ],
-              },
-              {
-                name: '2024',
-                data: [
-                  { name: 'Active', data: [6, 20, 15, 18, 7, 24, 6, 10, 12, 17, 18, 10] },
-                  { name: 'Inactive', data: [6, 20, 15, 18, 7, 24, 6, 10, 12, 17, 18, 10] },
-                ],
-              },
-            ],
-          }}
-        />
-
-      </Grid>
-
-      <Grid size={{ xs: 12, lg: 8 }}>
-        <AppNewInvoice
-          title="Inbox"
-          tableData={_appInvoices}
-          headCells={[
-            { id: 'id', label: 'Message ID' },
-            { id: 'category', label: 'Type' },
-            { id: 'price', label: 'Price' },
-            { id: 'status', label: 'Status' },
-            { id: '' },
-          ]}
-        />
-      </Grid>
-
-      <Grid size={{ xs: 12, md: 12, lg: 12 }}>
-        <Box sx={{ gap: 3, display: 'flex', flexDirection: 'row' }}>
-          <AppWidget
-            title="Profile Completion"
-            total={48}
-            icon="solar:user-rounded-bold"
-            chart={{ series: 48 }}
+          <AppNewInvoice
+            title="Payments"
+            tableData={[]}
+            headCells={[
+              { id: 'id', label: 'Message ID' },
+              { id: 'category', label: 'Type' },
+              { id: 'price', label: 'Price' },
+              { id: 'status', label: 'Status' },
+              { id: '' },
+            ]}
           />
+        </Grid>
 
-          <AppWidget
-            title="Applications"
-            total={55566}
-            icon="fluent:mail-24-filled"
-            chart={{
-              series: 75,
-              colors: [theme.vars.palette.info.light, theme.vars.palette.info.main],
-            }}
-            sx={{ bgcolor: 'info.dark', [`& .${svgColorClasses.root}`]: { color: 'info.light' } }}
-          />
-        </Box>
+
       </Grid>
-    </Grid>
     </DashboardContent >
   );
 }

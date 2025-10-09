@@ -295,6 +295,12 @@ export const _bookingsOverview = Array.from({ length: 3 }, (_, index) => ({
   value: _mock.number.percent(index + 5),
 }));
 
+export const _customersOverview = Array.from({ length: 3 }, (_, index) => ({
+  status: ['paid', 'pending', 'inactive'][index],
+  quantity: _mock.number.nativeL(index),
+  value: _mock.number.percent(index + 5),
+}));
+
 export const _bookingReview = Array.from({ length: 5 }, (_, index) => ({
   id: _mock.id(index),
   name: _mock.fullName(index),

@@ -82,6 +82,7 @@ export type ICustomerItem = {
   status: string;
   address: string;
   phone: string;
+  created_at?: string
 };
 
 export type ICustomerAccountBillingHistory = {

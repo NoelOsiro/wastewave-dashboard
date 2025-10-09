@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid2';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useCustomerStore } from 'src/store/customerStore';
-import { _bookings, _bookingNew, _bookingReview, _bookingsOverview } from 'src/_mock';
+import { _bookings, _bookingNew, _bookingReview } from 'src/_mock';
 import {
   BookingIllustration,
   CheckInIllustration,
@@ -27,6 +27,7 @@ import { BookingCustomerReviews } from '../booking-customer-reviews';
 // ----------------------------------------------------------------------
 
 export function OverviewBookingView() {
+
   const customers = useCustomerStore((state) => state.customers);
   const fetchCustomers = useCustomerStore((state) => state.fetchCustomers);
 
@@ -36,7 +37,7 @@ export function OverviewBookingView() {
   }, []);
 
   const totalCustomers = customers.length;
-  const totalActive = customers.filter((c) => c.status === 'active').length;
+  const totalActive = customers.filter((c) => c.status === 'paid').length;
   const totalPending = customers.filter((c) => c.status === 'pending').length;
   const totalInactive = customers.filter((c) => c.status === 'inactive').length;
 
@@ -105,7 +106,11 @@ export function OverviewBookingView() {
 
                 <BookingBooked
                   title="Customer Status"
-                  data={_bookingsOverview}
+                  data={[
+                    { status: 'Paid', value: (totalActive / totalCustomers) * 100, quantity: totalActive },
+                    { status: 'Pending', value: (totalPending / totalCustomers) * 100, quantity: totalPending },
+                    { status: 'Inactive', value: (totalInactive / totalCustomers) * 100, quantity: totalInactive },
+                  ]}
                   sx={{ boxShadow: { md: 'none' } }}
                 />
               </Box>
@@ -161,11 +166,11 @@ export function OverviewBookingView() {
           <Grid size={{ xs: 12, md: 5, lg: 4 }}>
             <Box sx={{ gap: 3, display: 'flex', flexDirection: 'column' }}>
               <BookingAvailable
-                title="Tours available"
+                title="Papers sheets"
                 chart={{
                   series: [
-                    { label: 'Sold out', value: 120 },
-                    { label: 'Available', value: 66 },
+                    { label: 'Houses', value: totalCustomers },
+                    { label: 'Available', value: totalCustomers * 6},
                   ],
                 }}
               />
